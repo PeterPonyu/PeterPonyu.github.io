@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 2400" role="img" aria-labelledby="title desc">
   <title id="title">ZF Lab Scientific Identity System</title>
-  <desc id="desc">Refined SVG identity sheet for ZF Lab including master mark variants, favicon, usage rules, and a 25-badge scientific project system.</desc>
+  <desc id="desc">Filled-circle badge system for ZF Lab: master mark, favicon, and 25-project badge family with category colors.</desc>
   <defs>
     <style>
       .bg { fill: #ffffff; }
@@ -8,7 +8,6 @@
       .soft { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 2; }
       .darkPanel { fill: #0f172a; }
       .rule { stroke: #e2e8f0; stroke-width: 2; }
-      .dash { fill: none; stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 10 8; }
       .title { font: 700 46px Inter, Arial, sans-serif; fill: #0f172a; }
       .subtitle { font: 500 20px Inter, Arial, sans-serif; fill: #475569; }
       .section { font: 700 24px Inter, Arial, sans-serif; fill: #0f172a; }
@@ -17,277 +16,258 @@
       .label { font: 600 15px Inter, Arial, sans-serif; fill: #475569; text-anchor: middle; }
       .labelDark { font: 600 15px Inter, Arial, sans-serif; fill: #cbd5e1; text-anchor: middle; }
       .legend { font: 600 16px Inter, Arial, sans-serif; fill: #334155; }
-      .badgeCode { font: 600 30px 'JetBrains Mono', 'IBM Plex Mono', Menlo, Consolas, monospace; fill: currentColor; text-anchor: middle; dominant-baseline: central; }
+      .badgeCode { font: 700 44px 'JetBrains Mono', 'IBM Plex Mono', Menlo, Consolas, monospace; fill: #ffffff; text-anchor: middle; dominant-baseline: central; }
       .badgeName { font: 700 18px Inter, Arial, sans-serif; fill: #0f172a; text-anchor: middle; }
       .badgeMeta { font: 500 14px Inter, Arial, sans-serif; fill: #64748b; text-anchor: middle; }
-      .monoStroke { fill: none; stroke: currentColor; stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
-      .monoStrokeSmall { fill: none; stroke: currentColor; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
     </style>
 
-    <!-- Badge shell: circle + trajectory arc through UPPER region, text area clear below -->
-    <g id="badgeShell">
-      <circle class="monoStroke" cx="0" cy="0" r="58"/>
-      <!-- Trajectory arcs through the top of the circle, clearing center for text -->
-      <path class="monoStroke" d="M -72 -24 C -52 -24, -36 -52, -12 -52 C 14 -52, 36 -24, 72 -24"/>
-      <circle cx="-72" cy="-24" r="4.5" fill="currentColor"/>
-      <circle cx="72" cy="-24" r="4.5" fill="currentColor"/>
+    <g id="badgeShell_pub">
+      <circle cx="0" cy="0" r="62" fill="#1e3a5f"/>
+      <circle cx="0" cy="0" r="60" fill="none" stroke="#2e5f8f" stroke-width="2.5"/>
+      <path d="M-46 -16 C-30 -16, -18 -38, 0 -38 C16 -38, 30 -16, 46 -16" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="-46" cy="-16" r="4" fill="#6ba3e8"/>
+      <circle cx="46" cy="-16" r="4" fill="#6ba3e8"/>
     </g>
 
-    <!-- Master mark: ZF implied by the trajectory stroke -->
-    <g id="masterMark">
-      <circle class="monoStroke" cx="0" cy="0" r="58"/>
-      <path class="monoStroke" d="M -78 -28 C -58 -28, -48 -28, -34 -28 H 28 C 18 -20, 2 -8, -12 4 C 0 4, 14 4, 28 4 C 36 4, 40 10, 40 18 V 34 C 40 48, 52 56, 78 56"/>
-      <circle cx="-78" cy="-28" r="4.5" fill="currentColor"/>
-      <circle cx="78" cy="56" r="4.5" fill="currentColor"/>
+    <g id="badgeShell_dev">
+      <circle cx="0" cy="0" r="62" fill="#334155"/>
+      <circle cx="0" cy="0" r="60" fill="none" stroke="#475569" stroke-width="2.5"/>
+      <path d="M-46 -16 C-30 -16, -18 -38, 0 -38 C16 -38, 30 -16, 46 -16" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="-46" cy="-16" r="4" fill="#94a3b8"/>
+      <circle cx="46" cy="-16" r="4" fill="#94a3b8"/>
     </g>
 
-    <!-- Favicon: simplified trajectory -->
+    <g id="badgeShell_web">
+      <circle cx="0" cy="0" r="62" fill="#1e3a8a"/>
+      <circle cx="0" cy="0" r="60" fill="none" stroke="#3451b2" stroke-width="2.5"/>
+      <path d="M-46 -16 C-30 -16, -18 -38, 0 -38 C16 -38, 30 -16, 46 -16" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="-46" cy="-16" r="4" fill="#818cf8"/>
+      <circle cx="46" cy="-16" r="4" fill="#818cf8"/>
+    </g>
+
+    <g id="badgeShell_ember">
+      <circle cx="0" cy="0" r="62" fill="#78350f"/>
+      <circle cx="0" cy="0" r="60" fill="none" stroke="#a16207" stroke-width="2.5"/>
+      <path d="M-46 -16 C-30 -16, -18 -38, 0 -38 C16 -38, 30 -16, 46 -16" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="-46" cy="-16" r="4" fill="#fbbf24"/>
+      <circle cx="46" cy="-16" r="4" fill="#fbbf24"/>
+    </g>
+
     <g id="faviconMark">
-      <circle class="monoStrokeSmall" cx="0" cy="0" r="58"/>
-      <path class="monoStrokeSmall" d="M -70 -22 C -50 -22, -34 -50, -10 -50 C 16 -50, 34 -22, 70 -22"/>
+      <circle cx="0" cy="0" r="62" fill="#1e3a5f"/>
+      <circle cx="0" cy="0" r="60" fill="none" stroke="#2e5f8f" stroke-width="2.5"/>
+      <path d="M-42 -14 C-26 -14, -14 -38, 0 -38 C14 -38, 28 -14, 42 -14" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="4.5" stroke-linecap="round"/>
+      <circle cx="-42" cy="-14" r="4.5" fill="#6ba3e8"/>
+      <circle cx="42" cy="-14" r="4.5" fill="#6ba3e8"/>
     </g>
 
     <g id="badgeTile">
-      <rect x="-122" y="-122" width="244" height="244" rx="24" class="soft"/>
+      <rect x="-90" y="-90" width="180" height="180" rx="24" class="soft"/>
     </g>
   </defs>
 
   <rect class="bg" x="0" y="0" width="1800" height="2400"/>
 
-  <text x="100" y="94" class="title">ZF Lab  Scientific Identity System</text>
-  <text x="100" y="130" class="subtitle">Minimal flat-vector monogram, scalable badge family, and favicon for computational biology, genomics, machine learning, and scientific computing.</text>
+  <text x="100" y="94" class="title">ZF Lab  Scientific Identity System</text>
+  <text x="100" y="130" class="subtitle">Filled-circle badge system. Dark backgrounds, white internals. Scalable from 16px favicon to 128px badge.</text>
   <line x1="100" y1="165" x2="1700" y2="165" class="rule"/>
 
-  <!-- Master mark section -->
-  <text x="100" y="220" class="section">Master mark</text>
-  <text x="100" y="252" class="body">A single-circle scientific glyph with one trajectory stroke. The monogram is implied by the path rather than placed as separate letters.</text>
+  <text x="100" y="220" class="section">Master badge</text>
+  <text x="100" y="252" class="body">Filled dark circle with trajectory arc and 2-letter code in bold white monospace. Reads on any background.</text>
 
   <g transform="translate(250 385)">
-    <rect x="-110" y="-110" width="220" height="220" rx="24" class="soft"/>
-    <g color="#1e3a5f"><use href="#masterMark"/></g>
-    <text x="0" y="146" class="label">Primary  #1e3a5f</text>
+    <use href="#badgeTile"/>
+    <use href="#badgeShell_pub"/><text x="0" y="14" class="badgeCode">ZF</text>
+    <text x="0" y="116" class="label">Published  #1e3a5f</text>
   </g>
   <g transform="translate(510 385)">
-    <rect x="-110" y="-110" width="220" height="220" rx="24" class="darkPanel"/>
-    <g color="#ffffff"><use href="#masterMark"/></g>
-    <text x="0" y="146" class="labelDark">White on dark</text>
+    <use href="#badgeTile"/>
+    <use href="#badgeShell_dev"/><text x="0" y="14" class="badgeCode">ZF</text>
+    <text x="0" y="116" class="label">Dev  #334155</text>
   </g>
   <g transform="translate(770 385)">
-    <rect x="-110" y="-110" width="220" height="220" rx="24" class="panel"/>
-    <g color="#1e3a5f"><use href="#masterMark"/></g>
-    <text x="0" y="146" class="label">Dark on white</text>
+    <use href="#badgeTile"/>
+    <use href="#badgeShell_web"/><text x="0" y="14" class="badgeCode">ZF</text>
+    <text x="0" y="116" class="label">Web  #1e3a8a</text>
   </g>
-  <g transform="translate(1080 385)">
-    <rect x="-122" y="-122" width="244" height="244" rx="24" class="soft"/>
-    <g color="#1e3a5f"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">ZF</text></g>
-    <text x="0" y="146" class="label">Master badge / profile</text>
+  <g transform="translate(1030 385)">
+    <use href="#badgeTile"/>
+    <use href="#badgeShell_ember"/><text x="0" y="14" class="badgeCode">ZF</text>
+    <text x="0" y="116" class="label">Ember  #78350f</text>
   </g>
 
-  <!-- Favicon + usage section -->
-  <text x="1290" y="220" class="section">Favicon + usage</text>
-  <text x="1290" y="252" class="body">Reduced silhouette for browser tabs and small UI contexts.</text>
+  <text x="1290" y="220" class="section">Favicon</text>
+  <text x="1290" y="252" class="body">Reduced mark for browser tabs and small UI.</text>
 
   <g transform="translate(1395 370)">
     <rect x="-56" y="-56" width="112" height="112" rx="18" class="panel"/>
-    <g transform="scale(0.5)" color="#1e3a5f"><use href="#faviconMark"/></g>
-    <text x="0" y="86" class="label">16 × 16</text>
+    <g transform="scale(0.5)"><use href="#faviconMark"/></g>
+    <text x="0" y="86" class="label">16px</text>
   </g>
   <g transform="translate(1570 370)">
     <rect x="-72" y="-72" width="144" height="144" rx="20" class="panel"/>
-    <g transform="scale(0.68)" color="#1e3a5f"><use href="#faviconMark"/></g>
-    <text x="0" y="104" class="label">32 × 32</text>
+    <g transform="scale(0.68)"><use href="#faviconMark"/></g>
+    <text x="0" y="104" class="label">32px</text>
   </g>
+
   <g transform="translate(1290 500)">
     <text x="0" y="0" class="body">Minimum rules</text>
-    <text x="0" y="34" class="small">" Favicon: 16 px minimum</text>
-    <text x="0" y="60" class="small">" Badge: 24 px minimum, 64 px preferred</text>
-    <text x="0" y="86" class="small">" Clear space: 0.25D around every mark</text>
-    <text x="0" y="112" class="small">" Single-color only, transparent background preferred</text>
-    <text x="0" y="138" class="small">" Uniform bold stroke, no effects</text>
-  </g>
-  <g transform="translate(1545 545)">
-    <rect x="-98" y="-98" width="196" height="196" rx="22" class="dash"/>
-    <rect x="-74" y="-74" width="148" height="148" rx="18" class="panel"/>
-    <g color="#1e3a5f"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">iA</text></g>
-    <text x="0" y="132" class="label">Clear space = 0.25D</text>
+    <text x="0" y="34" class="small">Favicon: 16px minimum</text>
+    <text x="0" y="60" class="small">Badge: 24px minimum, 64px preferred</text>
+    <text x="0" y="86" class="small">Clear space: 0.25D around every mark</text>
+    <text x="0" y="112" class="small">Filled circle, white internals, no effects</text>
   </g>
 
-  <line x1="100" y1="640" x2="1700" y2="640" class="rule"/>
+  <line x1="100" y1="540" x2="1700" y2="540" class="rule"/>
 
-  <!-- Badge family -->
-  <text x="100" y="694" class="section">Badge family</text>
-  <text x="100" y="726" class="body">Periodic-table logic: same shell, same geometry, only the 2-letter code changes.</text>
+  <text x="100" y="594" class="section">Badge family</text>
+  <text x="100" y="626" class="body">Same shell, same geometry, only the 2-letter code and category fill change.</text>
 
-  <rect x="100" y="756" width="18" height="18" rx="4" fill="#1e3a5f"/>
-  <text x="130" y="771" class="legend">Published tools + master</text>
-  <rect x="365" y="756" width="18" height="18" rx="4" fill="#64748b"/>
-  <text x="395" y="771" class="legend">In development</text>
-  <rect x="560" y="756" width="18" height="18" rx="4" fill="#3b82f6"/>
-  <text x="590" y="771" class="legend">Web apps</text>
-  <rect x="720" y="756" width="18" height="18" rx="4" fill="#f59e0b"/>
-  <text x="750" y="771" class="legend">Emberforge</text>
+  <rect x="100" y="656" width="18" height="18" rx="4" fill="#1e3a5f"/>
+  <text x="130" y="671" class="legend">Published tools</text>
+  <rect x="320" y="656" width="18" height="18" rx="4" fill="#334155"/>
+  <text x="350" y="671" class="legend">In development</text>
+  <rect x="530" y="656" width="18" height="18" rx="4" fill="#1e3a8a"/>
+  <text x="560" y="671" class="legend">Web apps</text>
+  <rect x="680" y="656" width="18" height="18" rx="4" fill="#78350f"/>
+  <text x="710" y="671" class="legend">Emberforge</text>
 
   <!-- Row 1: Published (ZF, iA, iV, Li, GN) -->
-  <g transform="translate(220 920)">
-    <use href="#badgeTile"/>
-    <g color="#1e3a5f"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">ZF</text></g>
-    <text x="0" y="146" class="badgeName">ZF</text>
-    <text x="0" y="170" class="badgeMeta">Personal brand / homepage / profile</text>
+  <g transform="translate(220 830)">
+    <use href="#badgeTile"/><use href="#badgeShell_pub"/><text x="0" y="14" class="badgeCode">ZF</text>
+    <text x="0" y="116" class="badgeName">ZF</text>
+    <text x="0" y="140" class="badgeMeta">Personal brand / homepage</text>
   </g>
-  <g transform="translate(520 920)">
-    <use href="#badgeTile"/>
-    <g color="#1e3a5f"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">iA</text></g>
-    <text x="0" y="146" class="badgeName">iAODE</text>
-    <text x="0" y="170" class="badgeMeta">Neural ODE VAE for scATAC-seq</text>
+  <g transform="translate(520 830)">
+    <use href="#badgeTile"/><use href="#badgeShell_pub"/><text x="0" y="14" class="badgeCode">iA</text>
+    <text x="0" y="116" class="badgeName">iAODE</text>
+    <text x="0" y="140" class="badgeMeta">Neural ODE VAE for scATAC-seq</text>
   </g>
-  <g transform="translate(820 920)">
-    <use href="#badgeTile"/>
-    <g color="#1e3a5f"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">iV</text></g>
-    <text x="0" y="146" class="badgeName">iVAE</text>
-    <text x="0" y="170" class="badgeMeta">Interpretable VAE for clustering</text>
+  <g transform="translate(820 830)">
+    <use href="#badgeTile"/><use href="#badgeShell_pub"/><text x="0" y="14" class="badgeCode">iV</text>
+    <text x="0" y="116" class="badgeName">iVAE</text>
+    <text x="0" y="140" class="badgeMeta">Interpretable VAE for clustering</text>
   </g>
-  <g transform="translate(1120 920)">
-    <use href="#badgeTile"/>
-    <g color="#1e3a5f"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">Li</text></g>
-    <text x="0" y="146" class="badgeName">LiVAE</text>
-    <text x="0" y="170" class="badgeMeta">Lorentz-regularized VAE for multi-omics</text>
+  <g transform="translate(1120 830)">
+    <use href="#badgeTile"/><use href="#badgeShell_pub"/><text x="0" y="14" class="badgeCode">Li</text>
+    <text x="0" y="116" class="badgeName">LiVAE</text>
+    <text x="0" y="140" class="badgeMeta">Lorentz-regularized VAE</text>
   </g>
-  <g transform="translate(1420 920)">
-    <use href="#badgeTile"/>
-    <g color="#1e3a5f"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">GN</text></g>
-    <text x="0" y="146" class="badgeName">GNODEVAE</text>
-    <text x="0" y="170" class="badgeMeta">Graph ODE-VAE for clustering</text>
+  <g transform="translate(1420 830)">
+    <use href="#badgeTile"/><use href="#badgeShell_pub"/><text x="0" y="14" class="badgeCode">GN</text>
+    <text x="0" y="116" class="badgeName">GNODEVAE</text>
+    <text x="0" y="140" class="badgeMeta">Graph ODE-VAE for clustering</text>
   </g>
 
-  <!-- Row 2: Published cont. + Dev start (RL, sF, CO, CC, MC) -->
-  <g transform="translate(220 1220)">
-    <use href="#badgeTile"/>
-    <g color="#1e3a5f"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">RL</text></g>
-    <text x="0" y="146" class="badgeName">scRL</text>
-    <text x="0" y="170" class="badgeMeta">Reinforcement learning for cell fate</text>
+  <!-- Row 2: Published + Dev (RL, sF, CO, CC, MC) -->
+  <g transform="translate(220 1080)">
+    <use href="#badgeTile"/><use href="#badgeShell_pub"/><text x="0" y="14" class="badgeCode">RL</text>
+    <text x="0" y="116" class="badgeName">scRL</text>
+    <text x="0" y="140" class="badgeMeta">RL for cell fate decisions</text>
   </g>
-  <g transform="translate(520 1220)">
-    <use href="#badgeTile"/>
-    <g color="#1e3a5f"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">sF</text></g>
-    <text x="0" y="146" class="badgeName">scFocus</text>
-    <text x="0" y="170" class="badgeMeta">SAC for lineage branching</text>
+  <g transform="translate(520 1080)">
+    <use href="#badgeTile"/><use href="#badgeShell_pub"/><text x="0" y="14" class="badgeCode">sF</text>
+    <text x="0" y="116" class="badgeName">scFocus</text>
+    <text x="0" y="140" class="badgeMeta">SAC for lineage branching</text>
   </g>
-  <g transform="translate(820 1220)">
-    <use href="#badgeTile"/>
-    <g color="#1e3a5f"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">CO</text></g>
-    <text x="0" y="146" class="badgeName">CODE</text>
-    <text x="0" y="170" class="badgeMeta">Correlated latent continuum modeling</text>
+  <g transform="translate(820 1080)">
+    <use href="#badgeTile"/><use href="#badgeShell_pub"/><text x="0" y="14" class="badgeCode">CO</text>
+    <text x="0" y="116" class="badgeName">CODE</text>
+    <text x="0" y="140" class="badgeMeta">Correlated latent continuum</text>
   </g>
-  <g transform="translate(1120 1220)">
-    <use href="#badgeTile"/>
-    <g color="#64748b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">CC</text></g>
-    <text x="0" y="146" class="badgeName">CCVGAE</text>
-    <text x="0" y="170" class="badgeMeta">Coupled variational graph AE for multi-omics</text>
+  <g transform="translate(1120 1080)">
+    <use href="#badgeTile"/><use href="#badgeShell_dev"/><text x="0" y="14" class="badgeCode">CC</text>
+    <text x="0" y="116" class="badgeName">CCVGAE</text>
+    <text x="0" y="140" class="badgeMeta">Coupled variational graph AE</text>
   </g>
-  <g transform="translate(1420 1220)">
-    <use href="#badgeTile"/>
-    <g color="#64748b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">MC</text></g>
-    <text x="0" y="146" class="badgeName">MCCVAE</text>
-    <text x="0" y="170" class="badgeMeta">Momentum contrastive coupling VAE</text>
+  <g transform="translate(1420 1080)">
+    <use href="#badgeTile"/><use href="#badgeShell_dev"/><text x="0" y="14" class="badgeCode">MC</text>
+    <text x="0" y="116" class="badgeName">MCCVAE</text>
+    <text x="0" y="140" class="badgeMeta">Momentum contrastive coupling</text>
   </g>
 
-  <!-- Row 3: Dev cont. (GA, Lo, PD, PT, CD) -->
-  <g transform="translate(220 1520)">
-    <use href="#badgeTile"/>
-    <g color="#64748b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">GA</text></g>
-    <text x="0" y="146" class="badgeName">GAHIB</text>
-    <text x="0" y="170" class="badgeMeta">Graph attention VAE + hyperbolic IB</text>
+  <!-- Row 3: Dev (GA, Lo, PD, PT, CD) -->
+  <g transform="translate(220 1330)">
+    <use href="#badgeTile"/><use href="#badgeShell_dev"/><text x="0" y="14" class="badgeCode">GA</text>
+    <text x="0" y="116" class="badgeName">GAHIB</text>
+    <text x="0" y="140" class="badgeMeta">Graph attention + hyperbolic IB</text>
   </g>
-  <g transform="translate(520 1520)">
-    <use href="#badgeTile"/>
-    <g color="#64748b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">Lo</text></g>
-    <text x="0" y="146" class="badgeName">Liora</text>
-    <text x="0" y="170" class="badgeMeta">Lorentz ODE regularized attention VAE</text>
+  <g transform="translate(520 1330)">
+    <use href="#badgeTile"/><use href="#badgeShell_dev"/><text x="0" y="14" class="badgeCode">Lo</text>
+    <text x="0" y="116" class="badgeName">Liora</text>
+    <text x="0" y="140" class="badgeMeta">Lorentz ODE regularized VAE</text>
   </g>
-  <g transform="translate(820 1520)">
-    <use href="#badgeTile"/>
-    <g color="#64748b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">PD</text></g>
-    <text x="0" y="146" class="badgeName">PanODE-DPMM</text>
-    <text x="0" y="170" class="badgeMeta">Flow-matching DPMM prior AE</text>
+  <g transform="translate(820 1330)">
+    <use href="#badgeTile"/><use href="#badgeShell_dev"/><text x="0" y="14" class="badgeCode">PD</text>
+    <text x="0" y="116" class="badgeName">PanODE-DPMM</text>
+    <text x="0" y="140" class="badgeMeta">Flow-matching DPMM prior</text>
   </g>
-  <g transform="translate(1120 1520)">
-    <use href="#badgeTile"/>
-    <g color="#64748b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">PT</text></g>
-    <text x="0" y="146" class="badgeName">PanODE-Topic</text>
-    <text x="0" y="170" class="badgeMeta">Flow-matching Dirichlet prior AE</text>
+  <g transform="translate(1120 1330)">
+    <use href="#badgeTile"/><use href="#badgeShell_dev"/><text x="0" y="14" class="badgeCode">PT</text>
+    <text x="0" y="116" class="badgeName">PanODE-Topic</text>
+    <text x="0" y="140" class="badgeMeta">Flow-matching Dirichlet prior</text>
   </g>
-  <g transform="translate(1420 1520)">
-    <use href="#badgeTile"/>
-    <g color="#64748b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">CD</text></g>
-    <text x="0" y="146" class="badgeName">CLOP-DiT</text>
-    <text x="0" y="170" class="badgeMeta">Contrastive language-omics + diffusion transformer</text>
+  <g transform="translate(1420 1330)">
+    <use href="#badgeTile"/><use href="#badgeShell_dev"/><text x="0" y="14" class="badgeCode">CD</text>
+    <text x="0" y="116" class="badgeName">CLOP-DiT</text>
+    <text x="0" y="140" class="badgeMeta">Language-omics + diffusion</text>
   </g>
 
-  <!-- Row 4: Dev end + Web apps (HS, Mo, SP, MR, LU) -->
-  <g transform="translate(220 1820)">
-    <use href="#badgeTile"/>
-    <g color="#64748b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">HS</text></g>
-    <text x="0" y="146" class="badgeName">HSDE</text>
-    <text x="0" y="170" class="badgeMeta">Hyperbolic stochastic differential equations</text>
+  <!-- Row 4: Dev + Web (HS, Mo, SP, MR, LU) -->
+  <g transform="translate(220 1580)">
+    <use href="#badgeTile"/><use href="#badgeShell_dev"/><text x="0" y="14" class="badgeCode">HS</text>
+    <text x="0" y="116" class="badgeName">HSDE</text>
+    <text x="0" y="140" class="badgeMeta">Hyperbolic stochastic DEs</text>
   </g>
-  <g transform="translate(520 1820)">
-    <use href="#badgeTile"/>
-    <g color="#64748b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">Mo</text></g>
-    <text x="0" y="146" class="badgeName">MoCoO</text>
-    <text x="0" y="170" class="badgeMeta">Momentum contrastive optimization</text>
+  <g transform="translate(520 1580)">
+    <use href="#badgeTile"/><use href="#badgeShell_dev"/><text x="0" y="14" class="badgeCode">Mo</text>
+    <text x="0" y="116" class="badgeName">MoCoO</text>
+    <text x="0" y="140" class="badgeMeta">Momentum contrastive optim</text>
   </g>
-  <g transform="translate(820 1820)">
-    <use href="#badgeTile"/>
-    <g color="#3b82f6"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">SP</text></g>
-    <text x="0" y="146" class="badgeName">scportal</text>
-    <text x="0" y="170" class="badgeMeta">Unified single-cell data portal</text>
+  <g transform="translate(820 1580)">
+    <use href="#badgeTile"/><use href="#badgeShell_web"/><text x="0" y="14" class="badgeCode">SP</text>
+    <text x="0" y="116" class="badgeName">scportal</text>
+    <text x="0" y="140" class="badgeMeta">Single-cell data portal</text>
   </g>
-  <g transform="translate(1120 1820)">
-    <use href="#badgeTile"/>
-    <g color="#3b82f6"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">MR</text></g>
-    <text x="0" y="146" class="badgeName">mrnapp-intersection</text>
-    <text x="0" y="170" class="badgeMeta">mRNA intersection visualization</text>
+  <g transform="translate(1120 1580)">
+    <use href="#badgeTile"/><use href="#badgeShell_web"/><text x="0" y="14" class="badgeCode">MR</text>
+    <text x="0" y="116" class="badgeName">mrnapp</text>
+    <text x="0" y="140" class="badgeMeta">mRNA intersection viz</text>
   </g>
-  <g transform="translate(1420 1820)">
-    <use href="#badgeTile"/>
-    <g color="#3b82f6"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">LU</text></g>
-    <text x="0" y="146" class="badgeName">liora-ui</text>
-    <text x="0" y="170" class="badgeMeta">Benchmarking dashboard</text>
+  <g transform="translate(1420 1580)">
+    <use href="#badgeTile"/><use href="#badgeShell_web"/><text x="0" y="14" class="badgeCode">LU</text>
+    <text x="0" y="116" class="badgeName">liora-ui</text>
+    <text x="0" y="140" class="badgeMeta">Benchmarking dashboard</text>
   </g>
 
-  <!-- Row 5: Intelligence + Emberforge (sM, EF, EC, EG, ET) -->
-  <g transform="translate(220 2120)">
-    <use href="#badgeTile"/>
-    <g color="#1e3a5f"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">sM</text></g>
-    <text x="0" y="146" class="badgeName">scMetaIntel-Hub</text>
-    <text x="0" y="170" class="badgeMeta">LLM benchmarking for dataset discovery</text>
+  <!-- Row 5: sM + Emberforge (sM, EF, EC, EG, ET) -->
+  <g transform="translate(220 1830)">
+    <use href="#badgeTile"/><use href="#badgeShell_pub"/><text x="0" y="14" class="badgeCode">sM</text>
+    <text x="0" y="116" class="badgeName">scMetaIntel</text>
+    <text x="0" y="140" class="badgeMeta">LLM dataset discovery</text>
   </g>
-  <g transform="translate(520 2120)">
-    <use href="#badgeTile"/>
-    <g color="#f59e0b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">EF</text></g>
-    <text x="0" y="146" class="badgeName">emberforge</text>
-    <text x="0" y="170" class="badgeMeta">Local-first coding forge, Rust</text>
+  <g transform="translate(520 1830)">
+    <use href="#badgeTile"/><use href="#badgeShell_ember"/><text x="0" y="14" class="badgeCode">EF</text>
+    <text x="0" y="116" class="badgeName">emberforge</text>
+    <text x="0" y="140" class="badgeMeta">Local-first coding forge</text>
   </g>
-  <g transform="translate(820 2120)">
-    <use href="#badgeTile"/>
-    <g color="#f59e0b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">EC</text></g>
-    <text x="0" y="146" class="badgeName">emberforge-cpp</text>
-    <text x="0" y="170" class="badgeMeta">C++ translation</text>
+  <g transform="translate(820 1830)">
+    <use href="#badgeTile"/><use href="#badgeShell_ember"/><text x="0" y="14" class="badgeCode">EC</text>
+    <text x="0" y="116" class="badgeName">emberforge-cpp</text>
+    <text x="0" y="140" class="badgeMeta">C++ translation</text>
   </g>
-  <g transform="translate(1120 2120)">
-    <use href="#badgeTile"/>
-    <g color="#f59e0b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">EG</text></g>
-    <text x="0" y="146" class="badgeName">emberforge-go</text>
-    <text x="0" y="170" class="badgeMeta">Go translation</text>
+  <g transform="translate(1120 1830)">
+    <use href="#badgeTile"/><use href="#badgeShell_ember"/><text x="0" y="14" class="badgeCode">EG</text>
+    <text x="0" y="116" class="badgeName">emberforge-go</text>
+    <text x="0" y="140" class="badgeMeta">Go translation</text>
   </g>
-  <g transform="translate(1420 2120)">
-    <use href="#badgeTile"/>
-    <g color="#f59e0b"><use href="#badgeShell"/><text x="0" y="14" class="badgeCode">ET</text></g>
-    <text x="0" y="146" class="badgeName">emberforge-ts</text>
-    <text x="0" y="170" class="badgeMeta">TypeScript translation</text>
+  <g transform="translate(1420 1830)">
+    <use href="#badgeTile"/><use href="#badgeShell_ember"/><text x="0" y="14" class="badgeCode">ET</text>
+    <text x="0" y="116" class="badgeName">emberforge-ts</text>
+    <text x="0" y="140" class="badgeMeta">TypeScript translation</text>
   </g>
 
-  <line x1="100" y1="2278" x2="1700" y2="2278" class="rule"/>
-  <text x="100" y="2330" class="small">System meaning: circle = cell / latent space / geometric container; trajectory = continuous dynamics / ODE flow / research path; nodes = observations / graph vertices. Every badge is monochrome-safe.</text>
-  <text x="100" y="2360" class="small">Trajectory arcs through the upper hemisphere of the circle, keeping the lower center clear for legible 2-letter codes at any scale.</text>
+  <line x1="100" y1="2020" x2="1700" y2="2020" class="rule"/>
+  <text x="100" y="2070" class="small">Filled dark circle = latent space / cell container. White trajectory arc = ODE flow / research path. Accent dots = graph vertices / observations.</text>
+  <text x="100" y="2100" class="small">Bold white monospace code (44px) centered below the arc. All badges are self-contained and background-agnostic.</text>
 </svg>
