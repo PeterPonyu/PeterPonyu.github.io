@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="starfield">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zeyu Fu — Single-Cell Computational Biology</title>
-  <meta name="description" content="Academic homepage of Zeyu Fu (付泽宇). Research in machine learning for single-cell genomics: variational autoencoders, neural ODEs, reinforcement learning, and graph neural networks for trajectory inference and representation learning.">
-  <meta name="keywords" content="Zeyu Fu, single-cell, scATAC-seq, scRNA-seq, variational autoencoder, neural ODE, computational biology, machine learning">
+  <meta name="description" content="Academic homepage of Zeyu Fu (付泽宇). Machine learning for single-cell genomics: VAEs, Neural ODEs, RL, GNNs, and hyperbolic geometry for trajectory inference and representation learning.">
   <meta name="author" content="Zeyu Fu">
   <link rel="canonical" href="https://peterponyu.github.io/">
   <meta property="og:title" content="Zeyu Fu — Single-Cell Computational Biology">
@@ -16,331 +15,222 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
-          colors: {
-            primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e3a5f', 900: '#0f1d33' },
-          }
-        }
-      }
-    }
-  </script>
+  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','system-ui','sans-serif'],mono:['JetBrains Mono','monospace']}}}}</script>
   <style>
-    html { scroll-behavior: smooth; }
-    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
-    .fade-in.visible { opacity: 1; transform: translateY(0); }
-    .pub-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px rgba(0,0,0,0.1); }
-    .pub-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .nav-link { position: relative; }
-    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background: #3b82f6; transition: width 0.3s ease; }
-    .nav-link:hover::after { width: 100%; }
-    .tool-card:hover { border-color: #3b82f6; }
-    .tool-card { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-    @media print { nav, .no-print { display: none !important; } }
+    html{scroll-behavior:smooth}
+    :root,[data-theme="starfield"]{--bg:#080c18;--bg-card:rgba(15,23,42,0.55);--text:#e2e8f0;--text-h:#f8fafc;--text-m:#94a3b8;--accent:#60a5fa;--accent2:#a78bfa;--border:rgba(148,163,184,0.12);--glass:rgba(15,23,42,0.4);--glass-b:8px;--badge-bg:rgba(96,165,250,0.12);--badge-t:#93c5fd;--hero-shadow:0 0 60px rgba(96,165,250,0.15)}
+    [data-theme="ocean"]{--bg:#031d33;--bg-card:rgba(3,29,51,0.55);--text:#e0f2fe;--text-h:#f0f9ff;--text-m:#7dd3fc;--accent:#22d3ee;--accent2:#06b6d4;--border:rgba(125,211,252,0.12);--glass:rgba(3,29,51,0.4);--glass-b:8px;--badge-bg:rgba(34,211,238,0.12);--badge-t:#67e8f9;--hero-shadow:0 0 60px rgba(34,211,238,0.15)}
+    [data-theme="mountain"]{--bg:#1a0e2e;--bg-card:rgba(26,14,46,0.55);--text:#fde68a;--text-h:#fef3c7;--text-m:#d97706;--accent:#f59e0b;--accent2:#dc6b3f;--border:rgba(217,119,6,0.12);--glass:rgba(26,14,46,0.45);--glass-b:8px;--badge-bg:rgba(245,158,11,0.12);--badge-t:#fbbf24;--hero-shadow:0 0 60px rgba(245,158,11,0.12)}
+    [data-theme="nature"]{--bg:#071a0e;--bg-card:rgba(7,26,14,0.55);--text:#d1fae5;--text-h:#ecfdf5;--text-m:#6ee7b7;--accent:#34d399;--accent2:#a3e635;--border:rgba(52,211,153,0.12);--glass:rgba(7,26,14,0.4);--glass-b:8px;--badge-bg:rgba(52,211,153,0.12);--badge-t:#6ee7b7;--hero-shadow:0 0 60px rgba(52,211,153,0.12)}
+    [data-theme="planet"]{--bg:#0a0518;--bg-card:rgba(10,5,24,0.55);--text:#ede9fe;--text-h:#f5f3ff;--text-m:#c4b5fd;--accent:#a78bfa;--accent2:#f0abfc;--border:rgba(167,139,250,0.12);--glass:rgba(10,5,24,0.4);--glass-b:8px;--badge-bg:rgba(167,139,250,0.12);--badge-t:#c4b5fd;--hero-shadow:0 0 60px rgba(167,139,250,0.15)}
+    [data-theme="light"]{--bg:#f8fafc;--bg-card:rgba(255,255,255,0.75);--text:#334155;--text-h:#0f172a;--text-m:#64748b;--accent:#3b82f6;--accent2:#6366f1;--border:rgba(148,163,184,0.25);--glass:rgba(255,255,255,0.6);--glass-b:12px;--badge-bg:rgba(59,130,246,0.08);--badge-t:#2563eb;--hero-shadow:0 4px 20px rgba(0,0,0,0.06)}
+    body{font-family:Inter,system-ui,sans-serif;color:var(--text);background:var(--bg);margin:0;-webkit-font-smoothing:antialiased;transition:background .6s ease,color .6s ease}
+    #bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .content{position:relative;z-index:1}
+    .glass{background:var(--glass);backdrop-filter:blur(var(--glass-b));-webkit-backdrop-filter:blur(var(--glass-b));border:1px solid var(--border);transition:background .4s,border-color .4s}
+    .glass:hover{border-color:var(--accent);background:var(--bg-card)}
+    .section-title{color:var(--text-h);font-weight:800;letter-spacing:-0.025em}
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:600;background:var(--badge-bg);color:var(--badge-t);text-decoration:none;transition:opacity .2s}
+    .badge:hover{opacity:.8}
+    .fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease-out,transform .5s ease-out}
+    .fade-in.visible{opacity:1;transform:translateY(0)}
+    .theme-btn{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);cursor:pointer;transition:transform .2s,box-shadow .2s}
+    .theme-btn:hover{transform:scale(1.15);box-shadow:0 0 12px var(--accent)}
+    .theme-btn.active{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+    @media(prefers-reduced-motion:reduce){.fade-in{opacity:1;transform:none}#bg-canvas{display:none}}
+    @media print{nav,.no-print,#bg-canvas,.theme-panel{display:none!important}body{background:#fff;color:#000}.glass{background:#fff;backdrop-filter:none}}
   </style>
 </head>
-<body class="font-sans text-slate-800 bg-white antialiased">
+<body>
+<canvas id="bg-canvas"></canvas>
 
-  <!-- Navigation -->
-  <nav id="navbar" class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/60 z-50 transition-shadow duration-300">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-      <a href="#" class="font-semibold text-lg text-primary-800 tracking-tight">Zeyu Fu</a>
-      <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-        <a href="#about" class="nav-link hover:text-primary-600">About</a>
-        <a href="#publications" class="nav-link hover:text-primary-600">Publications</a>
-        <a href="#software" class="nav-link hover:text-primary-600">Software</a>
-        <a href="#applications" class="nav-link hover:text-primary-600">Applications</a>
-        <a href="#contact" class="nav-link hover:text-primary-600">Contact</a>
+<div class="content">
+  <!-- Nav -->
+  <nav class="fixed top-0 w-full z-50 glass" style="border-top:none;border-left:none;border-right:none">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
+      <a href="#" class="font-bold text-base tracking-tight" style="color:var(--text-h)">ZF</a>
+      <div class="hidden md:flex items-center gap-6 text-[13px] font-medium" style="color:var(--text-m)">
+        <a href="#about" class="hover:text-[var(--accent)] transition-colors">About</a>
+        <a href="#pubs" class="hover:text-[var(--accent)] transition-colors">Publications</a>
+        <a href="#soft" class="hover:text-[var(--accent)] transition-colors">Software</a>
+        <a href="#apps" class="hover:text-[var(--accent)] transition-colors">Apps</a>
+        <a href="#contact" class="hover:text-[var(--accent)] transition-colors">Contact</a>
+        <div class="flex items-center gap-1.5 ml-2 pl-3" style="border-left:1px solid var(--border)">
+          <button class="theme-btn active" data-theme="starfield" style="background:linear-gradient(135deg,#0a0e1a,#1e3a5f)" title="Starfield"></button>
+          <button class="theme-btn" data-theme="ocean" style="background:linear-gradient(135deg,#031d33,#0891b2)" title="Ocean"></button>
+          <button class="theme-btn" data-theme="mountain" style="background:linear-gradient(135deg,#1a0e2e,#dc6b3f)" title="Mountain"></button>
+          <button class="theme-btn" data-theme="nature" style="background:linear-gradient(135deg,#071a0e,#34d399)" title="Nature"></button>
+          <button class="theme-btn" data-theme="planet" style="background:linear-gradient(135deg,#0a0518,#a78bfa)" title="Planet"></button>
+          <button class="theme-btn" data-theme="light" style="background:linear-gradient(135deg,#e2e8f0,#ffffff)" title="Light"></button>
+        </div>
       </div>
-      <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-600">
+      <button id="mob-btn" class="md:hidden p-1.5 rounded-lg" style="color:var(--text-m)">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
     </div>
-    <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200 bg-white px-4 py-3 space-y-2">
-      <a href="#about" class="block py-2 text-sm text-slate-600 hover:text-primary-600">About</a>
-      <a href="#publications" class="block py-2 text-sm text-slate-600 hover:text-primary-600">Publications</a>
-      <a href="#software" class="block py-2 text-sm text-slate-600 hover:text-primary-600">Software</a>
-      <a href="#applications" class="block py-2 text-sm text-slate-600 hover:text-primary-600">Applications</a>
-      <a href="#contact" class="block py-2 text-sm text-slate-600 hover:text-primary-600">Contact</a>
+    <div id="mob-menu" class="md:hidden hidden px-4 py-3 space-y-1 glass" style="border-top:1px solid var(--border)">
+      <a href="#about" class="block py-1.5 text-sm" style="color:var(--text-m)">About</a>
+      <a href="#pubs" class="block py-1.5 text-sm" style="color:var(--text-m)">Publications</a>
+      <a href="#soft" class="block py-1.5 text-sm" style="color:var(--text-m)">Software</a>
+      <a href="#apps" class="block py-1.5 text-sm" style="color:var(--text-m)">Apps</a>
+      <a href="#contact" class="block py-1.5 text-sm" style="color:var(--text-m)">Contact</a>
+      <div class="flex items-center gap-1.5 pt-2">
+        <button class="theme-btn active" data-theme="starfield" style="background:linear-gradient(135deg,#0a0e1a,#1e3a5f)" title="Starfield"></button>
+        <button class="theme-btn" data-theme="ocean" style="background:linear-gradient(135deg,#031d33,#0891b2)" title="Ocean"></button>
+        <button class="theme-btn" data-theme="mountain" style="background:linear-gradient(135deg,#1a0e2e,#dc6b3f)" title="Mountain"></button>
+        <button class="theme-btn" data-theme="nature" style="background:linear-gradient(135deg,#071a0e,#34d399)" title="Nature"></button>
+        <button class="theme-btn" data-theme="planet" style="background:linear-gradient(135deg,#0a0518,#a78bfa)" title="Planet"></button>
+        <button class="theme-btn" data-theme="light" style="background:linear-gradient(135deg,#e2e8f0,#ffffff)" title="Light"></button>
+      </div>
     </div>
   </nav>
 
   <!-- Hero -->
-  <section class="pt-28 pb-20 bg-gradient-to-b from-slate-50 via-white to-white">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center gap-10 md:gap-16">
-      <div class="flex-shrink-0">
-        <img src="assets/photo.png" alt="Zeyu Fu" class="w-44 h-56 md:w-52 md:h-[17rem] rounded-2xl object-cover object-top shadow-lg ring-1 ring-slate-200/50">
-      </div>
+  <section class="pt-20 pb-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+      <img src="assets/photo.png" alt="Zeyu Fu" class="w-36 h-[11.5rem] md:w-40 md:h-52 rounded-2xl object-cover object-top flex-shrink-0" style="box-shadow:var(--hero-shadow);border:1px solid var(--border)">
       <div class="text-center md:text-left">
-        <h1 class="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
-          Zeyu Fu <span class="text-slate-400 font-light text-3xl md:text-4xl">付泽宇</span>
-        </h1>
-        <p class="mt-3 text-xl text-slate-500 font-light">Ph.D. Candidate</p>
-        <p class="mt-1 text-lg text-slate-600">Single-Cell Computational Biology &middot; Machine Learning</p>
-        <div class="mt-6 flex flex-wrap justify-center md:justify-start gap-3">
-          <a href="https://orcid.org/0009-0001-8329-0108" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-50 text-emerald-700 text-sm font-medium hover:bg-emerald-100 transition-colors">
-            <svg class="w-4 h-4" viewBox="0 0 256 256"><path fill="#A6CE39" d="M256 128c0 70.7-57.3 128-128 128S0 198.7 0 128 57.3 0 128 0s128 57.3 128 128z"/><path fill="#fff" d="M86.3 186.2H70.9V79.1h15.4v107.1zm35.1 0h-15.2V79.1h15.2v107.1zm8.4-127.7c0 5.5-4.5 9.9-10 9.9s-10-4.4-10-9.9c0-5.5 4.5-9.9 10-9.9s10 4.4 10 9.9zm76.4 20.6c-24.2 0-38.1 12.8-38.1 36.2v71h15.3v-68.8c0-15.2 9.4-23.5 23.6-23.5 14.5 0 22.3 8.4 22.3 23.5v68.8h15.3v-71c0-23.4-14.4-36.2-38.4-36.2z"/></svg>
-            ORCID
-          </a>
-          <a href="https://github.com/PeterPonyu" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-sm font-medium hover:bg-slate-200 transition-colors">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-            GitHub
-          </a>
-          <a href="mailto:fuzeyu99@126.com" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 text-blue-700 text-sm font-medium hover:bg-blue-100 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            Email
-          </a>
-          <a href="https://www.scopus.com/authid/detail.uri?authorId=59315299200" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-orange-50 text-orange-700 text-sm font-medium hover:bg-orange-100 transition-colors">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-            Scopus
-          </a>
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight" style="color:var(--text-h)">Zeyu Fu <span class="font-light opacity-40 text-2xl md:text-3xl">付泽宇</span></h1>
+        <p class="mt-1.5 text-base font-light" style="color:var(--text-m)">Ph.D. Candidate</p>
+        <p class="mt-0.5 text-sm" style="color:var(--text)">Single-Cell Computational Biology &middot; Machine Learning</p>
+        <div class="mt-4 flex flex-wrap justify-center md:justify-start gap-2">
+          <a href="https://orcid.org/0009-0001-8329-0108" target="_blank" class="badge"><svg class="w-3 h-3" viewBox="0 0 256 256"><path fill="#A6CE39" d="M256 128c0 70.7-57.3 128-128 128S0 198.7 0 128 57.3 0 128 0s128 57.3 128 128z"/><path fill="#fff" d="M86.3 186.2H70.9V79.1h15.4v107.1zm35.1 0h-15.2V79.1h15.2v107.1zm8.4-127.7c0 5.5-4.5 9.9-10 9.9s-10-4.4-10-9.9 4.5-9.9 10-9.9 10 4.4 10 9.9zm76.4 20.6c-24.2 0-38.1 12.8-38.1 36.2v71h15.3v-68.8c0-15.2 9.4-23.5 23.6-23.5 14.5 0 22.3 8.4 22.3 23.5v68.8h15.3v-71c0-23.4-14.4-36.2-38.4-36.2z"/></svg>ORCID</a>
+          <a href="https://github.com/PeterPonyu" target="_blank" class="badge"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>GitHub</a>
+          <a href="https://www.scopus.com/authid/detail.uri?authorId=59315299200" target="_blank" class="badge">Scopus</a>
+          <a href="https://www.webofscience.com/wos/author/record/NOE-8588-2025" target="_blank" class="badge">WoS</a>
+          <a href="mailto:fuzeyu99@126.com" class="badge">fuzeyu99@126.com</a>
         </div>
       </div>
     </div>
   </section>
 
   <!-- About -->
-  <section id="about" class="py-20">
+  <section id="about" class="py-10">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 fade-in">
-      <h2 class="text-3xl font-bold text-slate-900 mb-8">About</h2>
-      <p class="text-lg text-slate-600 leading-relaxed mb-6">
-        I develop machine learning methods for single-cell sequencing data (scRNA-seq and scATAC-seq), with published work spanning
-        <strong class="text-slate-800">variational autoencoders</strong>,
-        <strong class="text-slate-800">neural ordinary differential equations</strong>,
-        <strong class="text-slate-800">reinforcement learning</strong>,
-        <strong class="text-slate-800">graph neural networks</strong>, and
-        <strong class="text-slate-800">hyperbolic geometry</strong>
-        applied to cell fate analysis and representation learning.
-      </p>
-      <div class="flex flex-wrap gap-2 mt-6">
-        <span class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">Single-Cell Genomics</span>
-        <span class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">Trajectory Inference</span>
-        <span class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">Variational Autoencoders</span>
-        <span class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">Neural ODEs</span>
-        <span class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">Reinforcement Learning</span>
-        <span class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">Graph Neural Networks</span>
-        <span class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">Hyperbolic Geometry</span>
-        <span class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">Representation Learning</span>
-        <span class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">Clustering</span>
-        <span class="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">Contrastive Learning</span>
+      <h2 class="section-title text-2xl mb-4">About</h2>
+      <p class="text-sm leading-relaxed mb-4" style="color:var(--text)">I develop machine learning methods for single-cell sequencing data (scRNA-seq and scATAC-seq), with published work spanning <strong style="color:var(--text-h)">variational autoencoders</strong>, <strong style="color:var(--text-h)">neural ODEs</strong>, <strong style="color:var(--text-h)">reinforcement learning</strong>, <strong style="color:var(--text-h)">graph neural networks</strong>, and <strong style="color:var(--text-h)">hyperbolic geometry</strong> applied to cell fate analysis and representation learning.</p>
+      <div class="flex flex-wrap gap-1.5">
+        <span class="badge">Single-Cell Genomics</span><span class="badge">Trajectory Inference</span><span class="badge">VAE</span><span class="badge">Neural ODE</span><span class="badge">Reinforcement Learning</span><span class="badge">GNN</span><span class="badge">Hyperbolic Geometry</span><span class="badge">Contrastive Learning</span><span class="badge">Clustering</span><span class="badge">Flow Matching</span>
       </div>
     </div>
   </section>
 
   <!-- Publications -->
-  <section id="publications" class="py-20 bg-slate-50/70">
+  <section id="pubs" class="py-10">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 fade-in">
-      <h2 class="text-3xl font-bold text-slate-900 mb-2">Publications</h2>
-      <p class="text-sm text-slate-500 mb-10"><sup>#</sup> Equal contribution &ensp; * Corresponding author</p>
+      <h2 class="section-title text-2xl mb-1">Publications</h2>
+      <p class="text-xs mb-6" style="color:var(--text-m)"><sup>#</sup> Equal contribution &ensp; * Corresponding author &ensp; 7 peer-reviewed papers</p>
+      <div class="space-y-3" id="pub-list">
 
-      <div class="space-y-5">
-
-        <!-- iAODE -->
-        <article class="pub-card bg-white rounded-xl p-6 border border-slate-200/80 shadow-sm">
+        <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-1 flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">1</span>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-slate-900 leading-snug">iAODE for Benchmarking and Continuum Modeling of Single-Cell Chromatin Accessibility</h3>
-              <p class="mt-1.5 text-sm text-slate-500">
-                <strong class="text-slate-700">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#</sup>, Wang, S. et al.
-              </p>
-              <p class="mt-1 text-sm">
-                <span class="font-medium text-primary-700">Communications Biology</span>
-                <span class="text-slate-400">&middot; 2026</span>
-              </p>
-              <div class="mt-3 flex flex-wrap gap-2">
-                <a href="https://doi.org/10.1038/s42003-026-09768-8" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium hover:bg-blue-100 transition-colors">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                  DOI
-                </a>
-                <a href="https://pubmed.ncbi.nlm.nih.gov/41775921/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-medium hover:bg-green-100 transition-colors">PubMed</a>
-                <a href="https://github.com/PeterPonyu/iAODE" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium hover:bg-slate-200 transition-colors">
-                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                  Code
-                </a>
-                <a href="https://pypi.org/project/iaode/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-xs font-medium hover:bg-amber-100 transition-colors">PyPI</a>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">1</span>
+            <div class="min-w-0">
+              <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">iAODE for Benchmarking and Continuum Modeling of Single-Cell Chromatin Accessibility</h3>
+              <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#</sup>, Wang, S. et al. &middot; <em style="color:var(--accent2)">Communications Biology</em> &middot; 2026</p>
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                <a href="https://doi.org/10.1038/s42003-026-09768-8" target="_blank" class="badge">DOI</a>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/41775921/" target="_blank" class="badge">PubMed</a>
+                <a href="https://github.com/PeterPonyu/iAODE" target="_blank" class="badge">Code</a>
+                <a href="https://pypi.org/project/iaode/" target="_blank" class="badge">PyPI</a>
               </div>
             </div>
           </div>
         </article>
 
-        <!-- LiVAE -->
-        <article class="pub-card bg-white rounded-xl p-6 border border-slate-200/80 shadow-sm">
+        <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-1 flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">2</span>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-slate-900 leading-snug">Lorentz-Regularized Interpretable VAE for Multi-Scale Single-Cell Transcriptomic and Epigenomic Embeddings</h3>
-              <p class="mt-1.5 text-sm text-slate-500">
-                <strong class="text-slate-700">Fu, Z.</strong><sup>#,*</sup>, Fu, J.<sup>#</sup>, Chen, C.<sup>#</sup> et al.
-              </p>
-              <p class="mt-1 text-sm">
-                <span class="font-medium text-primary-700">Frontiers in Genetics</span>, 16, 1713727
-                <span class="text-slate-400">&middot; 2026</span>
-              </p>
-              <div class="mt-3 flex flex-wrap gap-2">
-                <a href="https://doi.org/10.3389/fgene.2025.1713727" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium hover:bg-blue-100 transition-colors">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                  DOI
-                </a>
-                <a href="https://pubmed.ncbi.nlm.nih.gov/41555918/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-medium hover:bg-green-100 transition-colors">PubMed</a>
-                <a href="https://github.com/PeterPonyu/LiVAE" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium hover:bg-slate-200 transition-colors">
-                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                  Code
-                </a>
-                <a href="https://pypi.org/project/livae/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-xs font-medium hover:bg-amber-100 transition-colors">PyPI</a>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">2</span>
+            <div class="min-w-0">
+              <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">Lorentz-Regularized Interpretable VAE for Multi-Scale Single-Cell Transcriptomic and Epigenomic Embeddings</h3>
+              <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Fu, J.<sup>#</sup>, Chen, C.<sup>#</sup> et al. &middot; <em style="color:var(--accent2)">Frontiers in Genetics</em> 16, 1713727 &middot; 2026</p>
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                <a href="https://doi.org/10.3389/fgene.2025.1713727" target="_blank" class="badge">DOI</a>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/41555918/" target="_blank" class="badge">PubMed</a>
+                <a href="https://github.com/PeterPonyu/LiVAE" target="_blank" class="badge">Code</a>
+                <a href="https://pypi.org/project/livae/" target="_blank" class="badge">PyPI</a>
               </div>
             </div>
           </div>
         </article>
 
-        <!-- iVAE -->
-        <article class="pub-card bg-white rounded-xl p-6 border border-slate-200/80 shadow-sm">
+        <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-1 flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">3</span>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-slate-900 leading-snug">iVAE: An Interpretable Representation Learning Framework Enhancing Clustering Performance for Single-Cell Data</h3>
-              <p class="mt-1.5 text-sm text-slate-500">
-                <strong class="text-slate-700">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#</sup>, Wang, S. et al.
-              </p>
-              <p class="mt-1 text-sm">
-                <span class="font-medium text-primary-700">BMC Biology</span>, 23, 213
-                <span class="text-slate-400">&middot; 2025</span>
-              </p>
-              <div class="mt-3 flex flex-wrap gap-2">
-                <a href="https://doi.org/10.1186/s12915-025-02315-7" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium hover:bg-blue-100 transition-colors">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                  DOI
-                </a>
-                <a href="https://pubmed.ncbi.nlm.nih.gov/40660220/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-medium hover:bg-green-100 transition-colors">PubMed</a>
-                <a href="https://github.com/PeterPonyu/iVAE" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium hover:bg-slate-200 transition-colors">
-                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                  Code
-                </a>
-                <a href="https://pypi.org/project/iVAE/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-xs font-medium hover:bg-amber-100 transition-colors">PyPI</a>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">3</span>
+            <div class="min-w-0">
+              <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">iVAE: An Interpretable Representation Learning Framework Enhancing Clustering Performance for Single-Cell Data</h3>
+              <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#</sup>, Wang, S. et al. &middot; <em style="color:var(--accent2)">BMC Biology</em> 23, 213 &middot; 2025</p>
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                <a href="https://doi.org/10.1186/s12915-025-02315-7" target="_blank" class="badge">DOI</a>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/40660220/" target="_blank" class="badge">PubMed</a>
+                <a href="https://github.com/PeterPonyu/iVAE" target="_blank" class="badge">Code</a>
+                <a href="https://pypi.org/project/iVAE/" target="_blank" class="badge">PyPI</a>
               </div>
             </div>
           </div>
         </article>
 
-        <!-- CODE -->
-        <article class="pub-card bg-white rounded-xl p-6 border border-slate-200/80 shadow-sm">
+        <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-1 flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">4</span>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-slate-900 leading-snug">Correlated Latent Space Learning for Structural Differentiation Modeling in Single Cell RNA Data</h3>
-              <p class="mt-1.5 text-sm text-slate-500">
-                <strong class="text-slate-700">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#,*</sup>
-              </p>
-              <p class="mt-1 text-sm">
-                <span class="font-medium text-primary-700">Computers in Biology and Medicine</span>, 198(A), 111115
-                <span class="text-slate-400">&middot; 2025</span>
-              </p>
-              <div class="mt-3 flex flex-wrap gap-2">
-                <a href="https://doi.org/10.1016/j.compbiomed.2025.111115" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium hover:bg-blue-100 transition-colors">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                  DOI
-                </a>
-                <a href="https://pubmed.ncbi.nlm.nih.gov/41046682/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-medium hover:bg-green-100 transition-colors">PubMed</a>
-                <a href="https://github.com/PeterPonyu/CODE" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium hover:bg-slate-200 transition-colors">
-                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                  Code
-                </a>
-                <a href="https://pypi.org/project/scCODE/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-xs font-medium hover:bg-amber-100 transition-colors">PyPI</a>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">4</span>
+            <div class="min-w-0">
+              <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">Correlated Latent Space Learning for Structural Differentiation Modeling in Single Cell RNA Data</h3>
+              <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#,*</sup> &middot; <em style="color:var(--accent2)">Computers in Biology and Medicine</em> 198(A), 111115 &middot; 2025</p>
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                <a href="https://doi.org/10.1016/j.compbiomed.2025.111115" target="_blank" class="badge">DOI</a>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/41046682/" target="_blank" class="badge">PubMed</a>
+                <a href="https://github.com/PeterPonyu/CODE" target="_blank" class="badge">Code</a>
+                <a href="https://pypi.org/project/scCODE/" target="_blank" class="badge">PyPI</a>
               </div>
             </div>
           </div>
         </article>
 
-        <!-- GNODEVAE -->
-        <article class="pub-card bg-white rounded-xl p-6 border border-slate-200/80 shadow-sm">
+        <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-1 flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">5</span>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-slate-900 leading-snug">GNODEVAE: A Graph-Based ODE-VAE Enhances Clustering for Single-Cell Data</h3>
-              <p class="mt-1.5 text-sm text-slate-500">
-                <strong class="text-slate-700">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#</sup>, Wang, S. et al.
-              </p>
-              <p class="mt-1 text-sm">
-                <span class="font-medium text-primary-700">BMC Genomics</span>, 26, 767
-                <span class="text-slate-400">&middot; 2025</span>
-              </p>
-              <div class="mt-3 flex flex-wrap gap-2">
-                <a href="https://doi.org/10.1186/s12864-025-11946-7" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium hover:bg-blue-100 transition-colors">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                  DOI
-                </a>
-                <a href="https://pubmed.ncbi.nlm.nih.gov/40841610/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-medium hover:bg-green-100 transition-colors">PubMed</a>
-                <a href="https://github.com/PeterPonyu/GNODEVAE" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium hover:bg-slate-200 transition-colors">
-                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                  Code
-                </a>
-                <a href="https://pypi.org/project/gnodevae/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-xs font-medium hover:bg-amber-100 transition-colors">PyPI</a>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">5</span>
+            <div class="min-w-0">
+              <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">GNODEVAE: A Graph-Based ODE-VAE Enhances Clustering for Single-Cell Data</h3>
+              <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#</sup>, Wang, S. et al. &middot; <em style="color:var(--accent2)">BMC Genomics</em> 26, 767 &middot; 2025</p>
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                <a href="https://doi.org/10.1186/s12864-025-11946-7" target="_blank" class="badge">DOI</a>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/40841610/" target="_blank" class="badge">PubMed</a>
+                <a href="https://github.com/PeterPonyu/GNODEVAE" target="_blank" class="badge">Code</a>
+                <a href="https://pypi.org/project/gnodevae/" target="_blank" class="badge">PyPI</a>
               </div>
             </div>
           </div>
         </article>
 
-        <!-- scRL -->
-        <article class="pub-card bg-white rounded-xl p-6 border border-slate-200/80 shadow-sm">
+        <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-1 flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">6</span>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-slate-900 leading-snug">scRL: Utilizing Reinforcement Learning to Evaluate Fate Decisions in Single-Cell Data</h3>
-              <p class="mt-1.5 text-sm text-slate-500">
-                <strong class="text-slate-700">Fu, Z.</strong><sup>#</sup>, Chen, C.<sup>#</sup>, Wang, S. et al.
-              </p>
-              <p class="mt-1 text-sm">
-                <span class="font-medium text-primary-700">Biology</span>, 14(6), 679
-                <span class="text-slate-400">&middot; 2025</span>
-              </p>
-              <div class="mt-3 flex flex-wrap gap-2">
-                <a href="https://doi.org/10.3390/biology14060679" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium hover:bg-blue-100 transition-colors">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                  DOI
-                </a>
-                <a href="https://pubmed.ncbi.nlm.nih.gov/40563931/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-medium hover:bg-green-100 transition-colors">PubMed</a>
-                <a href="https://github.com/PeterPonyu/scRL" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium hover:bg-slate-200 transition-colors">
-                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                  Code
-                </a>
-                <a href="https://pypi.org/project/scrl-fatedecision/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-xs font-medium hover:bg-amber-100 transition-colors">PyPI</a>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">6</span>
+            <div class="min-w-0">
+              <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">scRL: Utilizing Reinforcement Learning to Evaluate Fate Decisions in Single-Cell Data</h3>
+              <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#</sup>, Chen, C.<sup>#</sup>, Wang, S. et al. &middot; <em style="color:var(--accent2)">Biology</em> 14(6), 679 &middot; 2025</p>
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                <a href="https://doi.org/10.3390/biology14060679" target="_blank" class="badge">DOI</a>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/40563931/" target="_blank" class="badge">PubMed</a>
+                <a href="https://github.com/PeterPonyu/scRL" target="_blank" class="badge">Code</a>
+                <a href="https://pypi.org/project/scrl-fatedecision/" target="_blank" class="badge">PyPI</a>
               </div>
             </div>
           </div>
         </article>
 
-        <!-- scFocus -->
-        <article class="pub-card bg-white rounded-xl p-6 border border-slate-200/80 shadow-sm">
+        <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-1 flex-shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">7</span>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-semibold text-slate-900 leading-snug">scFocus: Detecting Branching Probabilities in Single-cell Data with SAC</h3>
-              <p class="mt-1.5 text-sm text-slate-500">
-                Chen, C.<sup>#</sup>, <strong class="text-slate-700">Fu, Z.</strong><sup>#,*</sup>, Yang, J. et al.
-              </p>
-              <p class="mt-1 text-sm">
-                <span class="font-medium text-primary-700">Computational and Structural Biotechnology Journal</span>, 27, 2243&ndash;2263
-                <span class="text-slate-400">&middot; 2025</span>
-              </p>
-              <div class="mt-3 flex flex-wrap gap-2">
-                <a href="https://doi.org/10.1016/j.csbj.2025.04.036" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium hover:bg-blue-100 transition-colors">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                  DOI
-                </a>
-                <a href="https://pubmed.ncbi.nlm.nih.gov/40520594/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-medium hover:bg-green-100 transition-colors">PubMed</a>
-                <a href="https://github.com/PeterPonyu/scfocus" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium hover:bg-slate-200 transition-colors">
-                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                  Code
-                </a>
-                <a href="https://pypi.org/project/scfocus/" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 text-xs font-medium hover:bg-amber-100 transition-colors">PyPI</a>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">7</span>
+            <div class="min-w-0">
+              <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">scFocus: Detecting Branching Probabilities in Single-cell Data with SAC</h3>
+              <p class="mt-1 text-xs" style="color:var(--text-m)">Chen, C.<sup>#</sup>, <strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Yang, J. et al. &middot; <em style="color:var(--accent2)">CSBJ</em> 27, 2243–2263 &middot; 2025</p>
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                <a href="https://doi.org/10.1016/j.csbj.2025.04.036" target="_blank" class="badge">DOI</a>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/40520594/" target="_blank" class="badge">PubMed</a>
+                <a href="https://github.com/PeterPonyu/scfocus" target="_blank" class="badge">Code</a>
+                <a href="https://pypi.org/project/scfocus/" target="_blank" class="badge">PyPI</a>
               </div>
             </div>
           </div>
@@ -351,319 +241,265 @@
   </section>
 
   <!-- Software -->
-  <section id="software" class="py-20">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 fade-in">
-      <h2 class="text-3xl font-bold text-slate-900 mb-2">Open-Source Software</h2>
-      <p class="text-slate-500 mb-10">Published Python packages for single-cell analysis, all available on PyPI.</p>
+  <section id="soft" class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 fade-in">
+      <h2 class="section-title text-2xl mb-1">Open-Source Software</h2>
+      <p class="text-xs mb-6" style="color:var(--text-m)">7 published Python packages on PyPI</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-
-        <div class="tool-card bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white text-sm font-bold">iA</div>
-            <div>
-              <h3 class="font-semibold text-slate-900">iAODE</h3>
-              <p class="text-xs text-slate-400">pip install iaode</p>
-            </div>
+        <a href="https://github.com/PeterPonyu/iAODE" target="_blank" class="glass rounded-xl p-4 block transition-all group">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">iA</div>
+            <div><h3 class="text-sm font-semibold" style="color:var(--text-h)">iAODE</h3><p class="text-[10px] font-mono" style="color:var(--text-m)">pip install iaode</p></div>
           </div>
-          <p class="text-sm text-slate-600 mb-3">Neural ODE-VAE for scATAC-seq benchmarking and continuum modeling of chromatin accessibility.</p>
-          <div class="flex gap-2">
-            <a href="https://pypi.org/project/iaode/" target="_blank" rel="noopener"><img src="https://img.shields.io/pypi/v/iaode?style=flat-square&color=3b82f6" alt="PyPI" loading="lazy"></a>
-            <a href="https://github.com/PeterPonyu/iAODE" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/PeterPonyu/iAODE?style=flat-square&color=f59e0b" alt="Stars" loading="lazy"></a>
+          <p class="text-xs leading-relaxed" style="color:var(--text-m)">Neural ODE-VAE for scATAC-seq benchmarking and continuum modeling.</p>
+        </a>
+        <a href="https://github.com/PeterPonyu/iVAE" target="_blank" class="glass rounded-xl p-4 block transition-all group">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">iV</div>
+            <div><h3 class="text-sm font-semibold" style="color:var(--text-h)">iVAE</h3><p class="text-[10px] font-mono" style="color:var(--text-m)">pip install iVAE</p></div>
           </div>
-        </div>
-
-        <div class="tool-card bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center text-white text-sm font-bold">iV</div>
-            <div>
-              <h3 class="font-semibold text-slate-900">iVAE</h3>
-              <p class="text-xs text-slate-400">pip install iVAE</p>
-            </div>
+          <p class="text-xs leading-relaxed" style="color:var(--text-m)">Interpretable VAE enhancing clustering for single-cell data.</p>
+        </a>
+        <a href="https://github.com/PeterPonyu/LiVAE" target="_blank" class="glass rounded-xl p-4 block transition-all group">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">Li</div>
+            <div><h3 class="text-sm font-semibold" style="color:var(--text-h)">LiVAE</h3><p class="text-[10px] font-mono" style="color:var(--text-m)">pip install livae</p></div>
           </div>
-          <p class="text-sm text-slate-600 mb-3">Interpretable VAE framework enhancing clustering performance for single-cell data.</p>
-          <div class="flex gap-2">
-            <a href="https://pypi.org/project/iVAE/" target="_blank" rel="noopener"><img src="https://img.shields.io/pypi/v/iVAE?style=flat-square&color=3b82f6" alt="PyPI" loading="lazy"></a>
-            <a href="https://github.com/PeterPonyu/iVAE" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/PeterPonyu/iVAE?style=flat-square&color=f59e0b" alt="Stars" loading="lazy"></a>
+          <p class="text-xs leading-relaxed" style="color:var(--text-m)">Lorentz-regularized VAE for transcriptomic and epigenomic embeddings.</p>
+        </a>
+        <a href="https://github.com/PeterPonyu/GNODEVAE" target="_blank" class="glass rounded-xl p-4 block transition-all group">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">GN</div>
+            <div><h3 class="text-sm font-semibold" style="color:var(--text-h)">GNODEVAE</h3><p class="text-[10px] font-mono" style="color:var(--text-m)">pip install gnodevae</p></div>
           </div>
-        </div>
-
-        <div class="tool-card bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center text-white text-sm font-bold">Li</div>
-            <div>
-              <h3 class="font-semibold text-slate-900">LiVAE</h3>
-              <p class="text-xs text-slate-400">pip install livae</p>
-            </div>
+          <p class="text-xs leading-relaxed" style="color:var(--text-m)">Graph ODE-VAE with GNN-enhanced clustering and dynamics.</p>
+        </a>
+        <a href="https://github.com/PeterPonyu/scRL" target="_blank" class="glass rounded-xl p-4 block transition-all group">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">RL</div>
+            <div><h3 class="text-sm font-semibold" style="color:var(--text-h)">scRL</h3><p class="text-[10px] font-mono" style="color:var(--text-m)">pip install scrl-fatedecision</p></div>
           </div>
-          <p class="text-sm text-slate-600 mb-3">Lorentz-regularized interpretable VAE for multi-scale transcriptomic and epigenomic embeddings.</p>
-          <div class="flex gap-2">
-            <a href="https://pypi.org/project/livae/" target="_blank" rel="noopener"><img src="https://img.shields.io/pypi/v/livae?style=flat-square&color=3b82f6" alt="PyPI" loading="lazy"></a>
-            <a href="https://github.com/PeterPonyu/LiVAE" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/PeterPonyu/LiVAE?style=flat-square&color=f59e0b" alt="Stars" loading="lazy"></a>
+          <p class="text-xs leading-relaxed" style="color:var(--text-m)">RL for evaluating cell fate decisions in single-cell data.</p>
+        </a>
+        <a href="https://github.com/PeterPonyu/scfocus" target="_blank" class="glass rounded-xl p-4 block transition-all group">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">sF</div>
+            <div><h3 class="text-sm font-semibold" style="color:var(--text-h)">scFocus</h3><p class="text-[10px] font-mono" style="color:var(--text-m)">pip install scfocus</p></div>
           </div>
-        </div>
-
-        <div class="tool-card bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white text-sm font-bold">GN</div>
-            <div>
-              <h3 class="font-semibold text-slate-900">GNODEVAE</h3>
-              <p class="text-xs text-slate-400">pip install gnodevae</p>
-            </div>
+          <p class="text-xs leading-relaxed" style="color:var(--text-m)">SAC-based branching probability detection for lineage focusing.</p>
+        </a>
+        <a href="https://github.com/PeterPonyu/CODE" target="_blank" class="glass rounded-xl p-4 block transition-all group">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">CO</div>
+            <div><h3 class="text-sm font-semibold" style="color:var(--text-h)">CODE</h3><p class="text-[10px] font-mono" style="color:var(--text-m)">pip install scCODE</p></div>
           </div>
-          <p class="text-sm text-slate-600 mb-3">Graph-based ODE-VAE enhancing clustering for single-cell data with graph neural networks.</p>
-          <div class="flex gap-2">
-            <a href="https://pypi.org/project/gnodevae/" target="_blank" rel="noopener"><img src="https://img.shields.io/pypi/v/gnodevae?style=flat-square&color=3b82f6" alt="PyPI" loading="lazy"></a>
-            <a href="https://github.com/PeterPonyu/GNODEVAE" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/PeterPonyu/GNODEVAE?style=flat-square&color=f59e0b" alt="Stars" loading="lazy"></a>
-          </div>
-        </div>
-
-        <div class="tool-card bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-500 to-rose-700 flex items-center justify-center text-white text-sm font-bold">RL</div>
-            <div>
-              <h3 class="font-semibold text-slate-900">scRL</h3>
-              <p class="text-xs text-slate-400">pip install scrl-fatedecision</p>
-            </div>
-          </div>
-          <p class="text-sm text-slate-600 mb-3">Reinforcement learning for evaluating cell fate decisions in single-cell data.</p>
-          <div class="flex gap-2">
-            <a href="https://pypi.org/project/scrl-fatedecision/" target="_blank" rel="noopener"><img src="https://img.shields.io/pypi/v/scrl-fatedecision?style=flat-square&color=3b82f6" alt="PyPI" loading="lazy"></a>
-            <a href="https://github.com/PeterPonyu/scRL" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/PeterPonyu/scRL?style=flat-square&color=f59e0b" alt="Stars" loading="lazy"></a>
-          </div>
-        </div>
-
-        <div class="tool-card bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center text-white text-sm font-bold">sF</div>
-            <div>
-              <h3 class="font-semibold text-slate-900">scFocus</h3>
-              <p class="text-xs text-slate-400">pip install scfocus</p>
-            </div>
-          </div>
-          <p class="text-sm text-slate-600 mb-3">SAC-based branching probability detection for lineage focusing in single-cell data.</p>
-          <div class="flex gap-2">
-            <a href="https://pypi.org/project/scfocus/" target="_blank" rel="noopener"><img src="https://img.shields.io/pypi/v/scfocus?style=flat-square&color=3b82f6" alt="PyPI" loading="lazy"></a>
-            <a href="https://github.com/PeterPonyu/scfocus" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/PeterPonyu/scfocus?style=flat-square&color=f59e0b" alt="Stars" loading="lazy"></a>
-          </div>
-        </div>
-
-        <div class="tool-card bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white text-sm font-bold">CO</div>
-            <div>
-              <h3 class="font-semibold text-slate-900">CODE</h3>
-              <p class="text-xs text-slate-400">pip install scCODE</p>
-            </div>
-          </div>
-          <p class="text-sm text-slate-600 mb-3">Correlated latent space learning and continuum modeling for single-cell RNA data.</p>
-          <div class="flex gap-2">
-            <a href="https://pypi.org/project/scCODE/" target="_blank" rel="noopener"><img src="https://img.shields.io/pypi/v/scCODE?style=flat-square&color=3b82f6" alt="PyPI" loading="lazy"></a>
-            <a href="https://github.com/PeterPonyu/CODE" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/PeterPonyu/CODE?style=flat-square&color=f59e0b" alt="Stars" loading="lazy"></a>
-          </div>
-        </div>
+          <p class="text-xs leading-relaxed" style="color:var(--text-m)">Correlated latent space learning for single-cell RNA continuum modeling.</p>
+        </a>
 
       </div>
     </div>
   </section>
 
-  <!-- Interactive Applications -->
-  <section id="applications" class="py-20 bg-slate-50/70">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 fade-in">
-      <h2 class="text-3xl font-bold text-slate-900 mb-2">Interactive Applications</h2>
-      <p class="text-slate-500 mb-10">Web-based tools for exploring single-cell datasets, benchmarks, and visualizations.</p>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        <a href="https://peterponyu.github.io/scportal/" target="_blank" rel="noopener" class="group block bg-white rounded-xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-primary-300 transition-all">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg">SC</div>
-            <div>
-              <h3 class="font-semibold text-slate-900 group-hover:text-primary-600 transition-colors">SCPortal</h3>
-              <p class="text-xs text-slate-400">Next.js</p>
-            </div>
-          </div>
-          <p class="text-sm text-slate-600 mb-4">Unified single-cell data portal with 683 datasets, continuity explorer, and LAIOR benchmarking across 23 models and 24 metrics.</p>
-          <span class="text-sm font-medium text-primary-600 group-hover:text-primary-700">Launch App &rarr;</span>
+  <!-- Apps -->
+  <section id="apps" class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 fade-in">
+      <h2 class="section-title text-2xl mb-1">Interactive Applications</h2>
+      <p class="text-xs mb-6" style="color:var(--text-m)">Web-based tools for single-cell datasets, benchmarks, and visualizations</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <a href="https://peterponyu.github.io/scportal/" target="_blank" class="glass rounded-xl p-4 block transition-all group">
+          <h3 class="text-sm font-semibold mb-1" style="color:var(--text-h)">SCPortal <span class="text-[10px] font-normal" style="color:var(--text-m)">Next.js</span></h3>
+          <p class="text-xs mb-2" style="color:var(--text-m)">Unified data portal: 683 datasets, continuity explorer, LAIOR benchmarks (23 models, 24 metrics).</p>
+          <span class="text-xs font-medium" style="color:var(--accent)">Launch &rarr;</span>
         </a>
-
-        <a href="https://peterponyu.github.io/MCCVAE/" target="_blank" rel="noopener" class="group block bg-white rounded-xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-primary-300 transition-all">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">MC</div>
-            <div>
-              <h3 class="font-semibold text-slate-900 group-hover:text-primary-600 transition-colors">MCC-LAB</h3>
-              <p class="text-xs text-slate-400">Nuxt.js</p>
-            </div>
-          </div>
-          <p class="text-sm text-slate-600 mb-4">MoCo Coupling VAE benchmarking platform with 91 curated datasets, 30 baseline methods, and comprehensive evaluation metrics.</p>
-          <span class="text-sm font-medium text-primary-600 group-hover:text-primary-700">Launch App &rarr;</span>
+        <a href="https://peterponyu.github.io/MCCVAE/" target="_blank" class="glass rounded-xl p-4 block transition-all group">
+          <h3 class="text-sm font-semibold mb-1" style="color:var(--text-h)">MCC-LAB <span class="text-[10px] font-normal" style="color:var(--text-m)">Nuxt.js</span></h3>
+          <p class="text-xs mb-2" style="color:var(--text-m)">MoCo Coupling VAE platform: 91 datasets, 30 baselines, comprehensive evaluation metrics.</p>
+          <span class="text-xs font-medium" style="color:var(--accent)">Launch &rarr;</span>
         </a>
-
-        <a href="https://peterponyu.github.io/mrnapp-intersection/" target="_blank" rel="noopener" class="group block bg-white rounded-xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-primary-300 transition-all">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-lg">MR</div>
-            <div>
-              <h3 class="font-semibold text-slate-900 group-hover:text-primary-600 transition-colors">mRNA Intersection</h3>
-              <p class="text-xs text-slate-400">Next.js</p>
-            </div>
-          </div>
-          <p class="text-sm text-slate-600 mb-4">Interactive visualization tool for mRNA intersection analysis and exploration.</p>
-          <span class="text-sm font-medium text-primary-600 group-hover:text-primary-700">Launch App &rarr;</span>
+        <a href="https://peterponyu.github.io/mrnapp-intersection/" target="_blank" class="glass rounded-xl p-4 block transition-all group">
+          <h3 class="text-sm font-semibold mb-1" style="color:var(--text-h)">mRNA Intersection <span class="text-[10px] font-normal" style="color:var(--text-m)">Next.js</span></h3>
+          <p class="text-xs mb-2" style="color:var(--text-m)">Interactive mRNA intersection analysis and visualization tool.</p>
+          <span class="text-xs font-medium" style="color:var(--accent)">Launch &rarr;</span>
         </a>
-
-        <a href="https://peterponyu.github.io/liora-ui/" target="_blank" rel="noopener" class="group block bg-white rounded-xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-primary-300 transition-all">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-lg">Li</div>
-            <div>
-              <h3 class="font-semibold text-slate-900 group-hover:text-primary-600 transition-colors">Liora UI</h3>
-              <p class="text-xs text-slate-400">Next.js</p>
-            </div>
-          </div>
-          <p class="text-sm text-slate-600 mb-4">Single-cell benchmarking dashboard for Lorentz ODE regularized attention-based VAE.</p>
-          <span class="text-sm font-medium text-primary-600 group-hover:text-primary-700">Launch App &rarr;</span>
+        <a href="https://peterponyu.github.io/liora-ui/" target="_blank" class="glass rounded-xl p-4 block transition-all group">
+          <h3 class="text-sm font-semibold mb-1" style="color:var(--text-h)">Liora UI <span class="text-[10px] font-normal" style="color:var(--text-m)">Next.js</span></h3>
+          <p class="text-xs mb-2" style="color:var(--text-m)">Single-cell benchmarking dashboard for Lorentz ODE regularized attention VAE.</p>
+          <span class="text-xs font-medium" style="color:var(--accent)">Launch &rarr;</span>
         </a>
-
       </div>
     </div>
   </section>
 
   <!-- In Development -->
-  <section class="py-20">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 fade-in">
-      <h2 class="text-3xl font-bold text-slate-900 mb-2">In Development</h2>
-      <p class="text-slate-500 mb-10">Ongoing research projects and methods under active development.</p>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <a href="https://github.com/PeterPonyu/CCVGAE" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 transition-all">
-          <span class="font-semibold text-sm text-slate-800">CCVGAE</span>
-          <span class="text-xs text-slate-400 truncate">Coupled Variational Graph AE for multi-omics</span>
-        </a>
-        <a href="https://github.com/PeterPonyu/MCCVAE" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 transition-all">
-          <span class="font-semibold text-sm text-slate-800">MCCVAE</span>
-          <span class="text-xs text-slate-400 truncate">Momentum Contrastive Coupling VAE</span>
-        </a>
-        <a href="https://github.com/PeterPonyu/GAHIB" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 transition-all">
-          <span class="font-semibold text-sm text-slate-800">GAHIB</span>
-          <span class="text-xs text-slate-400 truncate">Graph Attention VAE + Hyperbolic IB</span>
-        </a>
-        <a href="https://github.com/PeterPonyu/Liora" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 transition-all">
-          <span class="font-semibold text-sm text-slate-800">Liora</span>
-          <span class="text-xs text-slate-400 truncate">Lorentz ODE Regularized Attention VAE</span>
-        </a>
-        <a href="https://github.com/PeterPonyu/PanODE-DPMM" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 transition-all">
-          <span class="font-semibold text-sm text-slate-800">PanODE-DPMM</span>
-          <span class="text-xs text-slate-400 truncate">Flow-matching refined DPMM prior AE</span>
-        </a>
-        <a href="https://github.com/PeterPonyu/PanODE-Topic" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 transition-all">
-          <span class="font-semibold text-sm text-slate-800">PanODE-Topic</span>
-          <span class="text-xs text-slate-400 truncate">Flow-matching-refined Dirichlet prior AE</span>
-        </a>
-        <a href="https://github.com/PeterPonyu/CLOP-DiT" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 transition-all">
-          <span class="font-semibold text-sm text-slate-800">CLOP-DiT</span>
-          <span class="text-xs text-slate-400 truncate">Contrastive language-omics + diffusion transformer</span>
-        </a>
-        <a href="https://github.com/PeterPonyu/HSDE" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 transition-all">
-          <span class="font-semibold text-sm text-slate-800">HSDE</span>
-          <span class="text-xs text-slate-400 truncate">Hyperbolic stochastic differential equations</span>
-        </a>
-        <a href="https://github.com/PeterPonyu/MoCoO" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 transition-all">
-          <span class="font-semibold text-sm text-slate-800">MoCoO</span>
-          <span class="text-xs text-slate-400 truncate">Momentum contrastive optimization</span>
-        </a>
-        <a href="https://github.com/PeterPonyu/scMetaIntel-Hub" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 transition-all">
-          <span class="font-semibold text-sm text-slate-800">scMetaIntel-Hub</span>
-          <span class="text-xs text-slate-400 truncate">Benchmarking LLMs for dataset discovery</span>
-        </a>
+  <section class="py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 fade-in">
+      <h2 class="section-title text-2xl mb-4">In Development</h2>
+      <div class="flex flex-wrap gap-2">
+        <a href="https://github.com/PeterPonyu/CCVGAE" target="_blank" class="badge">CCVGAE</a>
+        <a href="https://github.com/PeterPonyu/MCCVAE" target="_blank" class="badge">MCCVAE</a>
+        <a href="https://github.com/PeterPonyu/GAHIB" target="_blank" class="badge">GAHIB</a>
+        <a href="https://github.com/PeterPonyu/Liora" target="_blank" class="badge">Liora</a>
+        <a href="https://github.com/PeterPonyu/PanODE-DPMM" target="_blank" class="badge">PanODE-DPMM</a>
+        <a href="https://github.com/PeterPonyu/PanODE-Topic" target="_blank" class="badge">PanODE-Topic</a>
+        <a href="https://github.com/PeterPonyu/CLOP-DiT" target="_blank" class="badge">CLOP-DiT</a>
+        <a href="https://github.com/PeterPonyu/HSDE" target="_blank" class="badge">HSDE</a>
+        <a href="https://github.com/PeterPonyu/MoCoO" target="_blank" class="badge">MoCoO</a>
+        <a href="https://github.com/PeterPonyu/scMetaIntel-Hub" target="_blank" class="badge">scMetaIntel-Hub</a>
       </div>
     </div>
   </section>
 
-  <!-- Contact / Academic Profiles -->
-  <section id="contact" class="py-20 bg-slate-50/70">
+  <!-- Contact -->
+  <section id="contact" class="py-10">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 fade-in">
-      <h2 class="text-3xl font-bold text-slate-900 mb-10">Academic Profiles &amp; Contact</h2>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <a href="https://orcid.org/0009-0001-8329-0108" target="_blank" rel="noopener" class="flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all">
-          <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
-            <svg class="w-6 h-6" viewBox="0 0 256 256"><path fill="#A6CE39" d="M256 128c0 70.7-57.3 128-128 128S0 198.7 0 128 57.3 0 128 0s128 57.3 128 128z"/><path fill="#fff" d="M86.3 186.2H70.9V79.1h15.4v107.1zm35.1 0h-15.2V79.1h15.2v107.1zm8.4-127.7c0 5.5-4.5 9.9-10 9.9s-10-4.4-10-9.9c0-5.5 4.5-9.9 10-9.9s10 4.4 10 9.9zm76.4 20.6c-24.2 0-38.1 12.8-38.1 36.2v71h15.3v-68.8c0-15.2 9.4-23.5 23.6-23.5 14.5 0 22.3 8.4 22.3 23.5v68.8h15.3v-71c0-23.4-14.4-36.2-38.4-36.2z"/></svg>
-          </div>
-          <div>
-            <div class="font-semibold text-slate-900">ORCID</div>
-            <div class="text-sm text-slate-500">0009-0001-8329-0108</div>
-          </div>
+      <h2 class="section-title text-2xl mb-4">Contact</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <a href="https://orcid.org/0009-0001-8329-0108" target="_blank" class="glass rounded-xl p-3 text-center block transition-all">
+          <div class="text-xs font-semibold mb-0.5" style="color:var(--text-h)">ORCID</div>
+          <div class="text-[10px]" style="color:var(--text-m)">0009-0001-8329-0108</div>
         </a>
-
-        <a href="https://www.webofscience.com/wos/author/record/NOE-8588-2025" target="_blank" rel="noopener" class="flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-purple-300 transition-all">
-          <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
-            <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24"><path d="M5.242 13.769L0 9.5l12-3 12 3-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 15a5 5 0 00-4.9 4h9.8a5 5 0 00-4.9-4z"/></svg>
-          </div>
-          <div>
-            <div class="font-semibold text-slate-900">Web of Science</div>
-            <div class="text-sm text-slate-500">NOE-8588-2025</div>
-          </div>
+        <a href="https://www.webofscience.com/wos/author/record/NOE-8588-2025" target="_blank" class="glass rounded-xl p-3 text-center block transition-all">
+          <div class="text-xs font-semibold mb-0.5" style="color:var(--text-h)">Web of Science</div>
+          <div class="text-[10px]" style="color:var(--text-m)">NOE-8588-2025</div>
         </a>
-
-        <a href="https://www.scopus.com/authid/detail.uri?authorId=59315299200" target="_blank" rel="noopener" class="flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-300 transition-all">
-          <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
-            <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-          </div>
-          <div>
-            <div class="font-semibold text-slate-900">Scopus</div>
-            <div class="text-sm text-slate-500">Author ID: 59315299200</div>
-          </div>
+        <a href="https://www.scopus.com/authid/detail.uri?authorId=59315299200" target="_blank" class="glass rounded-xl p-3 text-center block transition-all">
+          <div class="text-xs font-semibold mb-0.5" style="color:var(--text-h)">Scopus</div>
+          <div class="text-[10px]" style="color:var(--text-m)">59315299200</div>
         </a>
-
-        <a href="mailto:fuzeyu99@126.com" class="flex items-center gap-4 p-5 bg-white rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-blue-300 transition-all">
-          <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-          </div>
-          <div>
-            <div class="font-semibold text-slate-900">Email</div>
-            <div class="text-sm text-slate-500">fuzeyu99@126.com</div>
-          </div>
+        <a href="mailto:fuzeyu99@126.com" class="glass rounded-xl p-3 text-center block transition-all">
+          <div class="text-xs font-semibold mb-0.5" style="color:var(--text-h)">Email</div>
+          <div class="text-[10px]" style="color:var(--text-m)">fuzeyu99@126.com</div>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="py-8 border-t border-slate-200">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-400">
-      <p>&copy; 2026 Zeyu Fu. Built with Tailwind CSS.</p>
-      <a href="https://github.com/PeterPonyu/PeterPonyu.github.io" target="_blank" rel="noopener" class="hover:text-slate-600 transition-colors">View source on GitHub</a>
-    </div>
+  <footer class="py-6 text-center text-[11px]" style="color:var(--text-m);border-top:1px solid var(--border)">
+    &copy; 2026 Zeyu Fu &middot; <a href="https://github.com/PeterPonyu/PeterPonyu.github.io" target="_blank" style="color:var(--accent)">Source</a>
   </footer>
+</div>
 
-  <script>
-    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-      document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
-    document.querySelectorAll('#mobile-menu a').forEach(function(link) {
-      link.addEventListener('click', function() {
-        document.getElementById('mobile-menu').classList.add('hidden');
-      });
-    });
+<script>
+(function(){
+  var C=document.getElementById('bg-canvas'),X=C.getContext('2d'),W,H,anim,cur='starfield';
+  function resize(){W=C.width=window.innerWidth;H=C.height=window.innerHeight;if(T[cur].init)T[cur].init()}
+  window.addEventListener('resize',resize);
 
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  function R(a,b){return Math.random()*(b-a)+a}
 
-    document.querySelectorAll('.fade-in').forEach(function(el) { observer.observe(el); });
+  var T={};
 
-    var navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', function() {
-      if (window.scrollY > 10) {
-        navbar.classList.add('shadow-sm');
-      } else {
-        navbar.classList.remove('shadow-sm');
-      }
-    });
-  </script>
+  // Starfield
+  T.starfield={s:[],sh:[],init:function(){
+    this.s=[];for(var i=0;i<250;i++)this.s.push({x:R(0,W),y:R(0,H),r:R(.3,2.2),p:R(0,6.28),sp:R(.008,.04)});
+    this.sh=[];
+  },render:function(t){
+    X.fillStyle='#080c18';X.fillRect(0,0,W,H);
+    for(var i=0;i<this.s.length;i++){var s=this.s[i],a=.3+.7*Math.sin(t*s.sp+s.p);
+      X.beginPath();X.arc(s.x,s.y,s.r,0,6.28);X.fillStyle='rgba(180,200,255,'+a+')';X.fill()}
+    if(Math.random()<.005){this.sh.push({x:R(0,W),y:R(0,H*.3),l:R(60,150),a:R(.2,.5),sp:R(4,8),life:0})}
+    for(i=this.sh.length-1;i>=0;i--){var h=this.sh[i];h.life+=1;var al=Math.max(0,h.a*(1-h.life/30));
+      X.beginPath();X.moveTo(h.x,h.y);X.lineTo(h.x+h.l,h.y+h.l*.4);X.strokeStyle='rgba(180,200,255,'+al+')';X.lineWidth=1.5;X.stroke();
+      h.x+=h.sp;h.y+=h.sp*.4;if(h.life>30)this.sh.splice(i,1)}
+  }};
 
+  // Ocean
+  T.ocean={render:function(t){
+    var g=X.createLinearGradient(0,0,0,H);g.addColorStop(0,'#031d33');g.addColorStop(.5,'#053f5e');g.addColorStop(1,'#0a5c7a');
+    X.fillStyle=g;X.fillRect(0,0,W,H);
+    var layers=[{y:.5,a:35,f:.006,s:.0012,c:'rgba(6,182,212,.25)'},{y:.55,a:28,f:.009,s:.0018,c:'rgba(14,165,233,.2)'},{y:.6,a:22,f:.013,s:.0022,c:'rgba(56,189,248,.18)'},{y:.68,a:15,f:.018,s:.003,c:'rgba(125,211,252,.12)'}];
+    for(var l=0;l<layers.length;l++){var L=layers[l];X.beginPath();X.moveTo(0,H);
+      for(var x=0;x<=W;x+=3)X.lineTo(x,H*L.y+Math.sin(x*L.f+t*L.s)*L.a+Math.sin(x*L.f*2.3+t*L.s*1.5)*L.a*.3);
+      X.lineTo(W,H);X.closePath();X.fillStyle=L.c;X.fill()}
+    for(var i=0;i<8;i++){var rx=((t*.0003+i*.125)%1)*W,ry=H*.45+Math.sin(t*.001+i)*20,ra=.15+.1*Math.sin(t*.002+i*2);
+      X.beginPath();X.arc(rx,ry,3,0,6.28);X.fillStyle='rgba(186,230,253,'+ra+')';X.fill()}
+  }};
+
+  // Mountain
+  T.mountain={render:function(t){
+    var g=X.createLinearGradient(0,0,0,H);g.addColorStop(0,'#0f0520');g.addColorStop(.3,'#3b1261');g.addColorStop(.55,'#9d3c5c');g.addColorStop(.75,'#dc6b3f');g.addColorStop(1,'#fbbf24');
+    X.fillStyle=g;X.fillRect(0,0,W,H);
+    for(var i=0;i<60;i++){var sx=R(0,W),sy=R(0,H*.35),sa=.3+.5*Math.sin(t*.01+i);
+      X.beginPath();X.arc(sx,sy,.8,0,6.28);X.fillStyle='rgba(255,255,220,'+sa+')';X.fill()}
+    var ml=[{b:.42,a:140,f:.0025,c:'#2d1048'},{b:.55,a:90,f:.004,c:'#1a0830'},{b:.68,a:55,f:.007,c:'#0f0520'}];
+    for(var m=0;m<ml.length;m++){var M=ml[m];X.beginPath();X.moveTo(0,H);
+      for(var x=0;x<=W;x+=2){var y=H*M.b-Math.abs(Math.sin(x*M.f+m+1))*M.a-Math.abs(Math.sin(x*M.f*2.7+m*3+2))*M.a*.35;X.lineTo(x,y)}
+      X.lineTo(W,H);X.closePath();X.fillStyle=M.c;X.fill()}
+    for(i=0;i<3;i++){var cx=((t*.00004+i*.33)%1.2-.1)*W,cy=H*.15+i*25;
+      X.beginPath();X.ellipse(cx,cy,80+i*20,15+i*5,0,0,6.28);X.fillStyle='rgba(255,255,255,.03)';X.fill()}
+  }};
+
+  // Nature
+  T.nature={fl:[],lv:[],init:function(){
+    this.fl=[];for(var i=0;i<40;i++)this.fl.push({x:R(0,W),y:R(0,H),p:R(0,6.28),s:R(.002,.005)});
+    this.lv=[];for(i=0;i<20;i++)this.lv.push({x:R(0,W),y:R(-H,0),sz:R(4,9),rot:R(0,6.28),rs:R(-.02,.02),fs:R(.15,.5),sw:R(20,50),ss:R(.001,.003)});
+  },render:function(t){
+    var g=X.createLinearGradient(0,0,0,H);g.addColorStop(0,'#071a0e');g.addColorStop(.5,'#0a2e14');g.addColorStop(1,'#0d3b1a');
+    X.fillStyle=g;X.fillRect(0,0,W,H);
+    for(var i=0;i<this.fl.length;i++){var f=this.fl[i],a=.15+.6*Math.sin(t*f.s+f.p),fx=f.x+Math.sin(t*.0008+f.p)*25,fy=f.y+Math.cos(t*.0006+f.p)*18;
+      X.beginPath();X.arc(fx,fy,2.5,0,6.28);X.fillStyle='rgba(250,240,100,'+a+')';X.fill();
+      X.beginPath();X.arc(fx,fy,6,0,6.28);X.fillStyle='rgba(250,240,100,'+(a*.15)+')';X.fill()}
+    for(i=0;i<this.lv.length;i++){var l=this.lv[i];l.y+=l.fs;l.rot+=l.rs;
+      if(l.y>H+20){l.y=-20;l.x=R(0,W)}
+      var sx=l.x+Math.sin(t*l.ss)*l.sw;X.save();X.translate(sx,l.y);X.rotate(l.rot);
+      X.beginPath();X.ellipse(0,0,l.sz,l.sz*.45,0,0,6.28);X.fillStyle='rgba(34,197,94,.35)';X.fill();X.restore()}
+  }};
+
+  // Planet
+  T.planet={d:[],orb:[],init:function(){
+    this.d=[];for(var i=0;i<180;i++)this.d.push({x:R(0,W),y:R(0,H),r:R(.3,1.5),p:R(0,6.28),s:R(.005,.02)});
+    this.orb=[{dist:120,sz:10,sp:.0006,c:'#c4b5fd',ph:0},{dist:200,sz:7,sp:.0004,c:'#f0abfc',ph:2},{dist:290,sz:5,sp:.00025,c:'#67e8f9',ph:4}];
+  },render:function(t){
+    X.fillStyle='#0a0518';X.fillRect(0,0,W,H);
+    for(var i=0;i<this.d.length;i++){var d=this.d[i],a=.15+.5*Math.sin(t*d.s+d.p);
+      X.beginPath();X.arc(d.x,d.y,d.r,0,6.28);X.fillStyle='rgba(196,181,253,'+a+')';X.fill()}
+    var cx=W/2,cy=H/2;
+    for(i=0;i<this.orb.length;i++){var o=this.orb[i];
+      X.beginPath();X.ellipse(cx,cy,o.dist,o.dist*.3,0,0,6.28);X.strokeStyle='rgba(167,139,250,.06)';X.lineWidth=1;X.stroke();
+      var ang=t*o.sp+o.ph,ox=cx+Math.cos(ang)*o.dist,oy=cy+Math.sin(ang)*o.dist*.3;
+      X.beginPath();X.arc(ox,oy,o.sz,0,6.28);X.fillStyle=o.c;X.fill()}
+    var pg=X.createRadialGradient(cx-10,cy-10,5,cx,cy,40);pg.addColorStop(0,'#a78bfa');pg.addColorStop(1,'#3b0764');
+    X.beginPath();X.arc(cx,cy,40,0,6.28);X.fillStyle=pg;X.fill();
+    X.beginPath();X.ellipse(cx,cy,70,8,.3,0,6.28);X.strokeStyle='rgba(196,181,253,.15)';X.lineWidth=2;X.stroke();
+  }};
+
+  // Light
+  T.light={pts:[],init:function(){
+    this.pts=[];for(var i=0;i<45;i++)this.pts.push({x:R(0,W),y:R(0,H),vx:(R(0,1)-.5)*.15,vy:(R(0,1)-.5)*.15,r:R(1.5,3)});
+  },render:function(t){
+    X.fillStyle='#f8fafc';X.fillRect(0,0,W,H);
+    var p=this.pts;
+    for(var i=0;i<p.length;i++){p[i].x+=p[i].vx;p[i].y+=p[i].vy;
+      if(p[i].x<0||p[i].x>W)p[i].vx*=-1;if(p[i].y<0||p[i].y>H)p[i].vy*=-1;
+      X.beginPath();X.arc(p[i].x,p[i].y,p[i].r,0,6.28);X.fillStyle='rgba(59,130,246,.06)';X.fill()}
+    for(i=0;i<p.length;i++)for(var j=i+1;j<p.length;j++){
+      var dx=p[i].x-p[j].x,dy=p[i].y-p[j].y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<140){X.beginPath();X.moveTo(p[i].x,p[i].y);X.lineTo(p[j].x,p[j].y);X.strokeStyle='rgba(59,130,246,'+(0.04*(1-d/140))+')';X.lineWidth=1;X.stroke()}}
+  }};
+
+  function loop(t){X.clearRect(0,0,W,H);T[cur].render(t);anim=requestAnimationFrame(loop)}
+  function setTheme(name){
+    document.documentElement.dataset.theme=name;
+    document.querySelectorAll('.theme-btn').forEach(function(b){b.classList.toggle('active',b.dataset.theme===name)});
+    cur=name;if(T[name].init)T[name].init();
+    try{localStorage.setItem('theme',name)}catch(e){}
+  }
+  document.querySelectorAll('.theme-btn').forEach(function(b){b.addEventListener('click',function(){setTheme(this.dataset.theme)})});
+
+  var saved;try{saved=localStorage.getItem('theme')}catch(e){}
+  if(saved&&T[saved])cur=saved;
+  resize();setTheme(cur);anim=requestAnimationFrame(loop);
+
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden){cancelAnimationFrame(anim)}else{anim=requestAnimationFrame(loop)}});
+
+  document.getElementById('mob-btn').addEventListener('click',function(){document.getElementById('mob-menu').classList.toggle('hidden')});
+  document.querySelectorAll('#mob-menu a').forEach(function(a){a.addEventListener('click',function(){document.getElementById('mob-menu').classList.add('hidden')})});
+
+  var obs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting)en.target.classList.add('visible')})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.fade-in').forEach(function(el){obs.observe(el)});
+})();
+</script>
 </body>
 </html>
