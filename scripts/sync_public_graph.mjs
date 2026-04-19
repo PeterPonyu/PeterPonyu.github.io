@@ -176,14 +176,12 @@ const renderBoundaryNote = (site) => {
   const label = boundaryLabel(site);
   const heading = `${label} boundary`;
 
-  return `              <div class="step-card">
-                <div class="flex items-start justify-between gap-3">
-                  <div>
-                    <div class="text-sm font-medium" style="color:var(--text-h)">${escapeHtml(heading)}</div>
-                    <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">${escapeHtml(note)}</p>
-                  </div>
+  return `              <div class="boundary-note">
+                <div class="flex flex-wrap items-center gap-2">
                   <span class="badge">${escapeHtml(label)}</span>
+                  <span class="text-sm font-medium" style="color:var(--text-h)">${escapeHtml(heading)}</span>
                 </div>
+                <p class="mt-2 text-xs leading-relaxed" style="color:var(--text-m)">${escapeHtml(note)}</p>
               </div>`;
 };
 
