@@ -174,11 +174,12 @@ const renderSecondaryCard = (site) => {
 const renderBoundaryNote = (site) => {
   const note = site.presentation?.homepage?.boundary_note ?? site.name;
   const label = boundaryLabel(site);
+  const heading = `${label} boundary`;
 
   return `              <div class="step-card">
                 <div class="flex items-start justify-between gap-3">
                   <div>
-                    <div class="text-sm font-medium" style="color:var(--text-h)">${escapeHtml(site.name)}</div>
+                    <div class="text-sm font-medium" style="color:var(--text-h)">${escapeHtml(heading)}</div>
                     <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">${escapeHtml(note)}</p>
                   </div>
                   <span class="badge">${escapeHtml(label)}</span>
