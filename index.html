@@ -57,6 +57,10 @@
     .stat-card span{display:block;margin-top:6px;font-size:11px;color:var(--text-m)}
     .step-card{padding:16px;border-radius:18px;border:1px solid var(--border);background:rgba(255,255,255,0.02)}
     .step-index{width:28px;height:28px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:var(--badge-bg);color:var(--badge-t)}
+    .route-step{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--border)}
+    .route-step:first-child{border-top:0;padding-top:0}
+    .route-step .step-index{width:24px;height:24px;font-size:10px;flex:0 0 auto}
+    .boundary-note{padding:12px 14px;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,0.018)}
     .focus-card{padding:20px;border-radius:20px;min-height:100%;border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))}
     @media(prefers-reduced-motion:reduce){.fade-in{opacity:1;transform:none}#bg-canvas{display:none}}
     @media print{nav,.no-print,#bg-canvas,.theme-panel{display:none!important}body{background:#fff;color:#000}.glass{background:#fff;backdrop-filter:none}}
@@ -663,62 +667,69 @@
             </div>
           </div>
         </div>
-        <aside class="glass rounded-2xl p-5">
+        <aside class="glass rounded-2xl p-5 self-start">
           <span class="kicker">Routing logic</span>
           <h3 class="mt-3 text-lg font-semibold" style="color:var(--text-h)">Homepage &rarr; SCPortal &rarr; focused tools</h3>
-          <p class="mt-3 text-sm leading-relaxed" style="color:var(--text-m)">The homepage remains curated. It explains identity and outputs first, sends visitors to SCPortal for discovery depth, and only exposes a limited set of direct public routes.</p>
-          <div class="mt-4 space-y-3">
-            <div class="step-card">
-              <div class="text-xs font-semibold uppercase tracking-[0.16em]" style="color:var(--text-m)">Step 1</div>
-              <div class="mt-1 text-sm font-medium" style="color:var(--text-h)">Use this page for overview</div>
-              <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Scan publications, software, and current focus before committing to a workflow.</p>
+          <p class="mt-3 text-sm leading-relaxed" style="color:var(--text-m)">The homepage stays curated: it explains identity and outputs, sends visitors to SCPortal for discovery depth, then exposes only a few direct public routes.</p>
+          <div class="mt-4">
+            <div class="route-step">
+              <span class="step-index">01</span>
+              <div>
+                <div class="text-sm font-medium" style="color:var(--text-h)">Overview first</div>
+                <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Scan publications, software, and focus before committing to a workflow.</p>
+              </div>
             </div>
-            <div class="step-card">
-              <div class="text-xs font-semibold uppercase tracking-[0.16em]" style="color:var(--text-m)">Step 2</div>
-              <div class="mt-1 text-sm font-medium" style="color:var(--text-h)">Open SCPortal when you need breadth</div>
-              <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">The hub collects broader navigation and discovery paths that do not belong on the homepage.</p>
+            <div class="route-step">
+              <span class="step-index">02</span>
+              <div>
+                <div class="text-sm font-medium" style="color:var(--text-h)">SCPortal for breadth</div>
+                <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Use the hub for broader navigation that does not belong on the identity homepage.</p>
+              </div>
             </div>
-            <div class="step-card">
-              <div class="text-xs font-semibold uppercase tracking-[0.16em]" style="color:var(--text-m)">Step 3</div>
-              <div class="mt-1 text-sm font-medium" style="color:var(--text-h)">Drop into a microsite for execution</div>
-              <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Open a focused destination once the task is clear enough to justify a dedicated interface.</p>
+            <div class="route-step">
+              <span class="step-index">03</span>
+              <div>
+                <div class="text-sm font-medium" style="color:var(--text-h)">Microsite for execution</div>
+                <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Open a focused destination once the task justifies a dedicated interface.</p>
+              </div>
             </div>
           </div>
-          <div class="mt-4 pt-4" style="border-top:1px solid var(--border)">
-            <div class="flex flex-wrap items-center gap-2.5">
-              <span class="text-[11px] font-semibold uppercase tracking-[0.16em]" style="color:var(--text-m)">Also in the public graph</span>
+        </aside>
+        <div class="lg:col-span-3 grid grid-cols-1 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] gap-3">
+          <div class="glass rounded-2xl p-4">
+            <div class="text-[11px] font-semibold uppercase tracking-[0.16em] mb-3" style="color:var(--text-m)">Also in the public graph</div>
+            <div class="flex flex-wrap items-center gap-2">
               <!-- PUBLIC_GRAPH_SECONDARY_START -->
               <a href="https://peterponyu.github.io/liora-ui/" target="_blank" rel="noopener noreferrer" class="badge">LAIOR Benchmarks</a>
               <a href="https://peterponyu.github.io/iAODE/" target="_blank" rel="noopener noreferrer" class="badge">iAODE Pages</a>
               <!-- PUBLIC_GRAPH_SECONDARY_END -->
             </div>
           </div>
-          <div class="mt-4 pt-4" style="border-top:1px solid var(--border)">
-            <div class="text-[11px] font-semibold uppercase tracking-[0.16em] mb-3" style="color:var(--text-m)">Hidden by design</div>
-            <div class="space-y-3">
+          <div class="glass rounded-2xl p-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+              <div class="text-[11px] font-semibold uppercase tracking-[0.16em]" style="color:var(--text-m)">Hidden by design</div>
+              <span class="badge">Boundaries preserved</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               <!-- PUBLIC_GRAPH_BOUNDARY_NOTES_START -->
-              <div class="step-card">
-                <div class="flex items-start justify-between gap-3">
-                  <div>
-                    <div class="text-sm font-medium" style="color:var(--text-h)">Local-First boundary</div>
-                    <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Kept off the homepage because it is a local-first workspace rather than a public hosted app surface.</p>
-                  </div>
+              <div class="boundary-note">
+                <div class="flex flex-wrap items-center gap-2">
                   <span class="badge">Local-First</span>
+                  <span class="text-sm font-medium" style="color:var(--text-h)">Local-First boundary</span>
                 </div>
+                <p class="mt-2 text-xs leading-relaxed" style="color:var(--text-m)">Kept off the homepage because it is a local-first workspace rather than a public hosted app surface.</p>
               </div>
-              <div class="step-card">
-                <div class="flex items-start justify-between gap-3">
-                  <div>
-                    <div class="text-sm font-medium" style="color:var(--text-h)">Landing-Only boundary</div>
-                    <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Maintained as a landing-only reference surface, so the homepage does not present it as an actively browsable public tool.</p>
-                  </div>
+              <div class="boundary-note">
+                <div class="flex flex-wrap items-center gap-2">
                   <span class="badge">Landing-Only</span>
+                  <span class="text-sm font-medium" style="color:var(--text-h)">Landing-Only boundary</span>
                 </div>
+                <p class="mt-2 text-xs leading-relaxed" style="color:var(--text-m)">Maintained as a landing-only reference surface, so the homepage does not present it as an actively browsable public tool.</p>
               </div>
               <!-- PUBLIC_GRAPH_BOUNDARY_NOTES_END -->
             </div>
           </div>
-        </aside>
+        </div>
       </div>
     </div>
   </section>
