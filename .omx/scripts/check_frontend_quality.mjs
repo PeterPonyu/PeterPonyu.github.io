@@ -5,7 +5,14 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { runNegativeFixtureChecks } from './frontend_quality_fixtures.mjs';
+import {
+  runNegativeFixtureChecks,
+  validateIaodePublicFixture,
+  validateIaodeReadmeFixture,
+  validateMccvaeFixture,
+  validateMrnaReadmeFixture,
+  validateProfileReadmeFixture,
+} from './frontend_quality_fixtures.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(scriptDir, '../..');
@@ -27,6 +34,72 @@ const SURFACES = {
     label: 'Liora UI',
     url: 'https://peterponyu.github.io/liora-ui/',
     screenshotBase: 'liora',
+  },
+  mccvae: {
+    label: 'MCCVAE',
+    url: 'https://peterponyu.github.io/MCCVAE/',
+    screenshotBase: 'mccvae',
+  },
+  iaode: {
+    label: 'iAODE',
+    url: 'https://peterponyu.github.io/iAODE/',
+    screenshotBase: 'iaode',
+  },
+};
+
+const V2A_SURFACES = {
+  profile: {
+    label: 'Profile README',
+    sources: {
+      readme: {
+        label: 'README',
+        url: 'https://raw.githubusercontent.com/PeterPonyu/PeterPonyu/main/README.md',
+        localPath: path.resolve(root, '../PeterPonyu-profile/README.md'),
+        preferLocal: false,
+        fileName: 'profile-readme.md',
+      },
+    },
+  },
+  mrna: {
+    label: 'mRNA Intersection',
+    sources: {
+      readme: {
+        label: 'README',
+        url: 'https://raw.githubusercontent.com/PeterPonyu/mrnapp-intersection/main/README.md',
+        localPath: path.resolve(root, '../peterponyu-readme-audit/mrnapp-intersection/README.md'),
+        preferLocal: false,
+        fileName: 'mrna-intersection-readme.md',
+      },
+    },
+  },
+  mccvae: {
+    label: 'MCCVAE landing-only',
+    sources: {
+      page: {
+        label: 'Landing page',
+        url: 'https://peterponyu.github.io/MCCVAE/',
+        localPath: path.resolve(root, '../ui-phase23/MCCVAE/out/index.html'),
+        fileName: 'mccvae.html',
+        cacheBust: true,
+      },
+    },
+  },
+  iaode: {
+    label: 'iAODE public/local-first boundary',
+    sources: {
+      page: {
+        label: 'Public page',
+        url: 'https://peterponyu.github.io/iAODE/',
+        fileName: 'iaode-public.html',
+        cacheBust: true,
+      },
+      readme: {
+        label: 'README',
+        url: 'https://raw.githubusercontent.com/PeterPonyu/iAODE/main/README.md',
+        localPath: path.resolve(root, '../ui-phase23/iAODE/README.md'),
+        fileName: 'iaode-readme.md',
+      },
+    },
   },
 };
 
@@ -87,12 +160,30 @@ const hrefExists = (html, expected) => {
   return new RegExp(`\\bhref=["'][^"']*${escaped}[^"']*["']`, 'i').test(html) || html.includes(expected);
 };
 
+const hrefMatches = (html, pattern) => [...html.matchAll(/\bhref=["']([^"']+)["']/gi)].some((match) => pattern.test(match[1]));
+
+const visibleTextIncludesAny = (visibleText, phrases) => phrases.some((phrase) => visibleText.includes(phrase));
+const normalizePlainText = (value) => value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+
 const extractSectionById = (html, id) => {
   const marker = html.search(new RegExp(`<section\\b[^>]*\\bid=["']${id}["']`, 'i'));
   if (marker < 0) return '';
   const close = html.indexOf('</section>', marker);
   if (close < 0) return '';
   return html.slice(marker, close + '</section>'.length);
+};
+
+const extractMarkdownSection = (markdown, headingPattern) => {
+  const lines = markdown.split(/\r?\n/);
+  const start = lines.findIndex((line) => headingPattern.test(line.trim()));
+  if (start < 0) return '';
+  const currentDepth = lines[start].match(/^#+/)?.[0].length ?? 0;
+  const end = lines.findIndex((line, index) => {
+    if (index <= start) return false;
+    const match = line.match(/^(#+)\s+/);
+    return match && match[1].length <= currentDepth;
+  });
+  return lines.slice(start, end < 0 ? undefined : end).join('\n');
 };
 
 const findEnclosingTag = (html, markerIndex, tagName) => {
@@ -284,10 +375,244 @@ const checkLiora = ({ html, status, headers }) => {
   return { title, canonical, ogUrl, counts, checks };
 };
 
+const checkMccvae = ({ html, status, headers }) => {
+  const checks = [];
+  const title = getTitle(html);
+  const { canonical, ogUrl, ok } = checkCanonicalOrOg(html, SURFACES.mccvae.url);
+  const robots = getMetaContent(html, 'name', 'robots');
+  const visibleText = normalizeVisibleText(html);
+  const promotedLiveAppRoutes = hrefMatches(html, /\/MCCVAE\/(?:datasets|models|metrics|explorer)(?:\/|$)/i);
+  const liveAppPromotionCopy = visibleTextIncludesAny(visibleText, [
+    'launch app',
+    'open app',
+    'try the app',
+    'explore datasets',
+    'launch explorer',
+    'start training',
+    'training ui',
+    'upload data',
+  ]);
+
+  recordCheck(checks, status === 200, 'http_200', { status });
+  recordCheck(checks, /MCCVAE/i.test(title) && /Landing/i.test(title), 'title_contains_mccvae_landing', { title });
+  recordCheck(checks, ok, 'canonical_or_og_url_points_to_mccvae', { canonical, ogUrl });
+  recordCheck(checks, robots.toLowerCase().includes('noindex'), 'robots_noindex_landing_page', { robots });
+  recordCheck(checks, hrefExists(html, SURFACES.homepage.url), 'contains_homepage_link');
+  recordCheck(checks, html.includes(SURFACES.scportal.url) || html.includes('/scportal/'), 'contains_scportal_link');
+  recordCheck(checks, html.includes('https://github.com/PeterPonyu/MCCVAE'), 'contains_mccvae_source_link');
+  recordCheck(checks, visibleText.includes('landing-only') || visibleText.includes('landing only'), 'contains_landing_only_language');
+  recordCheck(checks, visibleText.includes('local-first'), 'contains_local_first_boundary_language');
+  recordCheck(checks, visibleText.includes('not exposed here as a public app') || visibleText.includes('instead of presenting the operational training interface as a public app'), 'states_operational_interface_not_public_app');
+  recordCheck(checks, !promotedLiveAppRoutes, 'does_not_link_live_mccvae_app_routes');
+  recordCheck(checks, !liveAppPromotionCopy, 'does_not_use_live_app_promotion_copy');
+  recordInfo(checks, 'headers', {
+    lastModified: headers['last-modified'] ?? null,
+    cacheControl: headers['cache-control'] ?? null,
+  });
+
+  return { title, canonical, ogUrl, robots, checks };
+};
+
+const checkIaode = ({ html, status, headers }) => {
+  const checks = [];
+  const title = getTitle(html);
+  const visibleText = normalizeVisibleText(html);
+  const localWorkspacePromotion = visibleTextIncludesAny(visibleText, [
+    'training ui',
+    'localhost',
+    'start_training_ui',
+    'start training ui',
+    'local workspace',
+    'workspace ui',
+    'upload your data',
+    'monitor training progress',
+  ]);
+
+  recordCheck(checks, status === 200, 'http_200', { status });
+  recordCheck(checks, /iAODE/i.test(title), 'title_contains_iaode', { title });
+  recordCheck(checks, visibleText.includes('interpretable accessibility ode'), 'contains_project_name_expansion');
+  recordCheck(checks, visibleText.includes('dataset browser'), 'contains_dataset_browser_public_card');
+  recordCheck(checks, visibleText.includes('continuity explorer'), 'contains_continuity_explorer_public_card');
+  recordCheck(checks, hrefMatches(html, /(?:^|\/)datasets\/?$/i), 'contains_public_datasets_route');
+  recordCheck(checks, hrefMatches(html, /(?:^|\/)explorer\/?$/i), 'contains_public_explorer_route');
+  recordCheck(checks, html.includes('https://github.com/PeterPonyu/iAODE'), 'contains_iaode_repository_link');
+  recordCheck(checks, !localWorkspacePromotion, 'does_not_promote_local_workspace_or_training_ui');
+  recordInfo(checks, 'headers', {
+    lastModified: headers['last-modified'] ?? null,
+    cacheControl: headers['cache-control'] ?? null,
+  });
+
+  return { title, checks };
+};
+
+const slugCheckName = (message) =>
+  message
+    .toLowerCase()
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 80) || 'contract_failure';
+
+const sourceUrlWithCacheBust = (source, surfaceKey, sourceKey) => {
+  if (!source.cacheBust) return source.url;
+  const separator = source.url.includes('?') ? '&' : '?';
+  return `${source.url}${separator}v=frontend-quality-v2a-${Date.now()}-${surfaceKey}-${sourceKey}`;
+};
+
+const fetchV2ASource = async (surfaceKey, sourceKey, source, reportDir) => {
+  let status = null;
+  let finalUrl = source.url;
+  let headers = {};
+  let text = '';
+  let origin = 'remote';
+  let error = null;
+
+  if (source.preferLocal !== false && source.localPath && fs.existsSync(source.localPath)) {
+    origin = 'local';
+    finalUrl = source.localPath;
+    text = fs.readFileSync(source.localPath, 'utf8');
+  } else {
+    try {
+      const response = await fetch(sourceUrlWithCacheBust(source, surfaceKey, sourceKey), {
+        redirect: 'follow',
+        headers: { 'user-agent': 'frontend-quality-v2a/1.0 (+https://peterponyu.github.io/)' },
+      });
+      status = response.status;
+      finalUrl = response.url;
+      headers = Object.fromEntries(response.headers.entries());
+      text = await response.text();
+    } catch (fetchError) {
+      error = fetchError.stack || String(fetchError);
+    }
+  }
+
+  const outputPath = path.join(reportDir, source.fileName);
+  writeText(outputPath, text);
+  return {
+    key: sourceKey,
+    label: source.label,
+    origin,
+    status,
+    url: source.url,
+    finalUrl,
+    localPath: source.localPath ?? null,
+    path: relativePath(outputPath),
+    bytes: Buffer.byteLength(text),
+    headers,
+    text,
+    error,
+    available: !error && text.length > 0 && (origin === 'local' || status === 200),
+  };
+};
+
+const validationChecks = (messages) => {
+  if (messages.length === 0) {
+    return [{ name: 'v2a_contract_checks', status: CHECK_STATUS.pass }];
+  }
+  return messages.map((message) => ({
+    name: slugCheckName(message),
+    status: CHECK_STATUS.fail,
+    details: message,
+  }));
+};
+
+const checkV2ASurface = (surfaceKey, fetchedSources) => {
+  const checks = [];
+  for (const source of Object.values(fetchedSources)) {
+    recordCheck(checks, source.available, `${source.key}_source_available`, {
+      origin: source.origin,
+      status: source.status,
+      path: source.path,
+      url: source.url,
+      ...(source.error ? { error: source.error } : {}),
+    });
+  }
+
+  const validationFailures = [];
+  if (surfaceKey === 'profile') {
+    const readme = fetchedSources.readme?.text ?? '';
+    const webApps = extractMarkdownSection(readme, /^###\s+Web Applications\b/i);
+    const archive = extractMarkdownSection(readme, /^###\s+Archive\s*\/\s*Legacy Entries\b/i);
+    const webAppsText = normalizePlainText(webApps);
+    const archiveText = normalizePlainText(archive);
+    recordCheck(checks, /https:\/\/peterponyu\.github\.io\/(?![A-Za-z0-9_-])/i.test(readme), 'profile_contains_canonical_homepage_link');
+    recordCheck(checks, Boolean(webApps), 'profile_contains_web_applications_section');
+    recordCheck(
+      checks,
+      webAppsText.includes('scportal') &&
+        /https:\/\/peterponyu\.github\.io\/scportal\//i.test(webApps) &&
+        webAppsText.includes('liora-ui') &&
+        /https:\/\/peterponyu\.github\.io\/liora-ui\//i.test(webApps) &&
+        webAppsText.includes('mrnapp-intersection') &&
+        /https:\/\/peterponyu\.github\.io\/mrnapp-intersection\//i.test(webApps),
+      'profile_lists_current_web_apps_with_live_links',
+    );
+    recordCheck(checks, Boolean(archive), 'profile_contains_archive_legacy_section');
+    recordCheck(checks, archiveText.includes('mccvae') && archiveText.includes('landing-only'), 'profile_keeps_mccvae_archive_landing_only');
+    validationFailures.push(...validateProfileReadmeFixture(readme));
+  } else if (surfaceKey === 'mrna') {
+    const readme = fetchedSources.readme?.text ?? '';
+    const text = normalizePlainText(readme);
+    recordCheck(checks, text.includes('public utility surface'), 'mrna_contains_public_utility_surface_language');
+    recordCheck(checks, text.includes('bounded static-export exception'), 'mrna_contains_bounded_static_export_exception_language');
+    recordCheck(checks, text.includes('precomputed mrna-seq analysis results'), 'mrna_contains_precomputed_results_language');
+    recordCheck(checks, /https:\/\/peterponyu\.github\.io\/(?![A-Za-z0-9_-])/i.test(readme), 'mrna_contains_canonical_homepage_link');
+    recordCheck(checks, /https:\/\/peterponyu\.github\.io\/scportal\//i.test(readme), 'mrna_contains_scportal_root_neighbor_link');
+    recordCheck(checks, text.includes('canonical discovery/root neighbors'), 'mrna_contains_root_neighbor_language');
+    recordCheck(checks, text.includes('public boundary is intentional'), 'mrna_contains_intentional_public_boundary_language');
+    recordCheck(checks, !text.includes('root discovery hub'), 'mrna_does_not_claim_root_discovery_hub_role');
+    validationFailures.push(...validateMrnaReadmeFixture(readme));
+  } else if (surfaceKey === 'mccvae') {
+    validationFailures.push(...validateMccvaeFixture(fetchedSources.page?.text ?? ''));
+  } else if (surfaceKey === 'iaode') {
+    validationFailures.push(...validateIaodePublicFixture(fetchedSources.page?.text ?? ''));
+    validationFailures.push(...validateIaodeReadmeFixture(fetchedSources.readme?.text ?? ''));
+  }
+
+  checks.push(...validationChecks(validationFailures));
+  const primary = fetchedSources.page ?? fetchedSources.readme ?? Object.values(fetchedSources)[0];
+  return {
+    label: V2A_SURFACES[surfaceKey].label,
+    title: primary?.text ? getTitle(primary.text) || V2A_SURFACES[surfaceKey].label : V2A_SURFACES[surfaceKey].label,
+    url: primary?.url ?? '',
+    sources: Object.fromEntries(
+      Object.entries(fetchedSources).map(([sourceKey, source]) => [
+        sourceKey,
+        {
+          label: source.label,
+          origin: source.origin,
+          status: source.status,
+          url: source.url,
+          finalUrl: source.finalUrl,
+          localPath: source.localPath,
+          path: source.path,
+          bytes: source.bytes,
+          error: source.error,
+        },
+      ]),
+    ),
+    checks,
+  };
+};
+
+const runV2AQualityAudit = async (reportDir) => {
+  const results = {};
+  for (const [surfaceKey, surface] of Object.entries(V2A_SURFACES)) {
+    const fetchedSources = {};
+    for (const [sourceKey, source] of Object.entries(surface.sources)) {
+      fetchedSources[sourceKey] = await fetchV2ASource(surfaceKey, sourceKey, source, reportDir);
+    }
+    results[surfaceKey] = checkV2ASurface(surfaceKey, fetchedSources);
+  }
+  return results;
+};
+
 const checkerBySurface = {
   homepage: checkHomepage,
   scportal: checkScportal,
   liora: checkLiora,
+  mccvae: checkMccvae,
+  iaode: checkIaode,
 };
 
 const captureScreenshot = async ({ chrome, surfaceKey, surface, viewportName, viewport, reportDir }) => {
@@ -371,10 +696,44 @@ const geometryForLiora = (html) => ({
   hasScportalLink: html.includes(SURFACES.scportal.url) || html.includes('/scportal/'),
 });
 
+const geometryForMccvae = (html) => {
+  const visibleText = normalizeVisibleText(html);
+  return {
+    containsLandingOnly: visibleText.includes('landing-only') || visibleText.includes('landing only'),
+    containsLocalFirst: visibleText.includes('local-first'),
+    robotsNoindex: getMetaContent(html, 'name', 'robots').toLowerCase().includes('noindex'),
+    hasHomepageLink: hrefExists(html, SURFACES.homepage.url),
+    hasScportalLink: html.includes(SURFACES.scportal.url) || html.includes('/scportal/'),
+    hasSourceLink: html.includes('https://github.com/PeterPonyu/MCCVAE'),
+    promotesLiveAppRoutes: hrefMatches(html, /\/MCCVAE\/(?:datasets|models|metrics|explorer)(?:\/|$)/i),
+  };
+};
+
+const geometryForIaode = (html) => {
+  const visibleText = normalizeVisibleText(html);
+  return {
+    containsDatasetBrowser: visibleText.includes('dataset browser'),
+    containsContinuityExplorer: visibleText.includes('continuity explorer'),
+    hasDatasetsRoute: hrefMatches(html, /(?:^|\/)datasets\/?$/i),
+    hasExplorerRoute: hrefMatches(html, /(?:^|\/)explorer\/?$/i),
+    hasSourceLink: html.includes('https://github.com/PeterPonyu/iAODE'),
+    promotesLocalWorkspace: visibleTextIncludesAny(visibleText, [
+      'training ui',
+      'localhost',
+      'start_training_ui',
+      'start training ui',
+      'local workspace',
+      'workspace ui',
+    ]),
+  };
+};
+
 const geometryBySurface = {
   homepage: geometryForHomepage,
   scportal: geometryForScportal,
   liora: geometryForLiora,
+  mccvae: geometryForMccvae,
+  iaode: geometryForIaode,
 };
 
 const runPublicGraphAudit = async () => {
@@ -387,9 +746,9 @@ const runPublicGraphAudit = async () => {
   };
 };
 
-const buildSummaryMarkdown = ({ timestamp, reportDir, chrome, publicGraphAudit, surfaces, screenshots, failures }) => {
+const buildSummaryMarkdown = ({ timestamp, reportDir, chrome, publicGraphAudit, surfaces, v2aSurfaces, screenshots, failures }) => {
   const lines = [
-    '# Frontend Quality V1 Report',
+    '# Frontend Quality V2-A Report',
     '',
     `- Timestamp: \`${timestamp}\``,
     `- Overall: **${failures.length === 0 ? 'PASS' : 'FAIL'}**`,
@@ -410,8 +769,29 @@ const buildSummaryMarkdown = ({ timestamp, reportDir, chrome, publicGraphAudit, 
     );
   }
 
+  lines.push('', '## V2-A Cross-Surface Documents', '');
+  lines.push('| Surface | URL | Result | Sources |');
+  lines.push('| --- | --- | --- | --- |');
+  for (const [surfaceKey, result] of Object.entries(v2aSurfaces)) {
+    const allChecksPass = result.checks.every((check) => check.status !== CHECK_STATUS.fail);
+    const sources = Object.entries(result.sources)
+      .map(([sourceKey, source]) => `${sourceKey}: \`${source.path}\` (${source.origin}${source.status === null ? '' : ` ${source.status}`})`)
+      .join('<br>');
+    lines.push(`| ${surfaceKey} | ${result.url} | ${allChecksPass ? 'PASS' : 'FAIL'} | ${sources} |`);
+  }
+
   lines.push('', '## Checks', '');
   for (const [surfaceKey, result] of Object.entries(surfaces)) {
+    lines.push(`### ${surfaceKey}`, '');
+    for (const check of result.checks) {
+      const prefix = check.status === CHECK_STATUS.pass ? '✅' : check.status === CHECK_STATUS.fail ? '❌' : 'ℹ️';
+      lines.push(`- ${prefix} \`${check.name}\`${check.details ? ` — \`${JSON.stringify(check.details)}\`` : ''}`);
+    }
+    lines.push('');
+  }
+
+  lines.push('## V2-A Document Checks', '');
+  for (const [surfaceKey, result] of Object.entries(v2aSurfaces)) {
     lines.push(`### ${surfaceKey}`, '');
     for (const check of result.checks) {
       const prefix = check.status === CHECK_STATUS.pass ? '✅' : check.status === CHECK_STATUS.fail ? '❌' : 'ℹ️';
@@ -433,7 +813,7 @@ const buildSummaryMarkdown = ({ timestamp, reportDir, chrome, publicGraphAudit, 
   }
 
   lines.push('', '## Chrome command conventions', '');
-  lines.push('- Uses installed Chrome/Chromium directly; V1 intentionally does not add Playwright.');
+  lines.push('- Uses installed Chrome/Chromium directly; the gate intentionally does not add Playwright.');
   lines.push('- Desktop screenshots use `1440x1200`.');
   lines.push('- Mobile screenshots use `390x1400`.');
 
@@ -484,6 +864,7 @@ const main = async () => {
   }
 
   const publicGraphAudit = await runPublicGraphAudit();
+  const v2aSurfaces = await runV2AQualityAudit(reportDir);
 
   const fetchResults = Object.fromEntries(
     await Promise.all(
@@ -493,6 +874,14 @@ const main = async () => {
 
   const surfaces = {};
   const failures = [];
+
+  for (const [surfaceKey, result] of Object.entries(v2aSurfaces)) {
+    for (const check of result.checks) {
+      if (check.status === CHECK_STATUS.fail) {
+        failures.push(`${surfaceKey}: ${check.name}`);
+      }
+    }
+  }
 
   for (const [surfaceKey, fetchResult] of Object.entries(fetchResults)) {
     const checker = checkerBySurface[surfaceKey];
@@ -566,12 +955,25 @@ const main = async () => {
         },
       ]),
     ),
+    v2aSurfaces: Object.fromEntries(
+      Object.entries(v2aSurfaces).map(([surfaceKey, surface]) => [
+        surfaceKey,
+        {
+          ok: surface.checks.every((check) => check.status !== CHECK_STATUS.fail),
+          label: surface.label,
+          url: surface.url,
+          title: surface.title,
+          sources: surface.sources,
+          checks: surface.checks,
+        },
+      ]),
+    ),
     screenshots,
     failures,
   };
 
   writeText(path.join(reportDir, 'result.json'), JSON.stringify(result, null, 2));
-  writeText(path.join(reportDir, 'summary.md'), buildSummaryMarkdown({ timestamp, reportDir, chrome, publicGraphAudit, surfaces, screenshots, failures }));
+  writeText(path.join(reportDir, 'summary.md'), buildSummaryMarkdown({ timestamp, reportDir, chrome, publicGraphAudit, surfaces, v2aSurfaces, screenshots, failures }));
 
   if (failures.length > 0) {
     console.error(`Frontend quality gate failed with ${failures.length} failure(s).`);

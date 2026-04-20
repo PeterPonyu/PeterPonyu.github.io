@@ -22,11 +22,15 @@ Run the repo-local public graph audit:
 node .omx/scripts/check_frontend_public_graph.mjs
 ```
 
-Run the full V1 flagship-triad quality gate:
+Run the full V2-A frontend quality gate:
 
 ```bash
 node .omx/scripts/check_frontend_quality.mjs
 ```
+
+The gate covers the homepage identity root, profile README, SCPortal discovery
+hub, Liora benchmark microsite, mRNA Intersection utility, MCCVAE landing-only
+surface, and iAODE public page/local workspace boundary.
 
 Run only the local negative-fixture self-test:
 
