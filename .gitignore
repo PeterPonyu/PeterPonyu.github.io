@@ -1,0 +1,7 @@
+.omx/*
+!.omx/README.md
+!.omx/scripts/
+.omx/scripts/*
+!.omx/scripts/check_frontend_public_graph.mjs
+!.omx/scripts/check_frontend_quality.mjs
+!.omx/scripts/frontend_quality_fixtures.mjs
