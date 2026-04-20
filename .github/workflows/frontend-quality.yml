@@ -1,0 +1,91 @@
+name: Frontend Quality
+
+on:
+  pull_request:
+    paths:
+      - ".omx/**"
+      - ".github/workflows/frontend-quality.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - ".omx/**"
+      - ".github/workflows/frontend-quality.yml"
+  workflow_dispatch:
+  schedule:
+    - cron: "15 2 * * *"
+  workflow_run:
+    workflows:
+      - "pages-build-deployment"
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  script-self-check:
+    name: Script Self Check
+    if: >
+      github.event_name == 'pull_request' ||
+      github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Run repo-local audits
+        run: |
+          node .omx/scripts/check_frontend_public_graph.mjs
+          node .omx/scripts/frontend_quality_fixtures.mjs
+          node .omx/scripts/check_frontend_quality.mjs --fixture-self-test
+
+  live-quality-gate:
+    name: Live Quality Gate
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Verify Chrome
+        run: google-chrome --version
+
+      - name: Run full quality gate
+        run: node .omx/scripts/check_frontend_quality.mjs
+
+      - name: Locate latest report
+        id: report
+        run: |
+          latest="$(ls -td .omx/reports/frontend-quality-* | head -1)"
+          echo "path=$latest" >> "$GITHUB_OUTPUT"
+          echo "### Frontend quality report" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`$latest\`" >> "$GITHUB_STEP_SUMMARY"
+          echo >> "$GITHUB_STEP_SUMMARY"
+          sed -n '1,120p' "$latest/summary.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload quality report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-quality-report-${{ github.run_id }}
+          path: ${{ steps.report.outputs.path }}
+          if-no-files-found: error
