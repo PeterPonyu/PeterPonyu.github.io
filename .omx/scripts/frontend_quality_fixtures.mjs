@@ -109,13 +109,20 @@ const positiveFixtures = Object.freeze({
 | [**liora-ui**](https://github.com/PeterPonyu/liora-ui) | LAIOR single-cell benchmarking dashboard | [Live](https://peterponyu.github.io/liora-ui/) |
 | [**mrnapp-intersection**](https://github.com/PeterPonyu/mrnapp-intersection) | mRNA intersection visualization | [Live](https://peterponyu.github.io/mrnapp-intersection/) |
 
+## Selected Publications
+
+**Fu, Z.**, Chen, C., Zhang, K. (2026).
+Islands and bridges: Momentum contrastive coupling unifies discrete and continuous structure in single-cell omics.
+***Biomedical Signal Processing and Control***, 122, 110376.
+[DOI](https://doi.org/10.1016/j.bspc.2026.110376) [Code](https://github.com/PeterPonyu/MCCVAE)
+
 ### Archive / Legacy Entries
 
 Older or exploratory project entries are kept discoverable here without competing with the current public pages above.
 
 | Repository | Status | Description |
 |:-----------|:-------|:------------|
-| [**MCCVAE**](https://github.com/PeterPonyu/MCCVAE) | Landing-only public surface | Public page remains a landing entry, not a hosted training app |
+| [**LAIOR**](https://github.com/PeterPonyu/Liora) | Accepted / legacy code entry | Hyperbolic Neural-ODE VAE |
 `,
   mrnaReadme: `<div align="center">
   <a href="https://peterponyu.github.io/">
@@ -225,11 +232,13 @@ const negativeCases = Object.freeze([
     }),
   },
   {
-    id: 'profile-archive-legacy-section-removed',
-    expectedFailure: 'Profile README must keep the Archive / Legacy section.',
+    id: 'profile-mcc-paper-removed',
+    expectedFailure: 'Profile README must promote the published MCCVAE paper and repository.',
     mutate: (fixtures) => ({
       ...fixtures,
-      profileReadme: fixtures.profileReadme.replace(/### Archive \/ Legacy Entries[\s\S]*$/m, ''),
+      profileReadme: fixtures.profileReadme
+        .replace('10.1016/j.bspc.2026.110376', '10.0000/removed')
+        .replace('https://github.com/PeterPonyu/MCCVAE', 'https://github.com/PeterPonyu/removed'),
     }),
   },
   {
@@ -403,7 +412,16 @@ export function validateProfileReadmeFixture(markdown) {
   collectCheck(textIncludes(webApps, 'liora-ui') && /https:\/\/peterponyu\.github\.io\/liora-ui\//i.test(webApps), 'Profile README must list current liora-ui web app with live link.', failures);
   collectCheck(textIncludes(webApps, 'mrnapp-intersection') && /https:\/\/peterponyu\.github\.io\/mrnapp-intersection\//i.test(webApps), 'Profile README must list current mrnapp-intersection web app with live link.', failures);
   collectCheck(Boolean(archive), 'Profile README must keep the Archive / Legacy section.', failures);
-  collectCheck(textIncludes(archive, 'MCCVAE') && textIncludes(archive, 'landing-only'), 'Profile README must keep MCCVAE in Archive / Legacy as landing-only.', failures);
+  collectCheck(
+    /10\.1016\/j\.bspc\.2026\.110376/i.test(markdown) && /https:\/\/github\.com\/PeterPonyu\/MCCVAE/i.test(markdown),
+    'Profile README must promote the published MCCVAE paper and repository.',
+    failures,
+  );
+  collectCheck(
+    !(textIncludes(archive, 'MCCVAE') && textIncludes(archive, 'landing-only')),
+    'Profile README must not keep MCCVAE as a landing-only archive entry after publication.',
+    failures,
+  );
   return failures;
 }
 

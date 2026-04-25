@@ -548,7 +548,16 @@ const checkV2ASurface = (surfaceKey, fetchedSources) => {
       'profile_lists_current_web_apps_with_live_links',
     );
     recordCheck(checks, Boolean(archive), 'profile_contains_archive_legacy_section');
-    recordCheck(checks, archiveText.includes('mccvae') && archiveText.includes('landing-only'), 'profile_keeps_mccvae_archive_landing_only');
+    recordCheck(
+      checks,
+      readme.includes('10.1016/j.bspc.2026.110376') && /https:\/\/github\.com\/PeterPonyu\/MCCVAE/i.test(readme),
+      'profile_promotes_published_mccvae_paper_and_repo',
+    );
+    recordCheck(
+      checks,
+      !(archiveText.includes('mccvae') && archiveText.includes('landing-only')),
+      'profile_no_longer_keeps_mccvae_archive_landing_only',
+    );
     validationFailures.push(...validateProfileReadmeFixture(readme));
   } else if (surfaceKey === 'mrna') {
     const readme = fetchedSources.readme?.text ?? '';

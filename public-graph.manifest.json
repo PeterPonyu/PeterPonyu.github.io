@@ -29,7 +29,7 @@
         "scportal": "listed",
         "sitemap": true
       },
-      "related_sites": ["scportal", "mrna_intersection", "liora_benchmarks", "iaode_pages", "mccvae"],
+      "related_sites": ["scportal", "mrna_intersection", "liora_benchmarks", "iaode_pages"],
       "repo": "PeterPonyu/PeterPonyu.github.io"
     },
     {
@@ -53,7 +53,7 @@
           "cta_label": "Open SCPortal"
         }
       },
-      "related_sites": ["homepage", "liora_benchmarks", "mrna_intersection", "iaode_pages", "mccvae"],
+      "related_sites": ["homepage", "liora_benchmarks", "mrna_intersection", "iaode_pages"],
       "repo": "PeterPonyu/scportal"
     },
     {
@@ -150,20 +150,18 @@
       "id": "mccvae",
       "name": "MCCVAE",
       "canonical_url": "https://peterponyu.github.io/MCCVAE/",
-      "role": "companion_platform",
-      "boundary": "public",
-      "indexing": { "mode": "index_follow" },
+      "role": "landing_only",
+      "boundary": "landing_only",
+      "indexing": { "mode": "noindex_follow" },
       "visibility": {
-        "homepage": "secondary",
-        "homepage_order": 4,
-        "scportal": "featured",
-        "sitemap": true
+        "homepage": "hidden",
+        "homepage_order": null,
+        "scportal": "hidden",
+        "sitemap": false
       },
       "presentation": {
         "homepage": {
-          "kind": "BSPC Companion",
-          "summary": "Published companion platform for the MCC paper, covering 91 datasets, 30 baselines, and benchmark-ready single-cell omics evaluation.",
-          "cta_label": "Open MCCVAE"
+          "boundary_note": "Maintained as a landing-only reference surface, so the homepage does not present it as an actively browsable public tool."
         }
       },
       "related_sites": ["homepage", "scportal"],
