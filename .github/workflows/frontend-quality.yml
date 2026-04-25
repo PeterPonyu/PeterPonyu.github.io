@@ -48,9 +48,13 @@ jobs:
 
   live-quality-gate:
     name: Live Quality Gate
+    # Run browser/live checks only after Pages deploys, on schedule, or by manual dispatch.
+    # Push/PR events keep the repo-local self checks above, avoiding false failures while
+    # GitHub Pages is still serving the previous deployment.
     if: >
-      github.event_name != 'workflow_run' ||
-      github.event.workflow_run.conclusion == 'success'
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
