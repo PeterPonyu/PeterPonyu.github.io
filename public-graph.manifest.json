@@ -8,6 +8,7 @@
     "naming_contract": {
       "homepage": "Homepage",
       "scportal": "SCPortal",
+      "gahib_site": "GAHIB",
       "liora_benchmarks": "LAIOR Benchmarks",
       "mrna_intersection": "mRNA Intersection",
       "iaode_pages": "iAODE Pages",
@@ -34,6 +35,7 @@
       },
       "related_sites": [
         "scportal",
+        "gahib_site",
         "mrna_intersection",
         "liora_benchmarks",
         "iaode_pages",
@@ -66,12 +68,44 @@
       },
       "related_sites": [
         "homepage",
+        "gahib_site",
         "liora_benchmarks",
         "mrna_intersection",
         "iaode_pages",
         "scccvgben"
       ],
       "repo": "PeterPonyu/scportal"
+    },
+    {
+      "id": "gahib_site",
+      "name": "GAHIB",
+      "canonical_url": "https://peterponyu.github.io/gahib-site/",
+      "role": "companion_site",
+      "boundary": "public",
+      "indexing": {
+        "mode": "noindex_follow"
+      },
+      "visibility": {
+        "homepage": "secondary",
+        "homepage_order": 3,
+        "scportal": "featured",
+        "sitemap": false
+      },
+      "presentation": {
+        "homepage": {
+          "kind": "Companion Site",
+          "badge": "Preview",
+          "summary": "Publication-safe companion site for the GAHIB method, dataset metadata, metric definitions, benchmark design, and code links.",
+          "cta_label": "Open GAHIB"
+        }
+      },
+      "related_sites": [
+        "homepage",
+        "scportal",
+        "liora_benchmarks",
+        "iaode_pages"
+      ],
+      "repo": "PeterPonyu/gahib-site"
     },
     {
       "id": "liora_benchmarks",

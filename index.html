@@ -40,15 +40,34 @@
     .glass{background:var(--glass);backdrop-filter:blur(var(--glass-b));-webkit-backdrop-filter:blur(var(--glass-b));border:1px solid var(--border);transition:background .4s,border-color .4s}
     .glass:hover{border-color:var(--accent);background:var(--bg-card)}
     .section-title{color:var(--text-h);font-weight:800;letter-spacing:-0.025em}
-    .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:600;background:var(--badge-bg);color:var(--badge-t);text-decoration:none;transition:opacity .2s}
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:6px;font-size:11px;line-height:1.3;font-weight:600;background:var(--badge-bg);color:var(--badge-t);text-decoration:none;transition:opacity .2s}
     .badge:hover{opacity:.8}
     .fade-in{opacity:1;transform:none;transition:opacity .5s ease-out,transform .5s ease-out}
     .fade-in.visible{opacity:1;transform:translateY(0)}
-    .theme-btn{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);cursor:pointer;transition:transform .2s,box-shadow .2s}
+    .theme-menu{position:relative}
+    .desktop-theme-menu{border-left:1px solid var(--border)}
+    .theme-menu-toggle{width:44px;height:44px;min-width:44px;min-height:44px;border-radius:12px;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;background:var(--glass);color:var(--text-h);cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+    .theme-menu-toggle:hover{border-color:var(--accent);background:var(--bg-card);transform:translateY(-1px)}
+    .theme-preview{width:22px;height:22px;border-radius:999px;border:2px solid var(--border);box-shadow:0 0 0 1px rgba(255,255,255,0.06) inset}
+    .theme-menu-list{position:absolute;right:0;top:calc(100% + 8px);display:grid;grid-template-columns:repeat(3,44px);gap:8px;padding:10px;border-radius:16px;background:var(--glass);backdrop-filter:blur(var(--glass-b));-webkit-backdrop-filter:blur(var(--glass-b));border:1px solid var(--border);box-shadow:0 18px 45px rgba(0,0,0,.22)}
+    .theme-menu-list.hidden{display:none}
+    .theme-btn{width:44px;height:44px;min-width:44px;min-height:44px;border-radius:999px;border:2px solid var(--border);cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s}
+    .theme-color-starfield{background:linear-gradient(135deg,#0a0e1a,#1e3a5f)}
+    .theme-color-ocean{background:linear-gradient(135deg,#031d33,#0891b2)}
+    .theme-color-mountain{background:linear-gradient(135deg,#1a0e2e,#dc6b3f)}
+    .theme-color-nature{background:linear-gradient(135deg,#071a0e,#34d399)}
+    .theme-color-planet{background:linear-gradient(135deg,#0a0518,#a78bfa)}
+    .theme-color-light{background:linear-gradient(135deg,#e2e8f0,#ffffff)}
     .theme-btn:hover{transform:scale(1.15);box-shadow:0 0 12px var(--accent)}
     .theme-btn.active{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+    .brand-link{min-width:44px;min-height:44px;padding:0 6px;display:inline-flex;align-items:center;border-radius:10px;text-decoration:none;box-sizing:border-box}
+    .mobile-menu-button{width:44px;height:44px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--text-m);box-sizing:border-box}
+    #mob-menu .mobile-nav-link{min-height:44px;display:flex;align-items:center;border-radius:10px;padding:0 10px;color:var(--text-m)}
+    #mob-menu .mobile-nav-link:hover{background:var(--badge-bg);color:var(--accent)!important}
+    #mob-menu .theme-menu-list{position:static;grid-template-columns:repeat(6,44px);width:max-content;max-width:100%;margin-top:8px}
+    #mob-menu .theme-menu-toggle{width:auto;padding:0 12px;gap:10px}
     .kicker{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--text-m)}
-    .hero-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 16px;border-radius:999px;font-size:12px;font-weight:700;text-decoration:none;transition:transform .2s,background .2s,border-color .2s,color .2s}
+    .hero-cta{min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 16px;border-radius:999px;font-size:12px;font-weight:700;text-decoration:none;box-sizing:border-box;transition:transform .2s,background .2s,border-color .2s,color .2s}
     .hero-cta:hover{transform:translateY(-1px)}
     .hero-cta-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
     .hero-cta-secondary{border:1px solid var(--border);background:var(--glass);color:var(--text-h)}
@@ -63,7 +82,13 @@
     .route-step .step-index{width:24px;height:24px;font-size:10px;flex:0 0 auto}
     .boundary-note{padding:12px 14px;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,0.018)}
     .focus-card{padding:20px;border-radius:20px;min-height:100%;border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))}
-    @media(prefers-reduced-motion:reduce){.fade-in{opacity:1;transform:none}#bg-canvas{display:none}}
+    .site-footer{color:var(--text);font-size:13px;line-height:1.55;border-top:1px solid var(--border)}
+    .site-footer p,.site-footer li span{color:var(--text)}
+    .site-footer .badge{min-width:44px;min-height:44px;padding:8px 12px}
+    .footer-link{display:inline-flex;align-items:center;min-width:44px;min-height:44px;padding:6px 0;color:var(--accent);text-decoration:none}
+    .footer-link:hover{text-decoration:underline;text-underline-offset:3px}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.fade-in{opacity:1;transform:none}.theme-btn:hover,.theme-menu-toggle:hover,.hero-cta:hover{transform:none;box-shadow:none}#bg-canvas{display:none}}
     @media print{nav,.no-print,#bg-canvas,.theme-panel{display:none!important}body{background:#fff;color:#000}.glass{background:#fff;backdrop-filter:none}}
   </style>
   <script type="application/ld+json">
@@ -91,7 +116,7 @@
   <!-- Nav -->
   <nav class="fixed top-0 w-full z-50 glass" style="border-top:none;border-left:none;border-right:none">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
-      <a href="#top" class="flex items-center gap-2 font-bold text-base tracking-tight" style="color:var(--text-h)"><svg class="w-6 h-6" viewBox="0 0 128 128"><circle cx="64" cy="64" r="62" fill="#1e3a5f"/><circle cx="64" cy="64" r="60" fill="none" stroke="#2e5f8f" stroke-width="2.5"/><path d="M18 72C42 72 52 38 64 38C76 38 88 72 110 72" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="4.5" stroke-linecap="round"/><path d="M18 38C42 38 52 72 64 72C76 72 88 38 110 38" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="4.5" stroke-linecap="round"/><circle cx="18" cy="72" r="4" fill="#6ba3e8"/><circle cx="110" cy="72" r="4" fill="#6ba3e8"/><circle cx="18" cy="38" r="4" fill="#6ba3e8"/><circle cx="110" cy="38" r="4" fill="#6ba3e8"/></svg>ZF</a>
+      <a href="#top" class="brand-link flex items-center gap-2 font-bold text-base tracking-tight" style="color:var(--text-h)"><svg class="w-6 h-6" viewBox="0 0 128 128"><circle cx="64" cy="64" r="62" fill="#1e3a5f"/><circle cx="64" cy="64" r="60" fill="none" stroke="#2e5f8f" stroke-width="2.5"/><path d="M18 72C42 72 52 38 64 38C76 38 88 72 110 72" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="4.5" stroke-linecap="round"/><path d="M18 38C42 38 52 72 64 72C76 72 88 38 110 38" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="4.5" stroke-linecap="round"/><circle cx="18" cy="72" r="4" fill="#6ba3e8"/><circle cx="110" cy="72" r="4" fill="#6ba3e8"/><circle cx="18" cy="38" r="4" fill="#6ba3e8"/><circle cx="110" cy="38" r="4" fill="#6ba3e8"/></svg>ZF</a>
       <div class="hidden md:flex items-center gap-6 text-[13px] font-medium" style="color:var(--text-m)">
         <a href="#top" class="hover:text-[var(--accent)] transition-colors">Home</a>
         <a href="#about" class="hover:text-[var(--accent)] transition-colors">About</a>
@@ -100,37 +125,50 @@
         <a href="#soft" class="hover:text-[var(--accent)] transition-colors">Software</a>
         <a href="#apps" class="hover:text-[var(--accent)] transition-colors">Apps</a>
         <a href="#contact" class="hover:text-[var(--accent)] transition-colors">Contact</a>
-        <div class="flex items-center gap-1.5 ml-2 pl-3" style="border-left:1px solid var(--border)">
-          <button class="theme-btn active" data-theme="starfield" style="background:linear-gradient(135deg,#0a0e1a,#1e3a5f)" title="Starfield"></button>
-          <button class="theme-btn" data-theme="ocean" style="background:linear-gradient(135deg,#031d33,#0891b2)" title="Ocean"></button>
-          <button class="theme-btn" data-theme="mountain" style="background:linear-gradient(135deg,#1a0e2e,#dc6b3f)" title="Mountain"></button>
-          <button class="theme-btn" data-theme="nature" style="background:linear-gradient(135deg,#071a0e,#34d399)" title="Nature"></button>
-          <button class="theme-btn" data-theme="planet" style="background:linear-gradient(135deg,#0a0518,#a78bfa)" title="Planet"></button>
-          <button class="theme-btn" data-theme="light" style="background:linear-gradient(135deg,#e2e8f0,#ffffff)" title="Light"></button>
+        <div class="theme-menu desktop-theme-menu ml-2 pl-3">
+          <button type="button" class="theme-menu-toggle" aria-label="Choose color theme" aria-haspopup="menu" aria-expanded="false">
+            <span class="theme-preview theme-color-starfield" aria-hidden="true"></span>
+          </button>
+          <div class="theme-menu-list hidden" role="menu" aria-label="Color themes">
+            <button type="button" class="theme-btn theme-color-starfield active" data-theme="starfield" role="menuitemradio" aria-checked="true" aria-label="Use Starfield theme" title="Starfield"></button>
+            <button type="button" class="theme-btn theme-color-ocean" data-theme="ocean" role="menuitemradio" aria-checked="false" aria-label="Use Ocean theme" title="Ocean"></button>
+            <button type="button" class="theme-btn theme-color-mountain" data-theme="mountain" role="menuitemradio" aria-checked="false" aria-label="Use Mountain theme" title="Mountain"></button>
+            <button type="button" class="theme-btn theme-color-nature" data-theme="nature" role="menuitemradio" aria-checked="false" aria-label="Use Nature theme" title="Nature"></button>
+            <button type="button" class="theme-btn theme-color-planet" data-theme="planet" role="menuitemradio" aria-checked="false" aria-label="Use Planet theme" title="Planet"></button>
+            <button type="button" class="theme-btn theme-color-light" data-theme="light" role="menuitemradio" aria-checked="false" aria-label="Use Light theme" title="Light"></button>
+          </div>
         </div>
       </div>
-      <button id="mob-btn" class="md:hidden p-1.5 rounded-lg" style="color:var(--text-m)">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <button id="mob-btn" type="button" class="mobile-menu-button md:hidden p-2 rounded-lg" aria-label="Open navigation menu" aria-controls="mob-menu" aria-expanded="false">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
     </div>
-    <div id="mob-menu" class="md:hidden hidden px-4 py-3 space-y-1 glass" style="border-top:1px solid var(--border)">
-      <a href="#top" class="block py-1.5 text-sm" style="color:var(--text-m)">Home</a>
-      <a href="#about" class="block py-1.5 text-sm" style="color:var(--text-m)">About</a>
-      <a href="#focus" class="block py-1.5 text-sm" style="color:var(--text-m)">Focus</a>
-      <a href="#pubs" class="block py-1.5 text-sm" style="color:var(--text-m)">Publications</a>
-      <a href="#soft" class="block py-1.5 text-sm" style="color:var(--text-m)">Software</a>
-      <a href="#apps" class="block py-1.5 text-sm" style="color:var(--text-m)">Apps</a>
-      <a href="#contact" class="block py-1.5 text-sm" style="color:var(--text-m)">Contact</a>
-      <div class="flex items-center gap-1.5 pt-2">
-        <button class="theme-btn active" data-theme="starfield" style="background:linear-gradient(135deg,#0a0e1a,#1e3a5f)" title="Starfield"></button>
-        <button class="theme-btn" data-theme="ocean" style="background:linear-gradient(135deg,#031d33,#0891b2)" title="Ocean"></button>
-        <button class="theme-btn" data-theme="mountain" style="background:linear-gradient(135deg,#1a0e2e,#dc6b3f)" title="Mountain"></button>
-        <button class="theme-btn" data-theme="nature" style="background:linear-gradient(135deg,#071a0e,#34d399)" title="Nature"></button>
-        <button class="theme-btn" data-theme="planet" style="background:linear-gradient(135deg,#0a0518,#a78bfa)" title="Planet"></button>
-        <button class="theme-btn" data-theme="light" style="background:linear-gradient(135deg,#e2e8f0,#ffffff)" title="Light"></button>
+    <div id="mob-menu" class="md:hidden hidden px-4 py-3 space-y-1 glass" style="border-top:1px solid var(--border)" aria-hidden="true">
+      <a href="#top" class="mobile-nav-link text-sm">Home</a>
+      <a href="#about" class="mobile-nav-link text-sm">About</a>
+      <a href="#focus" class="mobile-nav-link text-sm">Focus</a>
+      <a href="#pubs" class="mobile-nav-link text-sm">Publications</a>
+      <a href="#soft" class="mobile-nav-link text-sm">Software</a>
+      <a href="#apps" class="mobile-nav-link text-sm">Apps</a>
+      <a href="#contact" class="mobile-nav-link text-sm">Contact</a>
+      <div class="theme-menu pt-2">
+        <button type="button" class="theme-menu-toggle" aria-label="Choose color theme" aria-haspopup="menu" aria-expanded="false">
+          <span class="theme-preview theme-color-starfield" aria-hidden="true"></span>
+          <span aria-hidden="true">Theme</span>
+        </button>
+        <div class="theme-menu-list hidden" role="menu" aria-label="Color themes">
+          <button type="button" class="theme-btn theme-color-starfield active" data-theme="starfield" role="menuitemradio" aria-checked="true" aria-label="Use Starfield theme" title="Starfield"></button>
+          <button type="button" class="theme-btn theme-color-ocean" data-theme="ocean" role="menuitemradio" aria-checked="false" aria-label="Use Ocean theme" title="Ocean"></button>
+          <button type="button" class="theme-btn theme-color-mountain" data-theme="mountain" role="menuitemradio" aria-checked="false" aria-label="Use Mountain theme" title="Mountain"></button>
+          <button type="button" class="theme-btn theme-color-nature" data-theme="nature" role="menuitemradio" aria-checked="false" aria-label="Use Nature theme" title="Nature"></button>
+          <button type="button" class="theme-btn theme-color-planet" data-theme="planet" role="menuitemradio" aria-checked="false" aria-label="Use Planet theme" title="Planet"></button>
+          <button type="button" class="theme-btn theme-color-light" data-theme="light" role="menuitemradio" aria-checked="false" aria-label="Use Light theme" title="Light"></button>
+        </div>
       </div>
     </div>
   </nav>
+
+  <main id="main-content">
 
   <!-- Hero -->
   <section id="top" class="pt-20 pb-10">
@@ -159,15 +197,15 @@
               </div>
               <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
                 <div class="stat-card">
-                  <strong><!-- HOMEPAGE_PUBLICATION_COUNT_START -->9<!-- HOMEPAGE_PUBLICATION_COUNT_END --></strong>
+                  <strong><!-- HOMEPAGE_PUBLICATION_COUNT_START -->8<!-- HOMEPAGE_PUBLICATION_COUNT_END --></strong>
                   <span>peer-reviewed papers highlighted on this homepage</span>
                 </div>
                 <div class="stat-card">
-                  <strong><!-- HOMEPAGE_SOFTWARE_COUNT_START -->9<!-- HOMEPAGE_SOFTWARE_COUNT_END --></strong>
+                  <strong><!-- HOMEPAGE_SOFTWARE_COUNT_START -->8<!-- HOMEPAGE_SOFTWARE_COUNT_END --></strong>
                   <span>published software projects with code or package distribution</span>
                 </div>
                 <div class="stat-card">
-                  <strong><!-- HOMEPAGE_ROUTE_COUNT_START -->5<!-- HOMEPAGE_ROUTE_COUNT_END --></strong>
+                  <strong><!-- HOMEPAGE_ROUTE_COUNT_START -->6<!-- HOMEPAGE_ROUTE_COUNT_END --></strong>
                   <span>public graph surfaces linked directly from the identity layer</span>
                 </div>
               </div>
@@ -274,6 +312,15 @@
           <p class="mt-2 text-xs leading-relaxed" style="color:var(--text-m)">Centroid-coupled VAE benchmark across 200 single-cell datasets (100 scRNA + 100 scATAC) with per-dataset metadata cards.</p>
           <span class="mt-3 inline-flex text-xs font-medium" style="color:var(--accent)">Open scCCVGBen &rarr;</span>
         </a>
+        <a href="https://peterponyu.github.io/gahib-site/" target="_blank" rel="noopener noreferrer" class="glass rounded-2xl p-4 block transition-all group">
+          <div class="flex items-center justify-between gap-3">
+            <span class="text-[10px] font-semibold uppercase tracking-[0.16em]" style="color:var(--text-m)">Companion Site</span>
+            <span class="badge">Secondary Route</span>
+          </div>
+          <h3 class="mt-3 text-base font-semibold" style="color:var(--text-h)">GAHIB</h3>
+          <p class="mt-2 text-xs leading-relaxed" style="color:var(--text-m)">Publication-safe companion site for the GAHIB method, dataset metadata, metric definitions, benchmark design, and code links.</p>
+          <span class="mt-3 inline-flex text-xs font-medium" style="color:var(--accent)">Open GAHIB &rarr;</span>
+        </a>
         <!-- PUBLIC_GRAPH_ROUTE_STRIP_END -->
       </div>
     </div>
@@ -375,7 +422,6 @@
           <div class="mt-4 flex flex-wrap gap-1.5">
             <span class="badge">iVAE</span>
             <span class="badge">LiVAE</span>
-            <span class="badge">CCVGAE</span>
           </div>
         </article>
         <article class="focus-card">
@@ -406,7 +452,7 @@
   <section id="pubs" class="py-10">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 fade-in">
       <h2 class="section-title text-2xl mb-1">Publications</h2>
-      <p class="text-xs mb-6" style="color:var(--text-m)"><sup>#</sup> Equal contribution &ensp; * Corresponding author &ensp; 9 peer-reviewed papers</p>
+      <p class="text-xs mb-6" style="color:var(--text-m)"><sup>#</sup> Equal contribution &ensp; * Corresponding author &ensp; 8 peer-reviewed papers</p>
       <div class="space-y-3" id="pub-list">
         <!-- PUBLICATION_LIST_START -->
 
@@ -541,13 +587,15 @@
 
         <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">9</span>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">8</span>
             <div class="min-w-0">
-              <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">CCVGAE: A Centroid-Coupled Variational Graph Attention Autoencoder for Stable and Interpretable Single-Cell Representation Learning</h3>
-              <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>*</sup>, Liu, Y., Wang, J., Wang, S. &middot; <em style="color:var(--accent2)">Array</em> &middot; 2026</p>
+              <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">GNODEVAE: A Graph-Based ODE-VAE Enhances Clustering for Single-Cell Data</h3>
+              <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#</sup>, Wang, S. et al. &middot; <em style="color:var(--accent2)">BMC Genomics</em> 26, 767 &middot; 2025</p>
               <div class="mt-2 flex flex-wrap gap-1.5">
-                <a href="https://doi.org/10.1016/j.array.2026.100808" target="_blank" rel="noopener noreferrer" class="badge">DOI</a>
-                <a href="https://github.com/PeterPonyu/CCVGAE" target="_blank" rel="noopener noreferrer" class="badge">Code</a>
+                <a href="https://doi.org/10.1186/s12864-025-11946-7" target="_blank" rel="noopener noreferrer" class="badge">DOI</a>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/40841610/" target="_blank" rel="noopener noreferrer" class="badge">PubMed</a>
+                <a href="https://github.com/PeterPonyu/GNODEVAE" target="_blank" rel="noopener noreferrer" class="badge">Code</a>
+                <a href="https://pypi.org/project/gnodevae/" target="_blank" rel="noopener noreferrer" class="badge">PyPI</a>
               </div>
             </div>
           </div>
@@ -562,7 +610,7 @@
   <section id="soft" class="py-10">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 fade-in">
       <h2 class="section-title text-2xl mb-1">Open-Source Software</h2>
-      <p class="text-xs mb-6" style="color:var(--text-m)">9 published tools (7 on PyPI)</p>
+      <p class="text-xs mb-6" style="color:var(--text-m)">8 published tools (7 on PyPI)</p>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <!-- SOFTWARE_CARD_LIST_START -->
 
@@ -623,13 +671,6 @@
             <div><h3 class="text-sm font-semibold" style="color:var(--text-h)">CODE</h3><p class="text-[10px] font-mono" style="color:var(--text-m)">pip install scCODE</p></div>
           </div>
           <p class="text-xs leading-relaxed" style="color:var(--text-m)">Correlated latent space learning for single-cell RNA continuum modeling.</p>
-        </a>
-        <a href="https://github.com/PeterPonyu/CCVGAE" target="_blank" rel="noopener noreferrer" class="glass rounded-xl p-4 block transition-all group">
-          <div class="flex items-center gap-2.5 mb-2">
-            <svg class="w-8 h-8 flex-shrink-0" viewBox="0 0 128 128"><circle cx="64" cy="64" r="62" fill="#1e3a5f"/><circle cx="64" cy="64" r="60" fill="none" stroke="#2e5f8f" stroke-width="2.5"/><path d="M18 46C38 46 50 22 64 22C78 22 92 46 110 46" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="3.5" stroke-linecap="round"/><path d="M18 22C38 22 50 46 64 46C78 46 92 22 110 22" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="3.5" stroke-linecap="round"/><circle cx="18" cy="46" r="3" fill="#6ba3e8"/><circle cx="110" cy="46" r="3" fill="#6ba3e8"/><circle cx="18" cy="22" r="3" fill="#6ba3e8"/><circle cx="110" cy="22" r="3" fill="#6ba3e8"/><text x="64" y="82" font-family="JetBrains Mono,monospace" font-size="44" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="central">CC</text></svg>
-            <div><h3 class="text-sm font-semibold" style="color:var(--text-h)">CCVGAE</h3><p class="text-[10px] font-mono" style="color:var(--text-m)">Array &middot; 2026</p></div>
-          </div>
-          <p class="text-xs leading-relaxed" style="color:var(--text-m)">Centroid-coupled variational graph attention autoencoder for single-cell representation learning.</p>
         </a>
         <!-- SOFTWARE_CARD_LIST_END -->
 
@@ -708,6 +749,15 @@
                 <p class="text-xs mb-2" style="color:var(--text-m)">Centroid-coupled VAE benchmark across 200 single-cell datasets (100 scRNA + 100 scATAC) with per-dataset metadata cards.</p>
                 <span class="text-xs font-medium" style="color:var(--accent)">Open scCCVGBen &rarr;</span>
               </a>
+              <a href="https://peterponyu.github.io/gahib-site/" target="_blank" rel="noopener noreferrer" class="glass rounded-xl p-4 block transition-all group">
+                <div class="flex items-center justify-between gap-3">
+                  <h3 class="text-sm font-semibold mb-1" style="color:var(--text-h)">GAHIB</h3>
+                  <span class="badge">Preview</span>
+                </div>
+                <p class="text-[10px] uppercase tracking-[0.16em] mb-2" style="color:var(--text-m)">Companion Site</p>
+                <p class="text-xs mb-2" style="color:var(--text-m)">Publication-safe companion site for the GAHIB method, dataset metadata, metric definitions, benchmark design, and code links.</p>
+                <span class="text-xs font-medium" style="color:var(--accent)">Open GAHIB &rarr;</span>
+              </a>
               <!-- PUBLIC_GRAPH_SECONDARY_CARDS_END -->
             </div>
           </div>
@@ -739,6 +789,7 @@
               <a href="https://peterponyu.github.io/liora-ui/" target="_blank" rel="noopener noreferrer" class="badge">LAIOR Benchmarks</a>
               <a href="https://peterponyu.github.io/iAODE/" target="_blank" rel="noopener noreferrer" class="badge">iAODE Pages</a>
               <a href="https://peterponyu.github.io/scccvgben-next/" target="_blank" rel="noopener noreferrer" class="badge">scCCVGBen</a>
+              <a href="https://peterponyu.github.io/gahib-site/" target="_blank" rel="noopener noreferrer" class="badge">GAHIB</a>
               <!-- PUBLIC_GRAPH_SECONDARY_END -->
             </div>
           </div>
@@ -801,14 +852,61 @@
     </div>
   </section>
 
-  <footer class="py-6 text-center text-[11px]" style="color:var(--text-m);border-top:1px solid var(--border)">
-    &copy; 2026 Zeyu Fu &middot; <a href="https://github.com/PeterPonyu/PeterPonyu.github.io" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">Source</a>
+  </main>
+
+  <footer class="site-footer py-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+        <div>
+          <div class="text-xs font-semibold" style="color:var(--text-h)">Zeyu Fu</div>
+          <p class="mt-2 leading-relaxed max-w-sm">Identity root for single-cell computational biology work, with profile records, publications, software, and curated public routes kept in one place.</p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <a href="#top" class="badge">Home</a>
+            <a href="#about" class="badge">About</a>
+            <a href="#focus" class="badge">Focus</a>
+            <a href="#pubs" class="badge">Publications</a>
+            <a href="#soft" class="badge">Software</a>
+            <a href="#apps" class="badge">Apps</a>
+            <a href="#contact" class="badge">Contact</a>
+          </div>
+        </div>
+        <div>
+          <div class="text-xs font-semibold" style="color:var(--text-h)">Public Routes</div>
+          <ul class="mt-2 space-y-2 leading-relaxed">
+            <li><a href="https://peterponyu.github.io/scportal/" target="_blank" rel="noopener noreferrer" class="footer-link font-medium">SCPortal</a><span> - discovery hub for datasets, benchmarks, models, and related tools.</span></li>
+            <li><a href="https://peterponyu.github.io/liora-ui/" target="_blank" rel="noopener noreferrer" class="footer-link font-medium">LAIOR Benchmarks</a><span> - focused model, dataset, and metric inspection.</span></li>
+            <li><a href="https://peterponyu.github.io/iAODE/" target="_blank" rel="noopener noreferrer" class="footer-link font-medium">iAODE Pages</a><span> - public iAODE project and explorer destination.</span></li>
+            <li><a href="https://peterponyu.github.io/mrnapp-intersection/" target="_blank" rel="noopener noreferrer" class="footer-link font-medium">mRNA Intersection</a><span> - interactive gene-list intersection utility.</span></li>
+            <li><a href="https://peterponyu.github.io/gahib-site/" target="_blank" rel="noopener noreferrer" class="footer-link font-medium">GAHIB Preview</a><span> - publication-safe method companion and benchmark notes.</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-xs font-semibold" style="color:var(--text-h)">Profiles</div>
+          <ul class="mt-2 space-y-2 leading-relaxed">
+            <li><a href="https://github.com/PeterPonyu" target="_blank" rel="me noopener noreferrer" class="footer-link font-medium">GitHub</a><span> - code, packages, and project repositories.</span></li>
+            <li><a href="https://orcid.org/0009-0001-8329-0108" target="_blank" rel="noopener noreferrer" class="footer-link font-medium">ORCID</a><span> - researcher identifier 0009-0001-8329-0108.</span></li>
+            <li><a href="https://www.scopus.com/authid/detail.uri?authorId=59315299200" target="_blank" rel="noopener noreferrer" class="footer-link font-medium">Scopus</a><span> - author record 59315299200.</span></li>
+            <li><a href="https://www.webofscience.com/wos/author/record/NOE-8588-2025" target="_blank" rel="noopener noreferrer" class="footer-link font-medium">Web of Science</a><span> - author record NOE-8588-2025.</span></li>
+            <li><a href="mailto:fuzeyu99@126.com" class="footer-link font-medium">Email</a><span> - collaboration and correspondence.</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-xs font-semibold" style="color:var(--text-h)">Provenance</div>
+          <ul class="mt-2 space-y-2 leading-relaxed">
+            <li><a href="https://github.com/PeterPonyu/PeterPonyu.github.io" target="_blank" rel="noopener noreferrer" class="footer-link font-medium">Source</a><span> - static homepage source and public graph sync script.</span></li>
+            <li><a href="sitemap.xml" class="footer-link font-medium">Sitemap</a><span> - indexable public routes generated from the manifest.</span></li>
+          </ul>
+          <p class="mt-4 leading-relaxed">&copy; 2026 Zeyu Fu. Public graph visibility remains manifest-owned; preview and hidden surfaces stay governed by their route policy.</p>
+        </div>
+      </div>
+    </div>
   </footer>
 </div>
 
 <script>
 (function(){
   var C=document.getElementById('bg-canvas'),X=C.getContext('2d'),W,H,anim,cur='starfield';
+  var reduceMotion=window.matchMedia?window.matchMedia('(prefers-reduced-motion: reduce)'):{matches:false};
   function resize(){W=C.width=window.innerWidth;H=C.height=window.innerHeight;if(T[cur].init)T[cur].init()}
   window.addEventListener('resize',resize);
 
@@ -904,24 +1002,84 @@
       if(d<140){X.beginPath();X.moveTo(p[i].x,p[i].y);X.lineTo(p[j].x,p[j].y);X.strokeStyle='rgba(59,130,246,'+(0.04*(1-d/140))+')';X.lineWidth=1;X.stroke()}}
   }};
 
-  function loop(t){X.clearRect(0,0,W,H);T[cur].render(t);anim=requestAnimationFrame(loop)}
+  function loop(t){if(reduceMotion.matches)return;X.clearRect(0,0,W,H);T[cur].render(t);anim=requestAnimationFrame(loop)}
+  function startLoop(){cancelAnimationFrame(anim);if(!reduceMotion.matches)anim=requestAnimationFrame(loop)}
+  function handleMotionChange(){if(reduceMotion.matches){cancelAnimationFrame(anim);X.clearRect(0,0,W,H)}else{resize();startLoop()}}
+  if(reduceMotion.addEventListener)reduceMotion.addEventListener('change',handleMotionChange);
+  else if(reduceMotion.addListener)reduceMotion.addListener(handleMotionChange);
+  function closeThemeMenus(except){
+    document.querySelectorAll('.theme-menu').forEach(function(menu){
+      if(except&&menu===except)return;
+      var toggle=menu.querySelector('.theme-menu-toggle'),list=menu.querySelector('.theme-menu-list');
+      if(toggle)toggle.setAttribute('aria-expanded','false');
+      if(list)list.classList.add('hidden');
+    })
+  }
+  function setThemeMenuExpanded(menu,expanded){
+    var toggle=menu.querySelector('.theme-menu-toggle'),list=menu.querySelector('.theme-menu-list');
+    if(!toggle||!list)return;
+    toggle.setAttribute('aria-expanded',expanded?'true':'false');
+    list.classList.toggle('hidden',!expanded);
+  }
+  var themeColorClasses=['theme-color-starfield','theme-color-ocean','theme-color-mountain','theme-color-nature','theme-color-planet','theme-color-light'];
+  function setThemeColorClass(el,name){
+    themeColorClasses.forEach(function(className){el.classList.remove(className)});
+    el.classList.add('theme-color-'+name);
+  }
+  function syncThemeControls(name){
+    document.querySelectorAll('.theme-btn').forEach(function(b){
+      var active=b.dataset.theme===name;
+      b.classList.toggle('active',active);
+      b.setAttribute('aria-checked',active?'true':'false');
+    });
+    document.querySelectorAll('.theme-preview').forEach(function(preview){
+      setThemeColorClass(preview,name);
+    });
+  }
   function setTheme(name){
     document.documentElement.dataset.theme=name;
-    document.querySelectorAll('.theme-btn').forEach(function(b){b.classList.toggle('active',b.dataset.theme===name)});
+    syncThemeControls(name);
     cur=name;if(T[name].init)T[name].init();
     try{localStorage.setItem('theme',name)}catch(e){}
   }
-  document.querySelectorAll('.theme-btn').forEach(function(b){b.addEventListener('click',function(){setTheme(this.dataset.theme)})});
+  document.querySelectorAll('.theme-menu-toggle').forEach(function(toggle){
+    toggle.addEventListener('click',function(event){
+      event.stopPropagation();
+      var menu=this.closest('.theme-menu'),expanded=this.getAttribute('aria-expanded')==='true';
+      closeThemeMenus(menu);
+      setThemeMenuExpanded(menu,!expanded);
+      if(!expanded){
+        var active=menu.querySelector('.theme-btn.active'),first=menu.querySelector('.theme-btn');
+        (active||first).focus();
+      }
+    })
+  });
+  document.querySelectorAll('.theme-btn').forEach(function(b){b.addEventListener('click',function(event){
+    event.stopPropagation();
+    setTheme(this.dataset.theme);
+    var menu=this.closest('.theme-menu'),toggle=menu?menu.querySelector('.theme-menu-toggle'):null;
+    if(menu)setThemeMenuExpanded(menu,false);
+    if(toggle)toggle.focus();
+  })});
+  document.addEventListener('click',function(){closeThemeMenus()});
+  document.addEventListener('keydown',function(event){if(event.key==='Escape')closeThemeMenus()});
 
   var saved;try{saved=localStorage.getItem('theme')}catch(e){}
   if(saved&&T[saved])cur=saved;
-  resize();setTheme(cur);anim=requestAnimationFrame(loop);
+  resize();setTheme(cur);startLoop();
 
   document.addEventListener('visibilitychange',function(){
-    if(document.hidden){cancelAnimationFrame(anim)}else{anim=requestAnimationFrame(loop)}});
+    if(document.hidden){cancelAnimationFrame(anim)}else{startLoop()}});
 
-  document.getElementById('mob-btn').addEventListener('click',function(){document.getElementById('mob-menu').classList.toggle('hidden')});
-  document.querySelectorAll('#mob-menu a').forEach(function(a){a.addEventListener('click',function(){document.getElementById('mob-menu').classList.add('hidden')})});
+  var mobBtn=document.getElementById('mob-btn'),mobMenu=document.getElementById('mob-menu');
+  function setMobileMenu(open){
+    mobMenu.classList.toggle('hidden',!open);
+    mobMenu.setAttribute('aria-hidden',open?'false':'true');
+    mobBtn.setAttribute('aria-expanded',open?'true':'false');
+    mobBtn.setAttribute('aria-label',open?'Close navigation menu':'Open navigation menu');
+  }
+  mobBtn.addEventListener('click',function(){setMobileMenu(mobMenu.classList.contains('hidden'))});
+  document.querySelectorAll('#mob-menu a').forEach(function(a){a.addEventListener('click',function(){setMobileMenu(false)})});
 
   var obs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting)en.target.classList.add('visible')})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
   document.querySelectorAll('.fade-in').forEach(function(el){obs.observe(el)});
