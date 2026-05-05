@@ -47,6 +47,19 @@ const SURFACES = {
   },
 };
 
+const SCPORTAL_PUBLIC_ROUTE_PATTERNS = Object.freeze({
+  datasets: /^\/scportal\/datasets$/i,
+  explorer: /^\/scportal\/explorer$/i,
+  benchmarks: /^\/scportal\/(?:benchmarks|metrics)$/i,
+  models: /^\/scportal\/(?:models|model-catalog|methods)$/i,
+});
+
+const LIORA_PUBLIC_ROUTE_PATTERNS = Object.freeze({
+  models: /^\/liora-ui\/models$/i,
+  datasets: /^\/liora-ui\/datasets$/i,
+  metrics: /^\/liora-ui\/metrics$/i,
+});
+
 const V2A_SURFACES = {
   profile: {
     label: 'Profile README',
@@ -162,6 +175,24 @@ const hrefExists = (html, expected) => {
 
 const hrefMatches = (html, pattern) => [...html.matchAll(/\bhref=["']([^"']+)["']/gi)].some((match) => pattern.test(match[1]));
 
+const hrefPaths = (html, baseUrl) =>
+  [...html.matchAll(/\bhref=["']([^"']+)["']/gi)]
+    .map((match) => {
+      try {
+        const pathname = new URL(match[1], baseUrl).pathname.replace(/\/+$/g, '');
+        return pathname || '/';
+      } catch {
+        return '';
+      }
+    })
+    .filter(Boolean);
+
+const routePresence = (html, baseUrl, patterns) => {
+  const paths = hrefPaths(html, baseUrl);
+  return Object.fromEntries(Object.entries(patterns).map(([name, pattern]) => [name, paths.some((hrefPath) => pattern.test(hrefPath))]));
+};
+
+const allRoutesPresent = (presence) => Object.values(presence).every(Boolean);
 const visibleTextIncludesAny = (visibleText, phrases) => phrases.some((phrase) => visibleText.includes(phrase));
 const normalizePlainText = (value) => value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
 
@@ -325,20 +356,14 @@ const checkScportal = ({ html, status, headers }) => {
   const title = getTitle(html);
   const { canonical, ogUrl, ok } = checkCanonicalOrOg(html, SURFACES.scportal.url);
   const visibleText = normalizeVisibleText(html);
+  const routes = routePresence(html, SURFACES.scportal.url, SCPORTAL_PUBLIC_ROUTE_PATTERNS);
 
   recordCheck(checks, status === 200, 'http_200', { status });
   recordCheck(checks, /SCPortal|Discovery Hub/i.test(title), 'title_contains_scportal_or_discovery_hub', { title });
   recordCheck(checks, ok, 'canonical_or_og_url_points_to_scportal', { canonical, ogUrl });
   recordCheck(checks, hrefExists(html, SURFACES.homepage.url), 'contains_homepage_link');
   recordCheck(checks, html.includes(SURFACES.liora.url) || html.includes('/liora-ui/'), 'contains_liora_link');
-  recordCheck(checks, visibleText.includes('flagship journey'), 'contains_flagship_journey_marker');
-  recordCheck(
-    checks,
-    (visibleText.includes('route-finding') || visibleText.includes('task-route')) &&
-      (html.includes('/scportal/datasets') || html.includes('/scportal/explorer')) &&
-      (html.includes('/scportal/benchmarks') || html.includes('metrics library')),
-    'contains_task_route_navigator_markers',
-  );
+  recordCheck(checks, allRoutesPresent(routes), 'contains_scportal_public_task_routes', routes);
   recordCheck(checks, !visibleText.includes('homepage as a discovery hub replacement'), 'does_not_present_homepage_as_discovery_hub_replacement');
   recordInfo(checks, 'headers', {
     lastModified: headers['last-modified'] ?? null,
@@ -353,6 +378,7 @@ const checkLiora = ({ html, status, headers }) => {
   const title = getTitle(html);
   const { canonical, ogUrl, ok } = checkCanonicalOrOg(html, SURFACES.liora.url);
   const visibleText = normalizeVisibleText(html);
+  const routes = routePresence(html, SURFACES.liora.url, LIORA_PUBLIC_ROUTE_PATTERNS);
   const counts = {
     models: countForLabel(html, 'Models'),
     datasets: countForLabel(html, 'Datasets'),
@@ -364,7 +390,7 @@ const checkLiora = ({ html, status, headers }) => {
   recordCheck(checks, ok, 'canonical_or_og_url_points_to_liora_ui', { canonical, ogUrl });
   recordCheck(checks, hrefExists(html, SURFACES.homepage.url), 'contains_homepage_link');
   recordCheck(checks, html.includes(SURFACES.scportal.url) || html.includes('/scportal/'), 'contains_scportal_link');
-  recordCheck(checks, visibleText.includes('identity → discovery → benchmark proof') || visibleText.includes('identity') && visibleText.includes('discovery') && visibleText.includes('benchmark proof'), 'contains_identity_discovery_benchmark_proof_marker');
+  recordCheck(checks, allRoutesPresent(routes), 'contains_liora_model_dataset_metric_routes', routes);
   recordCheck(checks, counts.models > 0 && counts.datasets > 0 && counts.metrics > 0, 'rendered_model_dataset_metric_counts_nonzero', counts);
   recordCheck(checks, !/general ecosystem discovery hub/i.test(visibleText) && !/general hub/i.test(visibleText), 'does_not_present_liora_as_general_ecosystem_hub');
   recordInfo(checks, 'headers', {
@@ -688,14 +714,13 @@ const geometryForHomepage = (html) => {
 };
 
 const geometryForScportal = (html) => ({
-  containsJourney: normalizeVisibleText(html).includes('flagship journey'),
-  containsTaskRoute: normalizeVisibleText(html).includes('route-finding') || normalizeVisibleText(html).includes('task-route'),
   hasHomepageLink: hrefExists(html, SURFACES.homepage.url),
   hasLioraLink: html.includes(SURFACES.liora.url) || html.includes('/liora-ui/'),
+  routes: routePresence(html, SURFACES.scportal.url, SCPORTAL_PUBLIC_ROUTE_PATTERNS),
 });
 
 const geometryForLiora = (html) => ({
-  containsJourney: normalizeVisibleText(html).includes('identity → discovery → benchmark proof') || normalizeVisibleText(html).includes('benchmark proof'),
+  routes: routePresence(html, SURFACES.liora.url, LIORA_PUBLIC_ROUTE_PATTERNS),
   counts: {
     models: countForLabel(html, 'Models'),
     datasets: countForLabel(html, 'Datasets'),
