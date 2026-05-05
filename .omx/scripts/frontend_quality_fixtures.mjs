@@ -2,6 +2,21 @@
 
 const EXPECTED_HOMEPAGE_ROUTE_STEPS = 3;
 const EXPECTED_HOMEPAGE_BOUNDARY_NOTES = 2;
+const SCPORTAL_URL = 'https://peterponyu.github.io/scportal/';
+const LIORA_URL = 'https://peterponyu.github.io/liora-ui/';
+
+const SCPORTAL_PUBLIC_ROUTE_PATTERNS = Object.freeze({
+  datasets: /^\/scportal\/datasets$/i,
+  explorer: /^\/scportal\/explorer$/i,
+  benchmarks: /^\/scportal\/(?:benchmarks|metrics)$/i,
+  models: /^\/scportal\/(?:models|model-catalog|methods)$/i,
+});
+
+const LIORA_PUBLIC_ROUTE_PATTERNS = Object.freeze({
+  models: /^\/liora-ui\/models$/i,
+  datasets: /^\/liora-ui\/datasets$/i,
+  metrics: /^\/liora-ui\/metrics$/i,
+});
 
 const positiveFixtures = Object.freeze({
   homepage: `<!doctype html>
@@ -31,11 +46,16 @@ const positiveFixtures = Object.freeze({
 <html>
 <head><title>SCPortal Discovery Hub</title></head>
 <body>
-  <main data-quality-marker="flagship-journey">
+  <main>
     <h1>SCPortal</h1>
     <a href="https://peterponyu.github.io/">Homepage</a>
     <a href="https://peterponyu.github.io/liora-ui/">LAIOR Benchmarks</a>
-    <p>Use this flagship journey route for datasets, models, and benchmark navigation.</p>
+    <nav aria-label="Public SCPortal task routes">
+      <a href="/scportal/datasets">Datasets</a>
+      <a href="/scportal/explorer">Continuity Explorer</a>
+      <a href="/scportal/benchmarks">Benchmarks</a>
+      <a href="/scportal/models">Models</a>
+    </nav>
   </main>
 </body>
 </html>`,
@@ -43,10 +63,15 @@ const positiveFixtures = Object.freeze({
 <html>
 <head><title>LAIOR Benchmarks</title></head>
 <body>
-  <main data-quality-marker="benchmark-journey">
+  <main>
     <h1>LAIOR Benchmarks</h1>
     <a href="https://peterponyu.github.io/">Homepage</a>
     <a href="https://peterponyu.github.io/scportal/">SCPortal</a>
+    <nav aria-label="LAIOR benchmark routes">
+      <a href="/liora-ui/models/">Models</a>
+      <a href="/liora-ui/datasets/">Datasets</a>
+      <a href="/liora-ui/metrics/">Metrics</a>
+    </nav>
     <dl class="benchmark-counts">
       <dt>Models</dt><dd data-quality-count="models">23</dd>
       <dt>Datasets</dt><dd data-quality-count="datasets">66</dd>
@@ -173,6 +198,22 @@ const negativeCases = Object.freeze([
     }),
   },
   {
+    id: 'scportal-model-route-removed',
+    expectedFailure: 'SCPortal must link to datasets, explorer, benchmarks, and models public routes.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      scportal: fixtures.scportal.replace(/\n      <a href="\/scportal\/models">Models<\/a>/, ''),
+    }),
+  },
+  {
+    id: 'liora-metric-route-removed',
+    expectedFailure: 'Liora must link to model, dataset, and metric routes.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      liora: fixtures.liora.replace(/\n      <a href="\/liora-ui\/metrics\/">Metrics<\/a>/, ''),
+    }),
+  },
+  {
     id: 'liora-zero-dataset-count',
     expectedFailure: 'Liora datasets count must be nonzero.',
     mutate: (fixtures) => ({
@@ -282,6 +323,32 @@ function hasHrefMatching(html, pattern) {
   return [...html.matchAll(/\bhref=["']([^"']+)["']/gi)].some((match) => pattern.test(match[1]));
 }
 
+function hrefPaths(html, baseUrl) {
+  return [...html.matchAll(/\bhref=["']([^"']+)["']/gi)]
+    .map((match) => {
+      try {
+        const pathname = new URL(match[1], baseUrl).pathname.replace(/\/+$/g, '');
+        return pathname || '/';
+      } catch {
+        return '';
+      }
+    })
+    .filter(Boolean);
+}
+
+function hasRoute(html, baseUrl, pattern) {
+  return hrefPaths(html, baseUrl).some((hrefPath) => pattern.test(hrefPath));
+}
+
+function routePresence(html, baseUrl, patterns) {
+  const paths = hrefPaths(html, baseUrl);
+  return Object.fromEntries(Object.entries(patterns).map(([name, pattern]) => [name, paths.some((hrefPath) => pattern.test(hrefPath))]));
+}
+
+function allRoutesPresent(presence) {
+  return Object.values(presence).every(Boolean);
+}
+
 function textIncludes(html, text) {
   return stripTags(html).toLowerCase().includes(text.toLowerCase());
 }
@@ -329,19 +396,21 @@ export function validateHomepageFixture(html) {
 
 export function validateScportalFixture(html) {
   const failures = [];
+  const routes = routePresence(html, SCPORTAL_URL, SCPORTAL_PUBLIC_ROUTE_PATTERNS);
   collectCheck(/<title>[^<]*(SCPortal|Discovery Hub)[^<]*<\/title>/i.test(html), 'SCPortal title must contain SCPortal or Discovery Hub.', failures);
-  collectCheck(hasHrefContaining(html, 'peterponyu.github.io/'), 'SCPortal must link to homepage.', failures);
-  collectCheck(hasHrefContaining(html, 'liora-ui'), 'SCPortal must link to Liora/LAIOR.', failures);
-  collectCheck(textIncludes(html, 'flagship journey') || textIncludes(html, 'task route') || /data-quality-marker=["']flagship-journey["']/i.test(html), 'SCPortal must include flagship journey/task-route markers.', failures);
+  collectCheck(hasRoute(html, SCPORTAL_URL, /^\/$/), 'SCPortal must link to homepage.', failures);
+  collectCheck(hasRoute(html, SCPORTAL_URL, /^\/liora-ui$/), 'SCPortal must link to Liora/LAIOR.', failures);
+  collectCheck(allRoutesPresent(routes), 'SCPortal must link to datasets, explorer, benchmarks, and models public routes.', failures);
   return failures;
 }
 
 export function validateLioraFixture(html) {
   const failures = [];
+  const routes = routePresence(html, LIORA_URL, LIORA_PUBLIC_ROUTE_PATTERNS);
   collectCheck(/<title>[^<]*LAIOR Benchmarks[^<]*<\/title>/i.test(html), 'Liora title must contain LAIOR Benchmarks.', failures);
-  collectCheck(hasHrefContaining(html, 'peterponyu.github.io/'), 'Liora must link to homepage.', failures);
-  collectCheck(hasHrefContaining(html, 'scportal'), 'Liora must link to SCPortal.', failures);
-  collectCheck(textIncludes(html, 'benchmark journey') || /data-quality-marker=["']benchmark-journey["']/i.test(html), 'Liora must include benchmark journey marker.', failures);
+  collectCheck(hasRoute(html, LIORA_URL, /^\/$/), 'Liora must link to homepage.', failures);
+  collectCheck(hasRoute(html, LIORA_URL, /^\/scportal$/), 'Liora must link to SCPortal.', failures);
+  collectCheck(allRoutesPresent(routes), 'Liora must link to model, dataset, and metric routes.', failures);
   for (const key of ['models', 'datasets', 'metrics']) {
     const count = readCount(html, key);
     collectCheck(Number.isFinite(count), `Liora ${key} count must be present.`, failures);
