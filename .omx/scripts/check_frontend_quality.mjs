@@ -326,21 +326,21 @@ const checkHomepage = ({ html, status, headers }) => {
   const title = getTitle(html);
   const canonical = getLinkHref(html, 'canonical');
   const appsSection = extractSectionById(html, 'apps');
-  const routingAside = findEnclosingTag(appsSection, appsSection.indexOf('route-step compact'), 'aside');
-  const boundaryNoteCount = countClassElements(appsSection, 'boundary-note');
-  const compactRouteStepCount = countElementsWithClasses(routingAside, ['route-step', 'compact']);
+  const routingAside = findEnclosingTag(appsSection, appsSection.indexOf('What you will find here'), 'aside');
+  const quickGuideBadgeCount = countClassElements(routingAside, 'badge');
   const appsText = normalizeVisibleText(appsSection);
   const asideText = normalizeVisibleText(routingAside);
+  const hasCurrentToolGroups = ['start here', 'benchmark and companion pages', 'more linked pages'].every((label) => appsText.includes(label));
 
   recordCheck(checks, status === 200, 'http_200', { status });
   recordCheck(checks, title.includes('Zeyu Fu'), 'title_contains_zeyu_fu', { title });
   recordCheck(checks, canonical === SURFACES.homepage.url, 'canonical_url', { canonical });
   recordCheck(checks, html.includes('https://peterponyu.github.io/scportal/') || html.includes('/scportal/'), 'contains_scportal_route');
   recordCheck(checks, html.includes('https://peterponyu.github.io/liora-ui/') || html.includes('/liora-ui/'), 'contains_liora_route');
-  recordCheck(checks, compactRouteStepCount === 3, 'apps_routing_aside_has_exactly_3_compact_route_steps', { compactRouteStepCount });
-  recordCheck(checks, !asideText.includes('also in the public graph'), 'also_in_public_graph_outside_routing_aside');
-  recordCheck(checks, !asideText.includes('hidden by design'), 'hidden_by_design_outside_routing_aside');
-  recordCheck(checks, boundaryNoteCount === 2, 'exactly_2_boundary_notes_in_apps_section', { boundaryNoteCount });
+  recordCheck(checks, Boolean(routingAside), 'apps_contains_quick_guide_aside');
+  recordCheck(checks, quickGuideBadgeCount >= 4, 'apps_quick_guide_has_at_least_4_badges', { quickGuideBadgeCount });
+  recordCheck(checks, hasCurrentToolGroups, 'apps_contains_current_tool_group_headings');
+  recordCheck(checks, !appsText.includes('also in the public graph') && !appsText.includes('hidden by design'), 'retired_public_graph_boundary_copy_absent');
   recordCheck(checks, !appsText.includes('iaode workspace'), 'iaode_workspace_not_visible_homepage_app_destination');
   recordCheck(checks, !appsText.includes('mccvae'), 'mccvae_not_visible_live_hosted_app_destination');
   recordInfo(checks, 'headers', {
@@ -704,12 +704,13 @@ const dumpDom = async ({ chrome, surfaceKey, surface, reportDir }) => {
 
 const geometryForHomepage = (html) => {
   const apps = extractSectionById(html, 'apps');
-  const aside = findEnclosingTag(apps, apps.indexOf('route-step compact'), 'aside');
+  const aside = findEnclosingTag(apps, apps.indexOf('What you will find here'), 'aside');
+  const appsText = normalizeVisibleText(apps);
   return {
-    routeSteps: countElementsWithClasses(aside, ['route-step', 'compact']),
-    boundaryNotes: countClassElements(apps, 'boundary-note'),
-    asideContainsAlso: normalizeVisibleText(aside).includes('also in the public graph'),
-    asideContainsHidden: normalizeVisibleText(aside).includes('hidden by design'),
+    quickGuideBadges: countClassElements(aside, 'badge'),
+    hasStartHere: appsText.includes('start here'),
+    hasBenchmarkAndCompanionPages: appsText.includes('benchmark and companion pages'),
+    hasMoreLinkedPages: appsText.includes('more linked pages'),
   };
 };
 
