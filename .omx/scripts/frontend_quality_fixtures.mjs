@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-const EXPECTED_HOMEPAGE_ROUTE_STEPS = 3;
-const EXPECTED_HOMEPAGE_BOUNDARY_NOTES = 2;
+const EXPECTED_HOMEPAGE_GUIDE_BADGES = 4;
 const SCPORTAL_URL = 'https://peterponyu.github.io/scportal/';
 const LIORA_URL = 'https://peterponyu.github.io/liora-ui/';
 
@@ -27,17 +26,31 @@ const positiveFixtures = Object.freeze({
 </head>
 <body>
   <section id="apps" aria-label="Flagship routes">
+    <div class="tool-groups">
+      <div>
+        <div>Start here</div>
+        <a href="https://peterponyu.github.io/scportal/">SCPortal</a>
+        <a href="https://peterponyu.github.io/mrnapp-intersection/">mRNA Intersection</a>
+      </div>
+      <div>
+        <div>Benchmark and companion pages</div>
+        <a href="https://peterponyu.github.io/liora-ui/">LAIOR Benchmarks</a>
+        <a href="https://peterponyu.github.io/iAODE/">iAODE Pages</a>
+        <a href="https://peterponyu.github.io/scccvgben-next/">scCCVGBen</a>
+        <a href="https://peterponyu.github.io/gahib-site/">GAHIB</a>
+      </div>
+    </div>
     <aside class="routing-aside">
-      <div class="route-step compact">1. Start at Homepage</div>
-      <div class="route-step compact">2. Open SCPortal</div>
-      <div class="route-step compact">3. Continue to LAIOR Benchmarks</div>
+      <h2>What you will find here</h2>
+      <span class="badge">Browse</span>
+      <span class="badge">Analyze</span>
+      <span class="badge">Compare</span>
+      <span class="badge">Read</span>
     </aside>
-    <div class="public-graph-extra">
-      <h2>Also in the public graph</h2>
-      <p class="boundary-note">mRNA Intersection remains a focused public node.</p>
-      <p class="boundary-note">iAODE Pages stay bounded to public documentation.</p>
-      <h2>Hidden by design</h2>
-      <p>MCCVAE and local-first workspaces are not promoted as app destinations.</p>
+    <div class="linked-pages">
+      <h2>More linked pages</h2>
+      <a href="https://peterponyu.github.io/liora-ui/">LAIOR Benchmarks</a>
+      <a href="https://peterponyu.github.io/iAODE/">iAODE Pages</a>
     </div>
   </section>
 </body>
@@ -169,21 +182,19 @@ Public utility surface in the PeterPonyu public graph for browsing precomputed m
 
 const negativeCases = Object.freeze([
   {
-    id: 'homepage-route-steps-removed',
-    expectedFailure: 'Homepage #apps aside must contain exactly 3 compact route steps.',
+    id: 'homepage-guide-badges-removed',
+    expectedFailure: 'Homepage #apps quick guide must contain at least 4 badges.',
     mutate: (fixtures) => ({
       ...fixtures,
-      homepage: fixtures.homepage.replaceAll(/\s*<div class="route-step compact">[\s\S]*?<\/div>/g, ''),
+      homepage: fixtures.homepage.replaceAll(/\s*<span class="badge">[\s\S]*?<\/span>/g, ''),
     }),
   },
   {
-    id: 'homepage-hidden-by-design-inside-aside',
-    expectedFailure: 'Homepage Hidden by design content must be outside the #apps routing aside.',
+    id: 'homepage-linked-pages-heading-removed',
+    expectedFailure: 'Homepage #apps must contain the current tool-group headings.',
     mutate: (fixtures) => ({
       ...fixtures,
-      homepage: fixtures.homepage
-        .replace('<h2>Hidden by design</h2>\n      ', '')
-        .replace('</aside>', '<h2>Hidden by design</h2></aside>'),
+      homepage: fixtures.homepage.replace('More linked pages', 'Linked pages'),
     }),
   },
   {
@@ -380,15 +391,17 @@ export function validateHomepageFixture(html) {
   const failures = [];
   const apps = elementBlockById(html, 'apps');
   const aside = firstBlockByClass(apps, 'routing-aside');
+  const appsText = stripTags(apps).toLowerCase();
 
   collectCheck(Boolean(apps), 'Homepage must contain #apps section.', failures);
   collectCheck(Boolean(aside), 'Homepage #apps must contain a routing aside.', failures);
-  collectCheck(countClass(aside, 'route-step') === EXPECTED_HOMEPAGE_ROUTE_STEPS, 'Homepage #apps aside must contain exactly 3 compact route steps.', failures);
-  collectCheck(textIncludes(apps, 'Also in the public graph'), 'Homepage must contain Also in the public graph copy.', failures);
-  collectCheck(!textIncludes(aside, 'Also in the public graph'), 'Homepage Also in the public graph content must be outside the #apps routing aside.', failures);
-  collectCheck(textIncludes(apps, 'Hidden by design'), 'Homepage must contain Hidden by design copy.', failures);
-  collectCheck(!textIncludes(aside, 'Hidden by design'), 'Homepage Hidden by design content must be outside the #apps routing aside.', failures);
-  collectCheck(countClass(apps, 'boundary-note') === EXPECTED_HOMEPAGE_BOUNDARY_NOTES, 'Homepage must contain exactly 2 boundary notes.', failures);
+  collectCheck(countClass(aside, 'badge') >= EXPECTED_HOMEPAGE_GUIDE_BADGES, 'Homepage #apps quick guide must contain at least 4 badges.', failures);
+  collectCheck(
+    ['start here', 'benchmark and companion pages', 'more linked pages'].every((label) => appsText.includes(label)),
+    'Homepage #apps must contain the current tool-group headings.',
+    failures,
+  );
+  collectCheck(!textIncludes(apps, 'Also in the public graph') && !textIncludes(apps, 'Hidden by design'), 'Homepage must not contain retired public-graph boundary copy.', failures);
   collectCheck(!textIncludes(apps, 'iAODE Workspace'), 'Homepage must not promote iAODE Workspace as a visible app destination.', failures);
 
   return failures;
