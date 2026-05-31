@@ -7,7 +7,7 @@
   <meta name="description" content="Academic homepage of Zeyu Fu (付泽宇), with publications, software, and public tools for single-cell genomics and machine learning.">
   <meta name="author" content="Zeyu Fu">
   <meta name="robots" content="index,follow">
-  <meta name="keywords" content="Zeyu Fu, PeterPonyu, single-cell computational biology, scRNA-seq, scATAC-seq, GitHub profile, academic homepage">
+  <meta name="keywords" content="Zeyu Fu, PeterPonyu, single-cell computational biology, scRNA-seq, scATAC-seq, CCVGAE, CLOP-DiT, GitHub profile, academic homepage">
   <link rel="canonical" href="https://peterponyu.github.io/">
   <link rel="me" href="https://github.com/PeterPonyu">
   <meta property="og:title" content="Zeyu Fu — Single-Cell Computational Biology">
@@ -18,7 +18,7 @@
   <meta property="og:image" content="https://peterponyu.github.io/assets/photo.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Zeyu Fu — Single-Cell Computational Biology">
-  <meta name="twitter:description" content="Publications, software, and public single-cell analysis tools from Zeyu Fu.">
+  <meta name="twitter:description" content="Publications, software, and AI-assisted single-cell analysis tools from Zeyu Fu.">
   <meta name="twitter:image" content="https://peterponyu.github.io/assets/photo.png">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><circle cx='64' cy='64' r='62' fill='%231e3a5f'/><circle cx='64' cy='64' r='60' fill='none' stroke='%232e5f8f' stroke-width='2.5'/><path d='M18 72C42 72 52 38 64 38C76 38 88 72 110 72' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='4.5' stroke-linecap='round'/><path d='M18 38C42 38 52 72 64 72C76 72 88 38 110 38' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='4.5' stroke-linecap='round'/><circle cx='18' cy='72' r='4' fill='%236ba3e8'/><circle cx='110' cy='72' r='4' fill='%236ba3e8'/><circle cx='18' cy='38' r='4' fill='%236ba3e8'/><circle cx='110' cy='38' r='4' fill='%236ba3e8'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -183,7 +183,7 @@
               <span class="kicker">Single-cell research, publications, and software</span>
               <h1 class="mt-3 text-3xl md:text-5xl font-extrabold tracking-tight" style="color:var(--text-h)">Zeyu Fu <span class="font-light opacity-40 text-2xl md:text-4xl">付泽宇</span></h1>
               <p class="mt-2 text-base font-light" style="color:var(--text-m)">Ph.D. Candidate &middot; Single-Cell Computational Biology &middot; Machine Learning</p>
-              <p class="mt-4 text-sm leading-relaxed max-w-2xl" style="color:var(--text)">I build machine learning methods for single-cell genomics, including interpretable representation learning, neural ODEs, reinforcement learning, and graph models for cell-state dynamics and trajectory analysis.</p>
+              <p class="mt-4 text-sm leading-relaxed max-w-2xl" style="color:var(--text)">I build machine learning methods for single-cell genomics, including interpretable representation learning, graph attention, neural ODEs, reinforcement learning, and structured latent generation for cell-state dynamics and trajectory analysis.</p>
               <div class="mt-5 flex flex-wrap justify-center md:justify-start gap-2.5">
                 <a href="https://peterponyu.github.io/scportal/" target="_blank" rel="noopener noreferrer" class="hero-cta hero-cta-primary">Open SCPortal</a>
                 <a href="#pubs" class="hero-cta hero-cta-secondary">View Publications</a>
@@ -199,11 +199,11 @@
               </div>
               <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
                 <div class="stat-card">
-                  <strong><!-- HOMEPAGE_PUBLICATION_COUNT_START -->8<!-- HOMEPAGE_PUBLICATION_COUNT_END --></strong>
+                  <strong><!-- HOMEPAGE_PUBLICATION_COUNT_START -->10<!-- HOMEPAGE_PUBLICATION_COUNT_END --></strong>
                   <span>peer-reviewed papers highlighted on this homepage</span>
                 </div>
                 <div class="stat-card">
-                  <strong><!-- HOMEPAGE_SOFTWARE_COUNT_START -->8<!-- HOMEPAGE_SOFTWARE_COUNT_END --></strong>
+                  <strong><!-- HOMEPAGE_SOFTWARE_COUNT_START -->10<!-- HOMEPAGE_SOFTWARE_COUNT_END --></strong>
                   <span>published software projects with code or package distribution</span>
                 </div>
                 <div class="stat-card">
@@ -373,15 +373,15 @@
       <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
         <div>
           <h2 class="section-title text-2xl mb-2">About</h2>
-          <p class="text-sm max-w-2xl" style="color:var(--text-m)">Representation learning, dynamics, and decision-making methods for single-cell sequencing data.</p>
+          <p class="text-sm max-w-2xl" style="color:var(--text-m)">Representation learning, dynamics, graph attention, and structured latent generation for single-cell sequencing data.</p>
         </div>
         <a href="#apps" class="badge">See public tools</a>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="glass rounded-2xl p-5">
-          <p class="text-sm leading-relaxed mb-4" style="color:var(--text)">I develop machine learning methods for single-cell sequencing data (scRNA-seq and scATAC-seq), with published work spanning <strong style="color:var(--text-h)">variational autoencoders</strong>, <strong style="color:var(--text-h)">neural ODEs</strong>, <strong style="color:var(--text-h)">reinforcement learning</strong>, <strong style="color:var(--text-h)">graph neural networks</strong>, and <strong style="color:var(--text-h)">hyperbolic geometry</strong> applied to cell fate analysis and representation learning.</p>
+          <p class="text-sm leading-relaxed mb-4" style="color:var(--text)">I develop machine learning methods for single-cell sequencing data (scRNA-seq and scATAC-seq), with published work spanning <strong style="color:var(--text-h)">variational autoencoders</strong>, <strong style="color:var(--text-h)">neural ODEs</strong>, <strong style="color:var(--text-h)">reinforcement learning</strong>, <strong style="color:var(--text-h)">graph attention</strong>, <strong style="color:var(--text-h)">diffusion-style latent generation</strong>, and <strong style="color:var(--text-h)">hyperbolic geometry</strong> applied to cell fate analysis and representation learning.</p>
           <div class="flex flex-wrap gap-1.5">
-            <span class="badge">Single-Cell Genomics</span><span class="badge">Trajectory Inference</span><span class="badge">VAE</span><span class="badge">Neural ODE</span><span class="badge">Reinforcement Learning</span><span class="badge">GNN</span><span class="badge">Hyperbolic Geometry</span><span class="badge">Contrastive Learning</span><span class="badge">Clustering</span><span class="badge">Flow Matching</span>
+            <span class="badge">Single-Cell Genomics</span><span class="badge">Trajectory Inference</span><span class="badge">VAE</span><span class="badge">Graph Attention</span><span class="badge">Neural ODE</span><span class="badge">Reinforcement Learning</span><span class="badge">Hyperbolic Geometry</span><span class="badge">Contrastive Learning</span><span class="badge">Diffusion Transformers</span><span class="badge">Clustering</span><span class="badge">Flow Matching</span>
           </div>
         </div>
         <div class="glass rounded-2xl p-5">
@@ -389,11 +389,15 @@
           <div class="mt-4 space-y-4">
             <div>
               <div class="text-sm font-medium" style="color:var(--text-h)">Recent methods</div>
-              <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Published work spanning variational autoencoders, neural ODEs, reinforcement learning, graph models, and hyperbolic geometry.</p>
+              <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Published work spanning variational autoencoders, centroid-coupled graph attention, neural ODEs, reinforcement learning, diffusion transformers, and hyperbolic geometry.</p>
             </div>
             <div>
               <div class="text-sm font-medium" style="color:var(--text-h)">Released software</div>
               <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Open-source packages, benchmark sites, and companion pages linked to the published research.</p>
+            </div>
+            <div>
+              <div class="text-sm font-medium" style="color:var(--text-h)">AI-assisted build loop</div>
+              <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Multi-agent build loop across Claude Code, Codex, Grok Build, Antigravity, and OpenCode, coordinated by oh-my-* harnesses for paper code, pages, and reproducible tooling.</p>
             </div>
             <div>
               <div class="text-sm font-medium" style="color:var(--text-h)">Profiles and identifiers</div>
@@ -424,6 +428,7 @@
           <div class="mt-4 flex flex-wrap gap-1.5">
             <span class="badge">iVAE</span>
             <span class="badge">LiVAE</span>
+            <span class="badge">CCVGAE</span>
           </div>
         </article>
         <article class="focus-card">
@@ -438,9 +443,11 @@
         </article>
         <article class="focus-card">
           <span class="kicker">03</span>
-          <h3 class="mt-3 text-lg font-semibold" style="color:var(--text-h)">Decision-aware single-cell analysis</h3>
-          <p class="mt-3 text-sm leading-relaxed" style="color:var(--text-m)">Reinforcement learning and downstream evaluation utilities for branching, lineage focus, and targeted biological workflow support.</p>
+          <h3 class="mt-3 text-lg font-semibold" style="color:var(--text-h)">Contrastive, generative, and decision-aware analysis</h3>
+          <p class="mt-3 text-sm leading-relaxed" style="color:var(--text-m)">Contrastive coupling, structured latent generation, reinforcement learning, and downstream utilities for branching, lineage focus, and biological workflow support.</p>
           <div class="mt-4 flex flex-wrap gap-1.5">
+            <span class="badge">MCCVAE</span>
+            <span class="badge">CLOP-DiT</span>
             <span class="badge">scRL</span>
             <span class="badge">scFocus</span>
             <span class="badge">mRNA Intersection</span>
@@ -454,7 +461,7 @@
   <section id="pubs" class="py-10">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 fade-in">
       <h2 class="section-title text-2xl mb-1">Publications</h2>
-      <p class="text-xs mb-6" style="color:var(--text-m)"><sup>#</sup> Equal contribution &ensp; * Corresponding author &ensp; 8 peer-reviewed papers</p>
+      <p class="text-xs mb-6" style="color:var(--text-m)"><sup>#</sup> Equal contribution &ensp; * Corresponding author &ensp; 10 peer-reviewed papers</p>
       <div class="space-y-3" id="pub-list">
         <!-- PUBLICATION_LIST_START -->
 
@@ -474,10 +481,40 @@
           </div>
         </article>
 
-
         <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
             <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">2</span>
+            <div class="min-w-0">
+              <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">CCVGAE: A centroid-coupled variational graph attention autoencoder for stable and interpretable single-cell representation learning</h3>
+              <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Liu, Y.<sup>#</sup>, Wang, J., Wang, S. &middot; <em style="color:var(--accent2)">Array</em> 30, 100808 &middot; 2026</p>
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                <a href="https://doi.org/10.1016/j.array.2026.100808" target="_blank" rel="noopener noreferrer" class="badge">DOI</a>
+                <a href="https://www.sciencedirect.com/science/article/pii/S2590005626001311" target="_blank" rel="noopener noreferrer" class="badge">ScienceDirect</a>
+                <a href="https://github.com/PeterPonyu/CCVGAE" target="_blank" rel="noopener noreferrer" class="badge">Code</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="glass rounded-xl p-4 transition-all">
+          <div class="flex items-start gap-3">
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">3</span>
+            <div class="min-w-0">
+              <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">CLOP-DiT: Structured-metadata-conditioned single-cell latent generation via contrastive language-omics pretraining and Diffusion Transformers</h3>
+              <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Liu, Y.<sup>#</sup>, Wang, J., Wang, S. &middot; <em style="color:var(--accent2)">Array</em> 100934, in press &middot; 2026</p>
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                <a href="https://doi.org/10.1016/j.array.2026.100934" target="_blank" rel="noopener noreferrer" class="badge">DOI</a>
+                <a href="https://www.sciencedirect.com/science/article/pii/S2590005626002572" target="_blank" rel="noopener noreferrer" class="badge">ScienceDirect</a>
+                <a href="https://github.com/PeterPonyu/CLOP-DiT" target="_blank" rel="noopener noreferrer" class="badge">Code</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+
+        <article class="glass rounded-xl p-4 transition-all">
+          <div class="flex items-start gap-3">
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">4</span>
             <div class="min-w-0">
               <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">iVAE: An Interpretable Representation Learning Framework Enhancing Clustering Performance for Single-Cell Data</h3>
               <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#</sup>, Wang, S. et al. &middot; <em style="color:var(--accent2)">BMC Biology</em> 23, 213 &middot; 2025</p>
@@ -493,7 +530,7 @@
 
         <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">3</span>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">5</span>
             <div class="min-w-0">
               <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">iAODE for Benchmarking and Continuum Modeling of Single-Cell Chromatin Accessibility</h3>
               <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#</sup>, Wang, S. et al. &middot; <em style="color:var(--accent2)">Communications Biology</em> &middot; 2026</p>
@@ -509,7 +546,7 @@
 
         <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">4</span>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">6</span>
             <div class="min-w-0">
               <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">Correlated Latent Space Learning for Structural Differentiation Modeling in Single Cell RNA Data</h3>
               <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#</sup> &middot; <em style="color:var(--accent2)">Computers in Biology and Medicine</em> 198(A), 111115 &middot; 2025</p>
@@ -525,7 +562,7 @@
 
         <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">5</span>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">7</span>
             <div class="min-w-0">
               <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">GNODEVAE: A Graph-Based ODE-VAE Enhances Clustering for Single-Cell Data</h3>
               <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Chen, C.<sup>#</sup>, Wang, S. et al. &middot; <em style="color:var(--accent2)">BMC Genomics</em> 26, 767 &middot; 2025</p>
@@ -541,7 +578,7 @@
 
         <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">6</span>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">8</span>
             <div class="min-w-0">
               <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">scFocus: Detecting Branching Probabilities in Single-cell Data with SAC</h3>
               <p class="mt-1 text-xs" style="color:var(--text-m)">Chen, C.<sup>#</sup>, <strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Yang, J. et al. &middot; <em style="color:var(--accent2)">Computational and Structural Biotechnology Journal</em> 27, 2243–2263 &middot; 2025</p>
@@ -557,7 +594,7 @@
 
         <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">7</span>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">9</span>
             <div class="min-w-0">
               <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">Lorentz-Regularized Interpretable VAE for Multi-Scale Single-Cell Transcriptomic and Epigenomic Embeddings</h3>
               <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#,*</sup>, Fu, J.<sup>#</sup>, Chen, C.<sup>#</sup> et al. &middot; <em style="color:var(--accent2)">Frontiers in Genetics</em> 16, 1713727 &middot; 2026</p>
@@ -573,7 +610,7 @@
 
         <article class="glass rounded-xl p-4 transition-all">
           <div class="flex items-start gap-3">
-            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">8</span>
+            <span class="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold" style="background:var(--badge-bg);color:var(--badge-t)">10</span>
             <div class="min-w-0">
               <h3 class="text-sm font-semibold leading-snug" style="color:var(--text-h)">scRL: Utilizing Reinforcement Learning to Evaluate Fate Decisions in Single-Cell Data</h3>
               <p class="mt-1 text-xs" style="color:var(--text-m)"><strong style="color:var(--accent)">Fu, Z.</strong><sup>#</sup>, Chen, C.<sup>#</sup>, Wang, S. et al. &middot; <em style="color:var(--accent2)">Biology</em> 14(6), 679 &middot; 2025</p>
@@ -596,7 +633,7 @@
   <section id="soft" class="py-10">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 fade-in">
       <h2 class="section-title text-2xl mb-1">Open-Source Software</h2>
-      <p class="text-xs mb-6" style="color:var(--text-m)">8 published tools (7 on PyPI)</p>
+      <p class="text-xs mb-6" style="color:var(--text-m)">10 published tools and code releases (7 on PyPI)</p>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <!-- SOFTWARE_CARD_LIST_START -->
 
@@ -608,6 +645,21 @@
           <p class="text-xs leading-relaxed" style="color:var(--text-m)">Momentum contrastive coupling for discrete and continuous structure in single-cell omics.</p>
         </a>
 
+        <a href="https://github.com/PeterPonyu/CCVGAE" target="_blank" rel="noopener noreferrer" class="glass rounded-xl p-4 block transition-all group">
+          <div class="flex items-center gap-2.5 mb-2">
+            <svg class="w-8 h-8 flex-shrink-0" viewBox="0 0 128 128"><circle cx="64" cy="64" r="62" fill="#1e3a5f"/><circle cx="64" cy="64" r="60" fill="none" stroke="#2e5f8f" stroke-width="2.5"/><path d="M18 46C38 46 50 22 64 22C78 22 92 46 110 46" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="3.5" stroke-linecap="round"/><path d="M18 22C38 22 50 46 64 46C78 46 92 22 110 22" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="3.5" stroke-linecap="round"/><circle cx="18" cy="46" r="3" fill="#6ba3e8"/><circle cx="110" cy="46" r="3" fill="#6ba3e8"/><circle cx="18" cy="22" r="3" fill="#6ba3e8"/><circle cx="110" cy="22" r="3" fill="#6ba3e8"/><text x="64" y="82" font-family="JetBrains Mono,monospace" font-size="44" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="central">CC</text></svg>
+            <div><h3 class="text-sm font-semibold" style="color:var(--text-h)">CCVGAE</h3><p class="text-[10px] font-mono" style="color:var(--text-m)">Array &middot; 2026</p></div>
+          </div>
+          <p class="text-xs leading-relaxed" style="color:var(--text-m)">Centroid-coupled graph attention VAE for stable, interpretable single-cell embeddings.</p>
+        </a>
+
+        <a href="https://github.com/PeterPonyu/CLOP-DiT" target="_blank" rel="noopener noreferrer" class="glass rounded-xl p-4 block transition-all group">
+          <div class="flex items-center gap-2.5 mb-2">
+            <svg class="w-8 h-8 flex-shrink-0" viewBox="0 0 128 128"><circle cx="64" cy="64" r="62" fill="#1e3a5f"/><circle cx="64" cy="64" r="60" fill="none" stroke="#2e5f8f" stroke-width="2.5"/><path d="M18 46C38 46 50 22 64 22C78 22 92 46 110 46" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="3.5" stroke-linecap="round"/><path d="M18 22C38 22 50 46 64 46C78 46 92 22 110 22" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="3.5" stroke-linecap="round"/><circle cx="18" cy="46" r="3" fill="#6ba3e8"/><circle cx="110" cy="46" r="3" fill="#6ba3e8"/><circle cx="18" cy="22" r="3" fill="#6ba3e8"/><circle cx="110" cy="22" r="3" fill="#6ba3e8"/><text x="64" y="82" font-family="JetBrains Mono,monospace" font-size="44" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="central">CD</text></svg>
+            <div><h3 class="text-sm font-semibold" style="color:var(--text-h)">CLOP-DiT</h3><p class="text-[10px] font-mono" style="color:var(--text-m)">Array &middot; 2026</p></div>
+          </div>
+          <p class="text-xs leading-relaxed" style="color:var(--text-m)">Structured metadata-conditioned latent generation via language-omics pretraining and DiT.</p>
+        </a>
 
         <a href="https://github.com/PeterPonyu/iAODE" target="_blank" rel="noopener noreferrer" class="glass rounded-xl p-4 block transition-all group">
           <div class="flex items-center gap-2.5 mb-2">
@@ -780,11 +832,11 @@
   <section id="ai-usage" class="py-10">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 fade-in">
       <h2 class="section-title text-2xl mb-4">AI Usage & Stats</h2>
-      <p class="text-xs mb-6" style="color:var(--text-m)">Live AI interaction statistics and cost estimates for my coding activity.</p>
+      <p class="text-xs mb-6" style="color:var(--text-m)">Live AI interaction statistics and cost estimates for the multi-agent coding loop behind these paper releases and pages.</p>
       <div class="glass rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex-1">
           <h3 class="text-base font-semibold" style="color:var(--text-h)">Tokscale AI Profile</h3>
-          <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Track my AI-assisted development metrics, showing models used and total estimated tokens across platforms.</p>
+          <p class="mt-1 text-xs leading-relaxed" style="color:var(--text-m)">Track AI-assisted development metrics across Claude Code, Codex, Grok Build, Antigravity, and OpenCode, with oh-my-* harnesses coordinating the build loop.</p>
           <a href="https://tokscale.ai/u/PeterPonyu" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center hero-cta hero-cta-secondary" style="min-height:32px; padding: 6px 12px;">View Full Stats &rarr;</a>
         </div>
         <div class="flex-shrink-0 w-full sm:w-auto">
