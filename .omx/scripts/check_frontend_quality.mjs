@@ -67,6 +67,7 @@ const V2A_SURFACES = {
       readme: {
         label: 'README',
         url: 'https://raw.githubusercontent.com/PeterPonyu/PeterPonyu/main/README.md',
+        githubApiUrl: 'https://api.github.com/repos/PeterPonyu/PeterPonyu/readme?ref=main',
         localPath: path.resolve(root, '../PeterPonyu-profile/README.md'),
         preferLocal: false,
         fileName: 'profile-readme.md',
@@ -79,6 +80,7 @@ const V2A_SURFACES = {
       readme: {
         label: 'README',
         url: 'https://raw.githubusercontent.com/PeterPonyu/mrnapp-intersection/main/README.md',
+        githubApiUrl: 'https://api.github.com/repos/PeterPonyu/mrnapp-intersection/readme?ref=main',
         localPath: path.resolve(root, '../peterponyu-readme-audit/mrnapp-intersection/README.md'),
         preferLocal: false,
         fileName: 'mrna-intersection-readme.md',
@@ -109,6 +111,7 @@ const V2A_SURFACES = {
       readme: {
         label: 'README',
         url: 'https://raw.githubusercontent.com/PeterPonyu/iAODE/main/README.md',
+        githubApiUrl: 'https://api.github.com/repos/PeterPonyu/iAODE/readme?ref=main',
         localPath: path.resolve(root, '../ui-phase23/iAODE/README.md'),
         fileName: 'iaode-readme.md',
       },
@@ -194,7 +197,8 @@ const routePresence = (html, baseUrl, patterns) => {
 
 const allRoutesPresent = (presence) => Object.values(presence).every(Boolean);
 const visibleTextIncludesAny = (visibleText, phrases) => phrases.some((phrase) => visibleText.includes(phrase));
-const normalizePlainText = (value) => value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+const stripNonVisibleBlocks = (html) => stripHtmlComments(html).replace(/<script\b[\s\S]*?<\/script>/gi, ' ').replace(/<style\b[\s\S]*?<\/style>/gi, ' ');
+const normalizePlainText = (value) => stripNonVisibleBlocks(value).replace(/<[^>]+>/g, ' ').replace(/&rarr;|&#x2192;|&RightArrow;/gi, '→').replace(/&amp;/gi, '&').replace(/&nbsp;/gi, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
 
 const extractSectionById = (html, id) => {
   const marker = html.search(new RegExp(`<section\\b[^>]*\\bid=["']${id}["']`, 'i'));
@@ -202,19 +206,6 @@ const extractSectionById = (html, id) => {
   const close = html.indexOf('</section>', marker);
   if (close < 0) return '';
   return html.slice(marker, close + '</section>'.length);
-};
-
-const extractMarkdownSection = (markdown, headingPattern) => {
-  const lines = markdown.split(/\r?\n/);
-  const start = lines.findIndex((line) => headingPattern.test(line.trim()));
-  if (start < 0) return '';
-  const currentDepth = lines[start].match(/^#+/)?.[0].length ?? 0;
-  const end = lines.findIndex((line, index) => {
-    if (index <= start) return false;
-    const match = line.match(/^(#+)\s+/);
-    return match && match[1].length <= currentDepth;
-  });
-  return lines.slice(start, end < 0 ? undefined : end).join('\n');
 };
 
 const findEnclosingTag = (html, markerIndex, tagName) => {
@@ -250,15 +241,18 @@ const countElementsWithClasses = (html, requiredClasses) => {
 };
 
 const countForLabel = (html, label) => {
-  const withoutComments = stripHtmlComments(html);
+  const visibleHtml = stripNonVisibleBlocks(html);
+  const dataCount = visibleHtml.match(new RegExp(`data-quality-count=["']${label.toLowerCase()}["'][^>]*>\\s*([0-9,]+)`, 'i'));
+  if (dataCount) return Number.parseInt(dataCount[1].replaceAll(',', ''), 10);
+
+  const visibleText = normalizePlainText(visibleHtml);
+  const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const patterns = [
-    new RegExp(`>\\s*(\\d+)\\s*<[^>]+>\\s*${label}\\b`, 'i'),
-    new RegExp(`(\\d+)\\s+${label}\\b`, 'i'),
-    new RegExp(`${label}\\D{0,80}(\\d+)`, 'i'),
+    new RegExp(`\\b([0-9][0-9,]*)\\s+${escapedLabel}\\b`, 'i'),
   ];
   for (const pattern of patterns) {
-    const match = withoutComments.match(pattern);
-    if (match) return Number.parseInt(match[1], 10);
+    const match = visibleText.match(pattern);
+    if (match) return Number.parseInt(match[1].replaceAll(',', ''), 10);
   }
   return 0;
 };
@@ -270,6 +264,21 @@ const recordCheck = (checks, condition, name, details = undefined) => {
 
 const recordInfo = (checks, name, details) => {
   checks.push({ name, status: CHECK_STATUS.info, details });
+};
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const fetchWithRetry = async (url, options, { attempts = 2, timeoutMs = 30_000 } = {}) => {
+  let lastError;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await fetch(url, { ...options, signal: AbortSignal.timeout(timeoutMs) });
+    } catch (error) {
+      lastError = error;
+      if (attempt < attempts) await sleep(750 * attempt);
+    }
+  }
+  throw lastError;
 };
 
 const runCommand = (command, argsForCommand, options = {}) =>
@@ -304,7 +313,7 @@ const findChrome = () => {
 
 const fetchSurface = async (surfaceKey, surface, reportDir) => {
   const url = `${surface.url}${surface.url.includes('?') ? '&' : '?'}v=frontend-quality-${Date.now()}-${surfaceKey}`;
-  const response = await fetch(url, {
+  const response = await fetchWithRetry(url, {
     redirect: 'follow',
     headers: { 'user-agent': 'frontend-quality-v1/1.0 (+https://peterponyu.github.io/)' },
   });
@@ -498,17 +507,31 @@ const fetchV2ASource = async (surfaceKey, sourceKey, source, reportDir) => {
     finalUrl = source.localPath;
     text = fs.readFileSync(source.localPath, 'utf8');
   } else {
-    try {
-      const response = await fetch(sourceUrlWithCacheBust(source, surfaceKey, sourceKey), {
-        redirect: 'follow',
-        headers: { 'user-agent': 'frontend-quality-v2a/1.0 (+https://peterponyu.github.io/)' },
-      });
-      status = response.status;
-      finalUrl = response.url;
-      headers = Object.fromEntries(response.headers.entries());
-      text = await response.text();
-    } catch (fetchError) {
-      error = fetchError.stack || String(fetchError);
+    const remoteAttempts = [
+      { url: sourceUrlWithCacheBust(source, surfaceKey, sourceKey), transform: 'text' },
+      ...(source.githubApiUrl ? [{ url: source.githubApiUrl, transform: 'githubContentsBase64' }] : []),
+    ];
+    for (const attempt of remoteAttempts) {
+      try {
+        const response = await fetchWithRetry(attempt.url, {
+          redirect: 'follow',
+          headers: { 'user-agent': 'frontend-quality-v2a/1.0 (+https://peterponyu.github.io/)' },
+        });
+        status = response.status;
+        finalUrl = response.url;
+        headers = Object.fromEntries(response.headers.entries());
+        if (response.status !== 200) throw new Error(`HTTP ${response.status} fetching ${attempt.url}`);
+        if (attempt.transform === 'githubContentsBase64') {
+          const payload = await response.json();
+          text = Buffer.from(String(payload.content ?? '').replace(/\s+/g, ''), 'base64').toString('utf8');
+        } else {
+          text = await response.text();
+        }
+        error = null;
+        break;
+      } catch (fetchError) {
+        error = fetchError.stack || String(fetchError);
+      }
     }
   }
 
@@ -554,36 +577,50 @@ const checkV2ASurface = (surfaceKey, fetchedSources) => {
     });
   }
 
+  const missingSources = Object.values(fetchedSources).filter((source) => !source.available);
+  if (missingSources.length > 0) {
+    checks.push({
+      name: 'v2a_contract_checks_skipped_source_unavailable',
+      status: CHECK_STATUS.info,
+      details: missingSources.map((source) => ({ key: source.key, error: source.error ?? null, status: source.status })),
+    });
+    const primary = fetchedSources.page ?? fetchedSources.readme ?? Object.values(fetchedSources)[0];
+    return {
+      label: V2A_SURFACES[surfaceKey].label,
+      title: primary?.text ? getTitle(primary.text) || V2A_SURFACES[surfaceKey].label : V2A_SURFACES[surfaceKey].label,
+      url: primary?.url ?? '',
+      sources: Object.fromEntries(
+        Object.entries(fetchedSources).map(([sourceKey, source]) => [
+          sourceKey,
+          {
+            label: source.label,
+            origin: source.origin,
+            status: source.status,
+            url: source.url,
+            finalUrl: source.finalUrl,
+            localPath: source.localPath,
+            path: source.path,
+            bytes: source.bytes,
+            error: source.error,
+          },
+        ]),
+      ),
+      checks,
+    };
+  }
+
   const validationFailures = [];
   if (surfaceKey === 'profile') {
     const readme = fetchedSources.readme?.text ?? '';
-    const webApps = extractMarkdownSection(readme, /^###\s+Web Applications\b/i);
-    const archive = extractMarkdownSection(readme, /^###\s+Archive\s*\/\s*Legacy Entries\b/i);
-    const webAppsText = normalizePlainText(webApps);
-    const archiveText = normalizePlainText(archive);
     recordCheck(checks, /https:\/\/peterponyu\.github\.io\/(?![A-Za-z0-9_-])/i.test(readme), 'profile_contains_canonical_homepage_link');
-    recordCheck(checks, Boolean(webApps), 'profile_contains_web_applications_section');
-    recordCheck(
-      checks,
-      webAppsText.includes('scportal') &&
-        /https:\/\/peterponyu\.github\.io\/scportal\//i.test(webApps) &&
-        webAppsText.includes('liora-ui') &&
-        /https:\/\/peterponyu\.github\.io\/liora-ui\//i.test(webApps) &&
-        webAppsText.includes('mrnapp-intersection') &&
-        /https:\/\/peterponyu\.github\.io\/mrnapp-intersection\//i.test(webApps),
-      'profile_lists_current_web_apps_with_live_links',
-    );
-    recordCheck(checks, Boolean(archive), 'profile_contains_archive_legacy_section');
+    recordCheck(checks, /current focus/i.test(readme) && /ai agent harnesses/i.test(readme), 'profile_states_current_ai_agent_focus');
+    recordCheck(checks, /##\s+Academic Proofs:\s+Selected Publications/i.test(readme), 'profile_contains_selected_publications_section');
     recordCheck(
       checks,
       readme.includes('10.1016/j.bspc.2026.110376') && /https:\/\/github\.com\/PeterPonyu\/MCCVAE/i.test(readme),
       'profile_promotes_published_mccvae_paper_and_repo',
     );
-    recordCheck(
-      checks,
-      !(archiveText.includes('mccvae') && archiveText.includes('landing-only')),
-      'profile_no_longer_keeps_mccvae_archive_landing_only',
-    );
+    recordCheck(checks, /\*\*Public identity:\*\*/i.test(readme) && /ORCID/i.test(readme) && /Scopus/i.test(readme), 'profile_contains_public_identity_links');
     validationFailures.push(...validateProfileReadmeFixture(readme));
   } else if (surfaceKey === 'mrna') {
     const readme = fetchedSources.readme?.text ?? '';

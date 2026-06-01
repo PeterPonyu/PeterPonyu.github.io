@@ -137,30 +137,18 @@ const positiveFixtures = Object.freeze({
 
 **Official homepage:** [peterponyu.github.io](https://peterponyu.github.io/)
 
-## Featured Repositories
+**Current focus:** AI agent harnesses, AI-accelerated research, AI scientist infrastructure, and production-minded mass-vibing systems.
 
-### Web Applications
-
-| Repository | Description | Demo |
-|:-----------|:------------|:-----|
-| [**scportal**](https://github.com/PeterPonyu/scportal) | Single-cell analysis portal and discovery hub | [Live](https://peterponyu.github.io/scportal/) |
-| [**liora-ui**](https://github.com/PeterPonyu/liora-ui) | LAIOR single-cell benchmarking dashboard | [Live](https://peterponyu.github.io/liora-ui/) |
-| [**mrnapp-intersection**](https://github.com/PeterPonyu/mrnapp-intersection) | mRNA intersection visualization | [Live](https://peterponyu.github.io/mrnapp-intersection/) |
-
-## Selected Publications
+## Academic Proofs: Selected Publications
 
 **Fu, Z.**, Chen, C., Zhang, K. (2026).
 Islands and bridges: Momentum contrastive coupling unifies discrete and continuous structure in single-cell omics.
 ***Biomedical Signal Processing and Control***, 122, 110376.
 [DOI](https://doi.org/10.1016/j.bspc.2026.110376) [Code](https://github.com/PeterPonyu/MCCVAE)
 
-### Archive / Legacy Entries
+## GitHub Stats & AI Usage
 
-Older or exploratory project entries are kept discoverable here without competing with the current public pages above.
-
-| Repository | Status | Description |
-|:-----------|:-------|:------------|
-| [**LAIOR**](https://github.com/PeterPonyu/Liora) | Accepted / legacy code entry | Hyperbolic Neural-ODE VAE |
+**Public identity:** [Homepage](https://peterponyu.github.io/) &middot; [ORCID](https://orcid.org/0009-0001-8329-0108) &middot; [Scopus](https://www.scopus.com/authid/detail.uri?authorId=59315299200)
 `,
   mrnaReadme: `<div align="center">
   <a href="https://peterponyu.github.io/">
@@ -233,6 +221,14 @@ const negativeCases = Object.freeze([
     }),
   },
   {
+    id: 'liora-visible-counts-removed-but-hydration-kept',
+    expectedFailure: 'Liora models count must be present.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      liora: fixtures.liora.replace(/<dl class="benchmark-counts">[\s\S]*?<\/dl>/, '<script>self.__next_f = ["23 Models 66 Datasets 24 Metrics"];</script>'),
+    }),
+  },
+  {
     id: 'homepage-visible-iaode-workspace-promoted',
     expectedFailure: 'Homepage must not promote iAODE Workspace as a visible app destination.',
     mutate: (fixtures) => ({
@@ -294,6 +290,30 @@ const negativeCases = Object.freeze([
     }),
   },
   {
+    id: 'profile-current-focus-removed',
+    expectedFailure: 'Profile README must state the current AI-agent focus.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      profileReadme: fixtures.profileReadme.replace('**Current focus:** AI agent harnesses, AI-accelerated research, AI scientist infrastructure, and production-minded mass-vibing systems.', ''),
+    }),
+  },
+  {
+    id: 'profile-selected-publications-heading-removed',
+    expectedFailure: 'Profile README must keep the selected publications section.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      profileReadme: fixtures.profileReadme.replace('## Academic Proofs: Selected Publications', '## Publications'),
+    }),
+  },
+  {
+    id: 'profile-public-identity-removed',
+    expectedFailure: 'Profile README must keep public identity links.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      profileReadme: fixtures.profileReadme.replace('**Public identity:** [Homepage](https://peterponyu.github.io/) &middot; [ORCID](https://orcid.org/0009-0001-8329-0108) &middot; [Scopus](https://www.scopus.com/authid/detail.uri?authorId=59315299200)', ''),
+    }),
+  },
+  {
     id: 'mrna-root-neighbor-link-removed',
     expectedFailure: 'mRNA README must link to SCPortal as a canonical root neighbor.',
     mutate: (fixtures) => ({
@@ -305,8 +325,12 @@ const negativeCases = Object.freeze([
   },
 ]);
 
+function stripNonVisibleBlocks(value) {
+  return value.replace(/<!--[\s\S]*?-->/g, ' ').replace(/<script\b[\s\S]*?<\/script>/gi, ' ').replace(/<style\b[\s\S]*?<\/style>/gi, ' ');
+}
+
 function stripTags(value) {
-  return value.replaceAll(/<[^>]+>/g, ' ').replaceAll(/\s+/g, ' ').trim();
+  return stripNonVisibleBlocks(value).replaceAll(/<[^>]+>/g, ' ').replaceAll(/\s+/g, ' ').trim();
 }
 
 function elementBlockById(html, id) {
@@ -364,22 +388,9 @@ function textIncludes(html, text) {
   return stripTags(html).toLowerCase().includes(text.toLowerCase());
 }
 
-function markdownSection(markdown, headingPattern) {
-  const lines = markdown.split(/\r?\n/);
-  const start = lines.findIndex((line) => headingPattern.test(line.trim()));
-  if (start < 0) return '';
-  const currentDepth = lines[start].match(/^#+/)?.[0].length ?? 0;
-  const end = lines.findIndex((line, index) => {
-    if (index <= start) return false;
-    const match = line.match(/^(#+)\s+/);
-    return match && match[1].length <= currentDepth;
-  });
-  return lines.slice(start, end < 0 ? undefined : end).join('\n');
-}
-
 function readCount(html, key) {
   const escaped = key.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const match = html.match(new RegExp(`data-quality-count=["']${escaped}["'][^>]*>\\s*([0-9,]+)`, 'i'));
+  const match = stripNonVisibleBlocks(html).match(new RegExp(`data-quality-count=["']${escaped}["'][^>]*>\\s*([0-9,]+)`, 'i'));
   return match ? Number.parseInt(match[1].replaceAll(',', ''), 10) : Number.NaN;
 }
 
@@ -485,25 +496,16 @@ export function validateIaodeReadmeFixture(markdown) {
 
 export function validateProfileReadmeFixture(markdown) {
   const failures = [];
-  const webApps = markdownSection(markdown, /^###\s+Web Applications\b/i);
-  const archive = markdownSection(markdown, /^###\s+Archive\s*\/\s*Legacy Entries\b/i);
 
   collectCheck(/https:\/\/peterponyu\.github\.io\/(?![A-Za-z0-9_-])/i.test(markdown), 'Profile README must link to the canonical homepage.', failures);
-  collectCheck(Boolean(webApps), 'Profile README must keep the Web Applications section.', failures);
-  collectCheck(textIncludes(webApps, 'scportal') && /https:\/\/peterponyu\.github\.io\/scportal\//i.test(webApps), 'Profile README must list current scportal web app with live link.', failures);
-  collectCheck(textIncludes(webApps, 'liora-ui') && /https:\/\/peterponyu\.github\.io\/liora-ui\//i.test(webApps), 'Profile README must list current liora-ui web app with live link.', failures);
-  collectCheck(textIncludes(webApps, 'mrnapp-intersection') && /https:\/\/peterponyu\.github\.io\/mrnapp-intersection\//i.test(webApps), 'Profile README must list current mrnapp-intersection web app with live link.', failures);
-  collectCheck(Boolean(archive), 'Profile README must keep the Archive / Legacy section.', failures);
+  collectCheck(/current focus/i.test(markdown) && /ai agent harnesses/i.test(markdown), 'Profile README must state the current AI-agent focus.', failures);
+  collectCheck(/##\s+Academic Proofs:\s+Selected Publications/i.test(markdown), 'Profile README must keep the selected publications section.', failures);
   collectCheck(
     /10\.1016\/j\.bspc\.2026\.110376/i.test(markdown) && /https:\/\/github\.com\/PeterPonyu\/MCCVAE/i.test(markdown),
     'Profile README must promote the published MCCVAE paper and repository.',
     failures,
   );
-  collectCheck(
-    !(textIncludes(archive, 'MCCVAE') && textIncludes(archive, 'landing-only')),
-    'Profile README must not keep MCCVAE as a landing-only archive entry after publication.',
-    failures,
-  );
+  collectCheck(/\*\*Public identity:\*\*/i.test(markdown) && /ORCID/i.test(markdown) && /Scopus/i.test(markdown), 'Profile README must keep public identity links.', failures);
   return failures;
 }
 
