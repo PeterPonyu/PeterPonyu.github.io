@@ -1,7 +1,12 @@
-.omx/*
-!.omx/README.md
-!.omx/scripts/
-.omx/scripts/*
-!.omx/scripts/check_frontend_public_graph.mjs
-!.omx/scripts/check_frontend_quality.mjs
-!.omx/scripts/frontend_quality_fixtures.mjs
+# AI / agent tooling — never serve on Pages
+.cursor/
+.cloud/
+.omc/
+.omx/
+.claude/
+.codex/
+*.live.txt
+.env
+.env.*
+!.env.example
+node_modules/

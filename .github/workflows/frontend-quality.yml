@@ -3,13 +3,13 @@ name: Frontend Quality
 on:
   pull_request:
     paths:
-      - ".omx/**"
+      - ".github/scripts/**"
       - ".github/workflows/frontend-quality.yml"
   push:
     branches:
       - main
     paths:
-      - ".omx/**"
+      - ".github/scripts/**"
       - ".github/workflows/frontend-quality.yml"
   workflow_dispatch:
   schedule:
@@ -42,9 +42,9 @@ jobs:
 
       - name: Run repo-local audits
         run: |
-          node .omx/scripts/check_frontend_public_graph.mjs
-          node .omx/scripts/frontend_quality_fixtures.mjs
-          node .omx/scripts/check_frontend_quality.mjs --fixture-self-test
+          node .github/scripts/check_frontend_public_graph.mjs
+          node .github/scripts/frontend_quality_fixtures.mjs
+          node .github/scripts/check_frontend_quality.mjs --fixture-self-test
 
   live-quality-gate:
     name: Live Quality Gate
@@ -75,7 +75,7 @@ jobs:
         run: google-chrome --version
 
       - name: Run full quality gate
-        run: node .omx/scripts/check_frontend_quality.mjs
+        run: node .github/scripts/check_frontend_quality.mjs
 
       - name: Locate latest report
         id: report

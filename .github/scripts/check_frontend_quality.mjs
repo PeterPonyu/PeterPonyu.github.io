@@ -17,7 +17,7 @@ import {
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(scriptDir, '../..');
 const reportsRoot = path.join(root, '.omx/reports');
-const publicGraphScript = path.join(root, '.omx/scripts/check_frontend_public_graph.mjs');
+const publicGraphScript = path.join(root, '.github/scripts/check_frontend_public_graph.mjs');
 
 const SURFACES = {
   homepage: {
