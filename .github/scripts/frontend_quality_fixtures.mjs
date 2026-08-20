@@ -138,7 +138,7 @@ const positiveFixtures = Object.freeze({
 
 **Official homepage:** [peterponyu.github.io](https://peterponyu.github.io/)
 
-**Current focus:** AI agent harnesses, AI-accelerated research, AI scientist infrastructure, and production-minded mass-vibing systems.
+**Focus:** AI for Science · Science for AI
 
 ## Academic Proofs: Selected Publications
 
@@ -292,10 +292,10 @@ const negativeCases = Object.freeze([
   },
   {
     id: 'profile-current-focus-removed',
-    expectedFailure: 'Profile README must state the current AI-agent focus.',
+    expectedFailure: 'Profile README must state the two-axis identity.',
     mutate: (fixtures) => ({
       ...fixtures,
-      profileReadme: fixtures.profileReadme.replace('**Current focus:** AI agent harnesses, AI-accelerated research, AI scientist infrastructure, and production-minded mass-vibing systems.', ''),
+      profileReadme: fixtures.profileReadme.replace('**Focus:** AI for Science · Science for AI', ''),
     }),
   },
   {
@@ -499,7 +499,7 @@ export function validateProfileReadmeFixture(markdown) {
   const failures = [];
 
   collectCheck(/https:\/\/peterponyu\.github\.io\/(?![A-Za-z0-9_-])/i.test(markdown), 'Profile README must link to the canonical homepage.', failures);
-  collectCheck(/current focus/i.test(markdown) && /ai agent harnesses/i.test(markdown), 'Profile README must state the current AI-agent focus.', failures);
+  collectCheck(/AI for Science/i.test(markdown) && /Science for AI/i.test(markdown), 'Profile README must state the two-axis identity.', failures);
   collectCheck(/##\s+Academic Proofs:\s+Selected Publications/i.test(markdown), 'Profile README must keep the selected publications section.', failures);
   collectCheck(
     /10\.1016\/j\.bspc\.2026\.110376/i.test(markdown) && /https:\/\/github\.com\/PeterPonyu\/MCCVAE/i.test(markdown),

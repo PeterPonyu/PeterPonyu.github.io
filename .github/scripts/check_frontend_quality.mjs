@@ -613,7 +613,7 @@ const checkV2ASurface = (surfaceKey, fetchedSources) => {
   if (surfaceKey === 'profile') {
     const readme = fetchedSources.readme?.text ?? '';
     recordCheck(checks, /https:\/\/peterponyu\.github\.io\/(?![A-Za-z0-9_-])/i.test(readme), 'profile_contains_canonical_homepage_link');
-    recordCheck(checks, /current focus/i.test(readme) && /ai agent harnesses/i.test(readme), 'profile_states_current_ai_agent_focus');
+    recordCheck(checks, /AI for Science/i.test(readme) && /Science for AI/i.test(readme), 'profile_states_two_axis_identity');
     recordCheck(checks, /##\s+Academic Proofs:\s+Selected Publications/i.test(readme), 'profile_contains_selected_publications_section');
     recordCheck(
       checks,
