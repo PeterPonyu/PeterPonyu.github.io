@@ -61,8 +61,8 @@
       "presentation": {
         "homepage": {
           "kind": "Hub",
-          "badge": "Primary Entry",
-          "summary": "Canonical public discovery hub for datasets, benchmarks, models, and related tools.",
+          "badge": "Portal",
+          "summary": "Overview of datasets, benchmarks, models, and related tools.",
           "cta_label": "Open SCPortal"
         }
       },
@@ -155,7 +155,7 @@
         "homepage": {
           "kind": "Utility",
           "summary": "Interactive mRNA intersection analysis and visualization tool.",
-          "cta_label": "Launch"
+          "cta_label": "Open"
         }
       },
       "related_sites": [
