@@ -335,7 +335,7 @@ const checkHomepage = ({ html, status, headers }) => {
   const title = getTitle(html);
   const canonical = getLinkHref(html, 'canonical');
   const appsSection = extractSectionById(html, 'apps');
-  const routingAside = findEnclosingTag(appsSection, appsSection.indexOf('What you will find here'), 'aside');
+  const routingAside = findEnclosingTag(appsSection, appsSection.indexOf('Quick guide'), 'aside');
   const quickGuideBadgeCount = countClassElements(routingAside, 'badge');
   const appsText = normalizeVisibleText(appsSection);
   const asideText = normalizeVisibleText(routingAside);
@@ -741,7 +741,7 @@ const dumpDom = async ({ chrome, surfaceKey, surface, reportDir }) => {
 
 const geometryForHomepage = (html) => {
   const apps = extractSectionById(html, 'apps');
-  const aside = findEnclosingTag(apps, apps.indexOf('What you will find here'), 'aside');
+  const aside = findEnclosingTag(apps, apps.indexOf('Quick guide'), 'aside');
   const appsText = normalizeVisibleText(apps);
   return {
     quickGuideBadges: countClassElements(aside, 'badge'),

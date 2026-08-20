@@ -41,7 +41,8 @@ const positiveFixtures = Object.freeze({
       </div>
     </div>
     <aside class="routing-aside">
-      <h2>What you will find here</h2>
+      <span class="kicker">Quick guide</span>
+      <h2>Linked pages</h2>
       <span class="badge">Browse</span>
       <span class="badge">Analyze</span>
       <span class="badge">Compare</span>
