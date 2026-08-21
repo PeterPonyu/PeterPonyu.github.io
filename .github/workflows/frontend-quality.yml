@@ -12,8 +12,6 @@ on:
       - ".github/scripts/**"
       - ".github/workflows/frontend-quality.yml"
   workflow_dispatch:
-  schedule:
-    - cron: "15 2 * * *"
   workflow_run:
     workflows:
       - "pages-build-deployment"
@@ -48,11 +46,10 @@ jobs:
 
   live-quality-gate:
     name: Live Quality Gate
-    # Run browser/live checks only after Pages deploys, on schedule, or by manual dispatch.
+    # Run browser/live checks only after Pages deploys or by manual dispatch.
     # Push/PR events keep the repo-local self checks above, avoiding false failures while
     # GitHub Pages is still serving the previous deployment.
     if: >
-      github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
