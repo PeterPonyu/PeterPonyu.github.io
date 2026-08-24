@@ -69,10 +69,12 @@ const loadSurfaceInventory = () => {
   };
   const scccvgben = hostedSites.find((site) => site.id === 'scccvgben');
   if (scccvgben) {
+    const hugoUrl = 'https://peterponyu.github.io/scCCVGBen/';
     surfaces.scccvgbenHugo = {
       ...createSurface(scccvgben, 'scccvgbenHugo'),
       label: 'scCCVGBen Hugo',
-      url: 'https://peterponyu.github.io/scCCVGBen/',
+      url: hugoUrl,
+      documentRoot: hugoUrl,
       routeSurface: true,
     };
   }
@@ -387,6 +389,8 @@ const documentUrlFixtureCases = () => {
   const autoselectUrl = 'https://peterponyu.github.io/scportal/autoselect/';
   const scportalRootUrl = 'https://peterponyu.github.io/scportal/';
   const autoselectRobotsUrl = documentUrlForSurface(autoselectUrl, 'robots.txt', scportalRootUrl);
+  const scccvgbenHugo = SURFACES.scccvgbenHugo;
+  const hugoRobotsUrl = documentUrlForSurface(scccvgbenHugo.url, 'robots.txt', scccvgbenHugo.documentRoot);
   return [
     ['hosted-document-root-path', documentUrlForSurface('https://peterponyu.github.io/', 'robots.txt'), 'https://peterponyu.github.io/robots.txt'],
     ['hosted-document-project-path', documentUrlForSurface('https://peterponyu.github.io/gahib-site/', 'robots.txt'), 'https://peterponyu.github.io/gahib-site/robots.txt'],
@@ -394,6 +398,9 @@ const documentUrlFixtureCases = () => {
     ['autoselect-document-project-root', autoselectRobotsUrl, 'https://peterponyu.github.io/scportal/robots.txt'],
     ['autoselect-document-not-route-relative', autoselectRobotsUrl !== 'https://peterponyu.github.io/scportal/autoselect/robots.txt', true],
     ['autoselect-sitemap-project-root', documentUrlForSurface(autoselectUrl, 'sitemap.xml', scportalRootUrl), 'https://peterponyu.github.io/scportal/sitemap.xml'],
+    ['scccvgben-hugo-document-project-root', hugoRobotsUrl, 'https://peterponyu.github.io/scCCVGBen/robots.txt'],
+    ['scccvgben-hugo-document-not-next-surface', hugoRobotsUrl !== 'https://peterponyu.github.io/scccvgben-next/robots.txt', true],
+    ['scccvgben-hugo-sitemap-project-root', documentUrlForSurface(scccvgbenHugo.url, 'sitemap.xml', scccvgbenHugo.documentRoot), 'https://peterponyu.github.io/scCCVGBen/sitemap.xml'],
   ].map(([id, actual, expected]) => ({ id, ok: actual === expected }));
 };
 
