@@ -39,6 +39,7 @@ const createSurface = (site, key = surfaceKeyByManifestId[site.id] ?? site.id) =
   manifestId: site.id,
   label: site.name,
   url: site.canonical_url,
+  documentRoot: site.canonical_url,
   indexingMode: site.indexing.mode,
   screenshotBase: screenshotBaseFor(key),
 });
@@ -357,16 +358,16 @@ const fetchSurface = async (surfaceKey, surface, reportDir) => {
   return { surfaceKey, status: response.status, url: response.url, requestedUrl: surface.url, headers, html, htmlPath };
 };
 
-const documentUrlForSurface = (surfaceUrl, name) => {
-  const url = new URL(surfaceUrl);
+const documentUrlForSurface = (surfaceUrl, name, documentRoot = surfaceUrl) => {
+  const url = new URL(documentRoot);
   const base = url.pathname === '/'
     ? new URL('/', url)
     : new URL(`${url.pathname.replace(/\/+$/, '')}/`, url);
   return new URL(name, base).href;
 };
 
-const fetchSurfaceDocument = async (surfaceUrl, name, reportDir) => {
-  const url = documentUrlForSurface(surfaceUrl, name);
+const fetchSurfaceDocument = async (surface, name, reportDir) => {
+  const url = documentUrlForSurface(surface.url, name, surface.documentRoot);
   try {
     const response = await fetchWithRetry(url, {
       redirect: 'follow',
@@ -382,18 +383,26 @@ const fetchSurfaceDocument = async (surfaceUrl, name, reportDir) => {
   }
 };
 
-const documentUrlFixtureCases = () => [
-  ['hosted-document-root-path', documentUrlForSurface('https://peterponyu.github.io/', 'robots.txt'), 'https://peterponyu.github.io/robots.txt'],
-  ['hosted-document-project-path', documentUrlForSurface('https://peterponyu.github.io/gahib-site/', 'robots.txt'), 'https://peterponyu.github.io/gahib-site/robots.txt'],
-  ['hosted-sitemap-project-path', documentUrlForSurface('https://peterponyu.github.io/gahib-site/', 'sitemap.xml'), 'https://peterponyu.github.io/gahib-site/sitemap.xml'],
-].map(([id, actual, expected]) => ({ id, ok: actual === expected }));
+const documentUrlFixtureCases = () => {
+  const autoselectUrl = 'https://peterponyu.github.io/scportal/autoselect/';
+  const scportalRootUrl = 'https://peterponyu.github.io/scportal/';
+  const autoselectRobotsUrl = documentUrlForSurface(autoselectUrl, 'robots.txt', scportalRootUrl);
+  return [
+    ['hosted-document-root-path', documentUrlForSurface('https://peterponyu.github.io/', 'robots.txt'), 'https://peterponyu.github.io/robots.txt'],
+    ['hosted-document-project-path', documentUrlForSurface('https://peterponyu.github.io/gahib-site/', 'robots.txt'), 'https://peterponyu.github.io/gahib-site/robots.txt'],
+    ['hosted-sitemap-project-path', documentUrlForSurface('https://peterponyu.github.io/gahib-site/', 'sitemap.xml'), 'https://peterponyu.github.io/gahib-site/sitemap.xml'],
+    ['autoselect-document-project-root', autoselectRobotsUrl, 'https://peterponyu.github.io/scportal/robots.txt'],
+    ['autoselect-document-not-route-relative', autoselectRobotsUrl !== 'https://peterponyu.github.io/scportal/autoselect/robots.txt', true],
+    ['autoselect-sitemap-project-root', documentUrlForSurface(autoselectUrl, 'sitemap.xml', scportalRootUrl), 'https://peterponyu.github.io/scportal/sitemap.xml'],
+  ].map(([id, actual, expected]) => ({ id, ok: actual === expected }));
+};
 
 const fetchSurfaceDocuments = async (surfaces, reportDir) =>
   Object.fromEntries(await Promise.all(Object.entries(surfaces).map(async ([surfaceKey, surface]) => [
     surfaceKey,
     {
-      robots: await fetchSurfaceDocument(surface.url, 'robots.txt', reportDir),
-      sitemap: await fetchSurfaceDocument(surface.url, 'sitemap.xml', reportDir),
+      robots: await fetchSurfaceDocument(surface, 'robots.txt', reportDir),
+      sitemap: await fetchSurfaceDocument(surface, 'sitemap.xml', reportDir),
     },
   ])));
 
