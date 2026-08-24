@@ -34,8 +34,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -86,9 +84,6 @@ jobs:
           test -f _site/sitemap.xml
           ! find _site -type d \( -name .agents -o -name .cache -o -name .claude -o -name .cloud -o -name .codex -o -name .cursor -o -name .git -o -name .github -o -name .omc -o -name .omx -o -name .superpowers -o -name node_modules -o -name scripts \) -print -quit | grep -q .
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -98,10 +93,16 @@ jobs:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
