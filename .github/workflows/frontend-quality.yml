@@ -86,6 +86,15 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Fetch pinned public graph
+        run: node .github/scripts/fetch_public_graph.mjs
+
+      - name: Synchronize generated homepage graph
+        run: node scripts/sync_public_graph.mjs
+
+      - name: Audit generated homepage graph
+        run: node .github/scripts/check_frontend_public_graph.mjs
+
       - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
 

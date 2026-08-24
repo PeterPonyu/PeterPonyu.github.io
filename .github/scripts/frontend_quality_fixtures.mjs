@@ -175,6 +175,7 @@ Public utility surface in the PeterPonyu public graph for browsing precomputed m
       robotsText: 'User-agent: *\nAllow: /\n',
       sitemapText: 'https://peterponyu.github.io/\n',
       domHtml: '<!doctype html><html><body>ready</body></html>',
+      localOnlyUrls: ['https://peterponyu.github.io/iAODE/frontend/'],
     },
     gahib: {
       surface: { url: 'https://peterponyu.github.io/gahib-site/', indexingMode: 'noindex_follow' },
@@ -357,6 +358,20 @@ const negativeCases = Object.freeze([
     }),
   },
   {
+    id: 'hosted-surface-root-relative-local-only-url-leaked',
+    expectedFailure: 'Hosted surface must not contain a local-only workspace URL.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        homepage: {
+          ...fixtures.hostedSurfaces.homepage,
+          html: fixtures.hostedSurfaces.homepage.html.replace('</body>', '<a href="/iAODE/frontend/">Workspace</a></body>'),
+        },
+      },
+    }),
+  },
+  {
     id: 'gahib-noindex-follow-disallow-all-mismatch',
     expectedFailure: 'Hosted surface robots.txt must allow crawler access for its canonical path.',
     mutate: (fixtures) => ({
@@ -366,6 +381,20 @@ const negativeCases = Object.freeze([
         gahib: {
           ...fixtures.hostedSurfaces.gahib,
           robotsText: 'User-agent: *\nDisallow: /\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'gahib-noindex-follow-canonical-route-disallowed',
+    expectedFailure: 'Hosted surface robots.txt must allow crawler access for its canonical path.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          robotsText: 'User-agent: *\nDisallow: /gahib-site/\n',
         },
       },
     }),
@@ -418,6 +447,18 @@ function hrefPaths(html, baseUrl) {
     .filter(Boolean);
 }
 
+function resourcePaths(html, baseUrl) {
+  return [...html.matchAll(/\b(?:href|src|action)=["']([^"']+)["']/gi)]
+    .map((match) => {
+      try {
+        return decodeURIComponent(new URL(match[1], baseUrl).pathname).replace(/\/{2,}/g, '/');
+      } catch {
+        return '';
+      }
+    })
+    .filter(Boolean);
+}
+
 function hasRoute(html, baseUrl, pattern) {
   return hrefPaths(html, baseUrl).some((hrefPath) => pattern.test(hrefPath));
 }
@@ -456,27 +497,64 @@ const robotsMode = (html) => {
 const expectedRobotsMode = (indexingMode) => indexingMode.replaceAll('_', ',');
 const escapeRegex = (value) => value.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+function wildcardRobotsRules(robotsText) {
+  const rules = [];
+  let groupMatchesWildcard = false;
+  let groupHasRules = false;
+  for (const rawLine of robotsText.split(/\r?\n/)) {
+    const line = rawLine.replace(/#.*/, '').trim();
+    if (!line) continue;
+    const userAgent = line.match(/^user-agent\s*:\s*(.+)$/i);
+    if (userAgent) {
+      if (groupHasRules) {
+        groupMatchesWildcard = userAgent[1].trim() === '*';
+        groupHasRules = false;
+      } else {
+        groupMatchesWildcard ||= userAgent[1].trim() === '*';
+      }
+      continue;
+    }
+    const rule = line.match(/^(allow|disallow)\s*:\s*(.*)$/i);
+    if (!rule) continue;
+    groupHasRules = true;
+    if (groupMatchesWildcard && rule[2]) {
+      rules.push({ type: rule[1].toLowerCase(), path: rule[2] });
+    }
+  }
+  return rules;
+}
+
+function robotsRuleMatchesPath(rulePath, pathname) {
+  const anchored = rulePath.endsWith('$');
+  const pattern = anchored ? rulePath.slice(0, -1) : rulePath;
+  const expression = `^${pattern.split('*').map(escapeRegex).join('.*')}${anchored ? '$' : ''}`;
+  return new RegExp(expression).test(pathname);
+}
+
+function robotsAllowsCanonicalPath(robotsText, canonicalUrl) {
+  const pathname = new URL(canonicalUrl).pathname;
+  const matches = wildcardRobotsRules(robotsText)
+    .filter((rule) => robotsRuleMatchesPath(rule.path, pathname))
+    .sort((left, right) => right.path.length - left.path.length || (left.type === 'allow' ? -1 : 1));
+  return matches.length === 0 || matches[0].type === 'allow';
+}
+
 export function validateHostedSurfaceFixture({ surface, status, html, robotsText, robotsStatus, sitemapText, sitemapStatus, domHtml = '', consoleOutput = '', localOnlyUrls = ['/iAODE/frontend/'] }) {
   const failures = [];
   const canonical = canonicalUrls(html);
   const expectedUrl = surface.url;
   const expectedMode = expectedRobotsMode(surface.indexingMode);
   const basePath = new URL(expectedUrl).pathname.replace(/\/+$/, '');
-  const hrefs = [...html.matchAll(/\bhref=["']([^"']+)["']/gi)].map((match) => match[1]);
+  const normalizedHtmlPaths = resourcePaths(html, expectedUrl);
+  const normalizedDomPaths = resourcePaths(domHtml, expectedUrl);
+  const prohibitedWorkspacePaths = localOnlyUrls.map((url) => decodeURIComponent(new URL(url, expectedUrl).pathname).replace(/\/{2,}/g, '/'));
   const returnPaths = hrefPaths(html, expectedUrl);
   const hasReturnPath = returnPaths.some((pathname) => pathname === '/' || pathname === '/scportal');
   const hasDuplicatedBasePath = basePath
-    ? hrefs.some((href) => {
-      try {
-        const pathname = new URL(href, expectedUrl).pathname;
-        return pathname.includes(`${basePath}${basePath.slice(1)}`);
-      } catch {
-        return false;
-      }
-    })
+    ? normalizedHtmlPaths.some((pathname) => pathname.includes(`${basePath}${basePath.slice(1)}`))
     : false;
   const sitemapContainsCanonical = new RegExp(`(^|[^A-Za-z0-9_/-])${escapeRegex(expectedUrl)}($|[^A-Za-z0-9_/-])`).test(sitemapText);
-  const disallowAll = /user-agent\s*:\s*\*[\s\S]*?disallow\s*:\s*\/(?:\s|$)/i.test(robotsText);
+  const hasLocalWorkspaceLeak = [...normalizedHtmlPaths, ...normalizedDomPaths].some((pathname) => prohibitedWorkspacePaths.includes(pathname));
 
   collectCheck(status === 200, 'Hosted surface must return HTTP 200.', failures);
   collectCheck(robotsStatus === undefined || robotsStatus === 200, 'Hosted surface robots.txt must return HTTP 200.', failures);
@@ -484,11 +562,11 @@ export function validateHostedSurfaceFixture({ surface, status, html, robotsText
   collectCheck(canonical.length === 1, 'Hosted surface must declare exactly one canonical URL.', failures);
   collectCheck(canonical[0] === expectedUrl, 'Hosted surface canonical URL must match its manifest URL.', failures);
   collectCheck(robotsMode(html) === expectedMode, 'Hosted surface robots metadata must match its indexing mode.', failures);
-  collectCheck(!localOnlyUrls.some((url) => html.includes(url)), 'Hosted surface must not contain a local-only workspace URL.', failures);
+  collectCheck(!hasLocalWorkspaceLeak, 'Hosted surface must not contain a local-only workspace URL.', failures);
   collectCheck(!hasDuplicatedBasePath, 'Hosted surface must not duplicate its base path in links.', failures);
   collectCheck(hasReturnPath, 'Hosted surface must link to the homepage or SCPortal.', failures);
   collectCheck(!/\b(?:console\s*error|error\s*:\s*console|uncaught(?:\s+\w+)?error|unhandled(?:\s+promise)?\s+rejection)\b/i.test(`${domHtml}\n${consoleOutput}`), 'Hosted surface DOM dump must not contain browser console errors.', failures);
-  collectCheck(!disallowAll, 'Hosted surface robots.txt must allow crawler access for its canonical path.', failures);
+  collectCheck(robotsAllowsCanonicalPath(robotsText, expectedUrl), 'Hosted surface robots.txt must allow crawler access for its canonical path.', failures);
   collectCheck(
     surface.indexingMode === 'index_follow' ? sitemapContainsCanonical : !sitemapContainsCanonical,
     surface.indexingMode === 'index_follow'
