@@ -49,14 +49,18 @@ assert(Array.isArray(manifest.sites), 'Manifest must contain a sites array.');
 
 for (const site of manifest.sites) {
   assert(typeof site.name === 'string' && site.name.length > 0, 'Each site must define a name.');
-  assert(
-    typeof site.canonical_url === 'string' || site.canonical_url === null,
-    `Site ${site.name} must define canonical_url as a URL or null.`
-  );
   assert(site.visibility && typeof site.visibility === 'object', `Site ${site.name} must define visibility.`);
   assert(typeof site.visibility.homepage === 'string', `Site ${site.name} must define visibility.homepage.`);
   assert(typeof site.visibility.sitemap === 'boolean', `Site ${site.name} must define visibility.sitemap.`);
   assert(site.indexing && typeof site.indexing.mode === 'string', `Site ${site.name} must define indexing.mode.`);
+  if (site.availability === 'local_only') {
+    assert(site.canonical_url === null, `Local-only site ${site.name} must set canonical_url to null.`);
+    assert(site.visibility.homepage === 'hidden', `Local-only site ${site.name} must be hidden from the homepage.`);
+    assert(site.visibility.sitemap === false, `Local-only site ${site.name} must be excluded from the sitemap.`);
+  } else {
+    assert(typeof site.canonical_url === 'string', `Site ${site.name} must define canonical_url as a URL.`);
+    new URL(site.canonical_url);
+  }
   if (site.visibility.homepage !== 'hidden') {
     assert(
       Number.isInteger(site.visibility.homepage_order),
@@ -79,9 +83,6 @@ for (const site of manifest.sites) {
       site.presentation.homepage.boundary_note.length > 0,
       `Hidden non-public site ${site.name} must define presentation.homepage.boundary_note.`
     );
-  }
-  if (site.canonical_url !== null) {
-    new URL(site.canonical_url);
   }
 }
 
