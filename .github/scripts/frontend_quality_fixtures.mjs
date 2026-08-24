@@ -167,6 +167,24 @@ Public utility surface in the PeterPonyu public graph for browsing precomputed m
 - Homepage (https://peterponyu.github.io/) and SCPortal (https://peterponyu.github.io/scportal/) are the canonical discovery/root neighbors for this surface.
 - The current public boundary is intentional.
 `,
+  hostedSurfaces: {
+    homepage: {
+      surface: { url: 'https://peterponyu.github.io/', indexingMode: 'index_follow' },
+      status: 200,
+      html: '<!doctype html><html><head><link rel="canonical" href="https://peterponyu.github.io/"><meta name="robots" content="index, follow"></head><body><a href="https://peterponyu.github.io/scportal/">SCPortal</a></body></html>',
+      robotsText: 'User-agent: *\nAllow: /\n',
+      sitemapText: 'https://peterponyu.github.io/\n',
+      domHtml: '<!doctype html><html><body>ready</body></html>',
+    },
+    gahib: {
+      surface: { url: 'https://peterponyu.github.io/gahib-site/', indexingMode: 'noindex_follow' },
+      status: 200,
+      html: '<!doctype html><html><head><link rel="canonical" href="https://peterponyu.github.io/gahib-site/"><meta name="robots" content="noindex, follow"></head><body><a href="https://peterponyu.github.io/">Homepage</a></body></html>',
+      robotsText: 'User-agent: *\nAllow: /\n',
+      sitemapText: 'https://peterponyu.github.io/\n',
+      domHtml: '<!doctype html><html><body>ready</body></html>',
+    },
+  },
 });
 
 const negativeCases = Object.freeze([
@@ -324,6 +342,34 @@ const negativeCases = Object.freeze([
         .replace('SCPortal', 'the analysis portal'),
     }),
   },
+  {
+    id: 'hosted-surface-local-only-url-leaked',
+    expectedFailure: 'Hosted surface must not contain a local-only workspace URL.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        homepage: {
+          ...fixtures.hostedSurfaces.homepage,
+          html: fixtures.hostedSurfaces.homepage.html.replace('</body>', '<a href="https://peterponyu.github.io/iAODE/frontend/">Workspace</a></body>'),
+        },
+      },
+    }),
+  },
+  {
+    id: 'gahib-noindex-follow-disallow-all-mismatch',
+    expectedFailure: 'Hosted surface robots.txt must allow crawler access for its canonical path.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          robotsText: 'User-agent: *\nDisallow: /\n',
+        },
+      },
+    }),
+  },
 ]);
 
 function stripNonVisibleBlocks(value) {
@@ -397,6 +443,66 @@ function readCount(html, key) {
 
 function collectCheck(condition, message, failures) {
   if (!condition) failures.push(message);
+}
+
+const canonicalUrls = (html) =>
+  [...html.matchAll(/<link\b(?=[^>]*\brel=["'][^"']*\bcanonical\b[^"']*["'])[^>]*\bhref=["']([^"']+)["'][^>]*>/gi)].map((match) => match[1]);
+
+const robotsMode = (html) => {
+  const match = html.match(/<meta\b(?=[^>]*\bname=["']robots["'])[^>]*\bcontent=["']([^"']+)["'][^>]*>/i);
+  return match ? match[1].toLowerCase().replace(/\s+/g, '') : '';
+};
+
+const expectedRobotsMode = (indexingMode) => indexingMode.replaceAll('_', ',');
+const escapeRegex = (value) => value.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+export function validateHostedSurfaceFixture({ surface, status, html, robotsText, robotsStatus, sitemapText, sitemapStatus, domHtml = '', consoleOutput = '', localOnlyUrls = ['/iAODE/frontend/'] }) {
+  const failures = [];
+  const canonical = canonicalUrls(html);
+  const expectedUrl = surface.url;
+  const expectedMode = expectedRobotsMode(surface.indexingMode);
+  const basePath = new URL(expectedUrl).pathname.replace(/\/+$/, '');
+  const hrefs = [...html.matchAll(/\bhref=["']([^"']+)["']/gi)].map((match) => match[1]);
+  const returnPaths = hrefPaths(html, expectedUrl);
+  const hasReturnPath = returnPaths.some((pathname) => pathname === '/' || pathname === '/scportal');
+  const hasDuplicatedBasePath = basePath
+    ? hrefs.some((href) => {
+      try {
+        const pathname = new URL(href, expectedUrl).pathname;
+        return pathname.includes(`${basePath}${basePath.slice(1)}`);
+      } catch {
+        return false;
+      }
+    })
+    : false;
+  const sitemapContainsCanonical = new RegExp(`(^|[^A-Za-z0-9_/-])${escapeRegex(expectedUrl)}($|[^A-Za-z0-9_/-])`).test(sitemapText);
+  const disallowAll = /user-agent\s*:\s*\*[\s\S]*?disallow\s*:\s*\/(?:\s|$)/i.test(robotsText);
+
+  collectCheck(status === 200, 'Hosted surface must return HTTP 200.', failures);
+  collectCheck(robotsStatus === undefined || robotsStatus === 200, 'Hosted surface robots.txt must return HTTP 200.', failures);
+  collectCheck(sitemapStatus === undefined || sitemapStatus === 200, 'Hosted surface sitemap.xml must return HTTP 200.', failures);
+  collectCheck(canonical.length === 1, 'Hosted surface must declare exactly one canonical URL.', failures);
+  collectCheck(canonical[0] === expectedUrl, 'Hosted surface canonical URL must match its manifest URL.', failures);
+  collectCheck(robotsMode(html) === expectedMode, 'Hosted surface robots metadata must match its indexing mode.', failures);
+  collectCheck(!localOnlyUrls.some((url) => html.includes(url)), 'Hosted surface must not contain a local-only workspace URL.', failures);
+  collectCheck(!hasDuplicatedBasePath, 'Hosted surface must not duplicate its base path in links.', failures);
+  collectCheck(hasReturnPath, 'Hosted surface must link to the homepage or SCPortal.', failures);
+  collectCheck(!/\b(?:console\s*error|error\s*:\s*console|uncaught(?:\s+\w+)?error|unhandled(?:\s+promise)?\s+rejection)\b/i.test(`${domHtml}\n${consoleOutput}`), 'Hosted surface DOM dump must not contain browser console errors.', failures);
+  collectCheck(!disallowAll, 'Hosted surface robots.txt must allow crawler access for its canonical path.', failures);
+  collectCheck(
+    surface.indexingMode === 'index_follow' ? sitemapContainsCanonical : !sitemapContainsCanonical,
+    surface.indexingMode === 'index_follow'
+      ? 'Indexable hosted surface must appear in sitemap.'
+      : 'Non-indexable hosted surface must be excluded from sitemap.',
+    failures,
+  );
+  return failures;
+}
+
+function validateHostedSurfaceFixtures(hostedSurfaces) {
+  return Object.fromEntries(
+    Object.entries(hostedSurfaces).map(([surface, fixture]) => [`hosted:${surface}`, validateHostedSurfaceFixture(fixture)]),
+  );
 }
 
 export function validateHomepageFixture(html) {
@@ -531,6 +637,7 @@ export function validateFlagshipHtmlFixtures(fixtures) {
     iaode: validateIaodeFixture(fixtures.iaode),
     profileReadme: validateProfileReadmeFixture(fixtures.profileReadme),
     mrnaReadme: validateMrnaReadmeFixture(fixtures.mrnaReadme),
+    ...validateHostedSurfaceFixtures(fixtures.hostedSurfaces),
   };
   const failures = Object.entries(checks).flatMap(([surface, list]) =>
     list.map((message) => ({ surface, message })),

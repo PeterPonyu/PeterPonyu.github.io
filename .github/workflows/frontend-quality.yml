@@ -96,6 +96,7 @@ jobs:
         run: node .github/scripts/check_frontend_quality.mjs
 
       - name: Locate latest report
+        if: ${{ always() }}
         id: report
         run: |
           latest="$(ls -td .omx/reports/frontend-quality-* | head -1)"
@@ -106,6 +107,7 @@ jobs:
           sed -n '1,120p' "$latest/summary.md" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload quality report artifact
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: frontend-quality-report-${{ github.run_id }}
