@@ -177,6 +177,15 @@ Public utility surface in the PeterPonyu public graph for browsing precomputed m
       domHtml: '<!doctype html><html><body>ready</body></html>',
       localOnlyUrls: ['https://peterponyu.github.io/iAODE/frontend/'],
     },
+    iaode: {
+      surface: { url: 'https://peterponyu.github.io/iAODE/', indexingMode: 'index_follow' },
+      status: 200,
+      html: '<!doctype html><html><head><link rel="canonical" href="https://peterponyu.github.io/iAODE/"><meta name="robots" content="index, follow"></head><body><a href="https://peterponyu.github.io/">Homepage</a></body></html>',
+      robotsText: 'User-agent: *\nAllow: /\n',
+      sitemapText: 'https://peterponyu.github.io/iAODE/\n',
+      domHtml: '<!doctype html><html><body>ready</body></html>',
+      localOnlyUrls: ['https://peterponyu.github.io/iAODE/frontend/'],
+    },
     gahib: {
       surface: { url: 'https://peterponyu.github.io/gahib-site/', indexingMode: 'noindex_follow' },
       status: 200,
@@ -372,6 +381,62 @@ const negativeCases = Object.freeze([
     }),
   },
   {
+    id: 'iaode-path-relative-local-only-url-leaked',
+    expectedFailure: 'Hosted surface must not contain a local-only workspace URL.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        iaode: {
+          ...fixtures.hostedSurfaces.iaode,
+          html: fixtures.hostedSurfaces.iaode.html.replace('</body>', '<a href="frontend/">Workspace</a></body>'),
+        },
+      },
+    }),
+  },
+  {
+    id: 'dom-only-absolute-local-only-url-leaked',
+    expectedFailure: 'Hosted surface must not contain a local-only workspace URL.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        iaode: {
+          ...fixtures.hostedSurfaces.iaode,
+          domHtml: '<!doctype html><html><body><a href="https://peterponyu.github.io/iAODE/frontend/">Workspace</a></body></html>',
+        },
+      },
+    }),
+  },
+  {
+    id: 'dom-only-root-relative-local-only-url-leaked',
+    expectedFailure: 'Hosted surface must not contain a local-only workspace URL.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        iaode: {
+          ...fixtures.hostedSurfaces.iaode,
+          domHtml: '<!doctype html><html><body><a href="/iAODE/frontend/">Workspace</a></body></html>',
+        },
+      },
+    }),
+  },
+  {
+    id: 'dom-only-path-relative-local-only-url-leaked',
+    expectedFailure: 'Hosted surface must not contain a local-only workspace URL.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        iaode: {
+          ...fixtures.hostedSurfaces.iaode,
+          domHtml: '<!doctype html><html><body><a href="frontend/">Workspace</a></body></html>',
+        },
+      },
+    }),
+  },
+  {
     id: 'gahib-noindex-follow-disallow-all-mismatch',
     expectedFailure: 'Hosted surface robots.txt must allow crawler access for its canonical path.',
     mutate: (fixtures) => ({
@@ -395,6 +460,48 @@ const negativeCases = Object.freeze([
         gahib: {
           ...fixtures.hostedSurfaces.gahib,
           robotsText: 'User-agent: *\nDisallow: /gahib-site/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'gahib-longer-allow-overrides-shorter-disallow',
+    expected: 'pass',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          robotsText: 'User-agent: *\nDisallow: /gahib-\nAllow: /gahib-site/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'gahib-longer-disallow-overrides-shorter-allow',
+    expectedFailure: 'Hosted surface robots.txt must allow crawler access for its canonical path.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          robotsText: 'User-agent: *\nAllow: /gahib-\nDisallow: /gahib-site/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'gahib-equal-path-allow-wins-over-disallow',
+    expected: 'pass',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          robotsText: 'User-agent: *\nDisallow: /gahib-site/\nAllow: /gahib-site/\n',
         },
       },
     }),
@@ -738,11 +845,13 @@ export function runNegativeFixtureChecks() {
     const mutated = fixtureCase.mutate(positiveFixtures);
     const result = validateFlagshipHtmlFixtures(mutated);
     const observedMessages = result.failures.map(({ message }) => message);
-    const ok = observedMessages.includes(fixtureCase.expectedFailure);
+    const expected = fixtureCase.expected ?? 'fail';
+    const ok = expected === 'pass' ? result.ok : observedMessages.includes(fixtureCase.expectedFailure);
     return {
       id: fixtureCase.id,
       ok,
-      expectedFailure: fixtureCase.expectedFailure,
+      expected,
+      expectedFailure: fixtureCase.expectedFailure ?? null,
       observedFailures: result.failures,
     };
   });
@@ -753,14 +862,16 @@ export function runNegativeFixtureChecks() {
     cases,
     failures: cases
       .filter((fixtureCase) => !fixtureCase.ok)
-      .map((fixtureCase) => `${fixtureCase.id}: expected failure not observed`),
+      .map((fixtureCase) => fixtureCase.expected === 'pass'
+        ? `${fixtureCase.id}: expected pass but observed failures`
+        : `${fixtureCase.id}: expected failure not observed`),
   };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const result = runNegativeFixtureChecks();
   for (const fixtureCase of result.cases) {
-    console.log(`${fixtureCase.ok ? 'PASS' : 'FAIL'} ${fixtureCase.id}: ${fixtureCase.expectedFailure}`);
+    console.log(`${fixtureCase.ok ? 'PASS' : 'FAIL'} ${fixtureCase.id}: ${fixtureCase.expected === 'pass' ? 'expected pass' : fixtureCase.expectedFailure}`);
   }
   if (!result.ok) {
     console.error(JSON.stringify(result.failures, null, 2));
