@@ -187,9 +187,17 @@ Public utility surface in the PeterPonyu public graph for browsing precomputed m
       localOnlyUrls: ['https://peterponyu.github.io/iAODE/frontend/'],
     },
     gahib: {
-      surface: { url: 'https://peterponyu.github.io/gahib-site/', indexingMode: 'noindex_follow' },
+      surface: { url: 'https://peterponyu.github.io/gahib-site/', indexingMode: 'noindex_nofollow' },
       status: 200,
-      html: '<!doctype html><html><head><link rel="canonical" href="https://peterponyu.github.io/gahib-site/"><meta name="robots" content="noindex, follow"></head><body><a href="https://peterponyu.github.io/">Homepage</a></body></html>',
+      html: '<!doctype html><html><head><link rel="canonical" href="https://peterponyu.github.io/gahib-site/"><meta name="robots" content="noindex, nofollow"></head><body><a href="https://peterponyu.github.io/">Homepage</a></body></html>',
+      robotsText: 'User-agent: *\nDisallow: /gahib-site/\n',
+      sitemapText: 'https://peterponyu.github.io/\n',
+      domHtml: '<!doctype html><html><body>ready</body></html>',
+    },
+    noindexFollow: {
+      surface: { url: 'https://peterponyu.github.io/prepublication/', indexingMode: 'noindex_follow' },
+      status: 200,
+      html: '<!doctype html><html><head><link rel="canonical" href="https://peterponyu.github.io/prepublication/"><meta name="robots" content="noindex, follow"></head><body><a href="https://peterponyu.github.io/">Homepage</a></body></html>',
       robotsText: 'User-agent: *\nAllow: /\n',
       sitemapText: 'https://peterponyu.github.io/\n',
       domHtml: '<!doctype html><html><body>ready</body></html>',
@@ -437,50 +445,36 @@ const negativeCases = Object.freeze([
     }),
   },
   {
-    id: 'gahib-noindex-follow-disallow-all-mismatch',
-    expectedFailure: 'Hosted surface robots.txt must allow crawler access for its canonical path.',
+    id: 'noindex-nofollow-canonical-path-allowed',
+    expectedFailure: 'Hosted surface robots.txt must disallow crawler access for its canonical path.',
     mutate: (fixtures) => ({
       ...fixtures,
       hostedSurfaces: {
         ...fixtures.hostedSurfaces,
         gahib: {
           ...fixtures.hostedSurfaces.gahib,
-          robotsText: 'User-agent: *\nDisallow: /\n',
+          robotsText: 'User-agent: *\nAllow: /gahib-site/\n',
         },
       },
     }),
   },
   {
-    id: 'gahib-noindex-follow-canonical-route-disallowed',
-    expectedFailure: 'Hosted surface robots.txt must allow crawler access for its canonical path.',
+    id: 'noindex-nofollow-canonical-route-allowed',
+    expectedFailure: 'Hosted surface robots.txt must disallow crawler access for its canonical path.',
     mutate: (fixtures) => ({
       ...fixtures,
       hostedSurfaces: {
         ...fixtures.hostedSurfaces,
         gahib: {
           ...fixtures.hostedSurfaces.gahib,
-          robotsText: 'User-agent: *\nDisallow: /gahib-site/\n',
+          robotsText: 'User-agent: *\nAllow: /\n',
         },
       },
     }),
   },
   {
-    id: 'gahib-longer-allow-overrides-shorter-disallow',
+    id: 'noindex-nofollow-longer-disallow-overrides-shorter-allow',
     expected: 'pass',
-    mutate: (fixtures) => ({
-      ...fixtures,
-      hostedSurfaces: {
-        ...fixtures.hostedSurfaces,
-        gahib: {
-          ...fixtures.hostedSurfaces.gahib,
-          robotsText: 'User-agent: *\nDisallow: /gahib-\nAllow: /gahib-site/\n',
-        },
-      },
-    }),
-  },
-  {
-    id: 'gahib-longer-disallow-overrides-shorter-allow',
-    expectedFailure: 'Hosted surface robots.txt must allow crawler access for its canonical path.',
     mutate: (fixtures) => ({
       ...fixtures,
       hostedSurfaces: {
@@ -493,8 +487,22 @@ const negativeCases = Object.freeze([
     }),
   },
   {
-    id: 'gahib-equal-path-allow-wins-over-disallow',
-    expected: 'pass',
+    id: 'noindex-nofollow-longer-allow-overrides-shorter-disallow',
+    expectedFailure: 'Hosted surface robots.txt must disallow crawler access for its canonical path.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          robotsText: 'User-agent: *\nDisallow: /gahib-\nAllow: /gahib-site/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'noindex-nofollow-equal-path-allow-wins-over-disallow',
+    expectedFailure: 'Hosted surface robots.txt must disallow crawler access for its canonical path.',
     mutate: (fixtures) => ({
       ...fixtures,
       hostedSurfaces: {
@@ -502,6 +510,48 @@ const negativeCases = Object.freeze([
         gahib: {
           ...fixtures.hostedSurfaces.gahib,
           robotsText: 'User-agent: *\nDisallow: /gahib-site/\nAllow: /gahib-site/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'noindex-follow-canonical-route-disallowed',
+    expectedFailure: 'Hosted surface robots.txt must allow crawler access for its canonical path.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        noindexFollow: {
+          ...fixtures.hostedSurfaces.noindexFollow,
+          robotsText: 'User-agent: *\nDisallow: /prepublication/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'noindex-nofollow-sitemap-includes-canonical',
+    expectedFailure: 'Non-indexable hosted surface must be excluded from sitemap.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          sitemapText: 'https://peterponyu.github.io/gahib-site/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'index-follow-robots-mode-mismatch',
+    expectedFailure: 'Hosted surface robots metadata must match its indexing mode.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        homepage: {
+          ...fixtures.hostedSurfaces.homepage,
+          html: fixtures.hostedSurfaces.homepage.html.replace('index, follow', 'noindex, follow'),
         },
       },
     }),
@@ -601,7 +651,11 @@ const robotsMode = (html) => {
   return match ? match[1].toLowerCase().replace(/\s+/g, '') : '';
 };
 
-const expectedRobotsMode = (indexingMode) => indexingMode.replaceAll('_', ',');
+const indexingRequirements = Object.freeze({
+  index_follow: { robotsMode: 'index,follow', crawlAllowed: true, sitemapIncluded: true },
+  noindex_follow: { robotsMode: 'noindex,follow', crawlAllowed: true, sitemapIncluded: false },
+  noindex_nofollow: { robotsMode: 'noindex,nofollow', crawlAllowed: false, sitemapIncluded: false },
+});
 const escapeRegex = (value) => value.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 function wildcardRobotsRules(robotsText) {
@@ -650,7 +704,7 @@ export function validateHostedSurfaceFixture({ surface, status, html, robotsText
   const failures = [];
   const canonical = canonicalUrls(html);
   const expectedUrl = surface.url;
-  const expectedMode = expectedRobotsMode(surface.indexingMode);
+  const requirements = indexingRequirements[surface.indexingMode];
   const basePath = new URL(expectedUrl).pathname.replace(/\/+$/, '');
   const normalizedHtmlPaths = resourcePaths(html, expectedUrl);
   const normalizedDomPaths = resourcePaths(domHtml, expectedUrl);
@@ -668,15 +722,22 @@ export function validateHostedSurfaceFixture({ surface, status, html, robotsText
   collectCheck(sitemapStatus === undefined || sitemapStatus === 200, 'Hosted surface sitemap.xml must return HTTP 200.', failures);
   collectCheck(canonical.length === 1, 'Hosted surface must declare exactly one canonical URL.', failures);
   collectCheck(canonical[0] === expectedUrl, 'Hosted surface canonical URL must match its manifest URL.', failures);
-  collectCheck(robotsMode(html) === expectedMode, 'Hosted surface robots metadata must match its indexing mode.', failures);
+  collectCheck(Boolean(requirements), 'Hosted surface must use a supported indexing mode.', failures);
+  collectCheck(robotsMode(html) === requirements?.robotsMode, 'Hosted surface robots metadata must match its indexing mode.', failures);
   collectCheck(!hasLocalWorkspaceLeak, 'Hosted surface must not contain a local-only workspace URL.', failures);
   collectCheck(!hasDuplicatedBasePath, 'Hosted surface must not duplicate its base path in links.', failures);
   collectCheck(hasReturnPath, 'Hosted surface must link to the homepage or SCPortal.', failures);
   collectCheck(!/\b(?:console\s*error|error\s*:\s*console|uncaught(?:\s+\w+)?error|unhandled(?:\s+promise)?\s+rejection)\b/i.test(`${domHtml}\n${consoleOutput}`), 'Hosted surface DOM dump must not contain browser console errors.', failures);
-  collectCheck(robotsAllowsCanonicalPath(robotsText, expectedUrl), 'Hosted surface robots.txt must allow crawler access for its canonical path.', failures);
   collectCheck(
-    surface.indexingMode === 'index_follow' ? sitemapContainsCanonical : !sitemapContainsCanonical,
-    surface.indexingMode === 'index_follow'
+    robotsAllowsCanonicalPath(robotsText, expectedUrl) === requirements?.crawlAllowed,
+    requirements?.crawlAllowed
+      ? 'Hosted surface robots.txt must allow crawler access for its canonical path.'
+      : 'Hosted surface robots.txt must disallow crawler access for its canonical path.',
+    failures,
+  );
+  collectCheck(
+    sitemapContainsCanonical === requirements?.sitemapIncluded,
+    requirements?.sitemapIncluded
       ? 'Indexable hosted surface must appear in sitemap.'
       : 'Non-indexable hosted surface must be excluded from sitemap.',
     failures,

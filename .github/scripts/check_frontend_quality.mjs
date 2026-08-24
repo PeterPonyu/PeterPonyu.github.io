@@ -357,15 +357,24 @@ const fetchSurface = async (surfaceKey, surface, reportDir) => {
   return { surfaceKey, status: response.status, url: response.url, requestedUrl: surface.url, headers, html, htmlPath };
 };
 
-const fetchOriginDocument = async (origin, name, reportDir) => {
-  const url = new URL(`/${name}`, origin).href;
+const documentUrlForSurface = (surfaceUrl, name) => {
+  const url = new URL(surfaceUrl);
+  const base = url.pathname === '/'
+    ? new URL('/', url)
+    : new URL(`${url.pathname.replace(/\/+$/, '')}/`, url);
+  return new URL(name, base).href;
+};
+
+const fetchSurfaceDocument = async (surfaceUrl, name, reportDir) => {
+  const url = documentUrlForSurface(surfaceUrl, name);
   try {
     const response = await fetchWithRetry(url, {
       redirect: 'follow',
       headers: { 'user-agent': 'frontend-quality-v1/1.0 (+https://peterponyu.github.io/)' },
     });
     const text = await response.text();
-    const outputPath = path.join(reportDir, `${new URL(origin).hostname}-${name}`);
+    const documentPath = new URL(url).pathname.replace(/^\/+|\/+$/g, '').replaceAll('/', '-') || 'root';
+    const outputPath = path.join(reportDir, `${new URL(url).hostname}-${documentPath}-${name}`);
     writeText(outputPath, text);
     return { url, status: response.status, text, path: relativePath(outputPath), error: null };
   } catch (error) {
@@ -373,16 +382,20 @@ const fetchOriginDocument = async (origin, name, reportDir) => {
   }
 };
 
-const fetchOriginDocuments = async (surfaces, reportDir) => {
-  const origins = [...new Set(Object.values(surfaces).map((surface) => new URL(surface.url).origin))];
-  return Object.fromEntries(await Promise.all(origins.map(async (origin) => [
-    origin,
+const documentUrlFixtureCases = () => [
+  ['hosted-document-root-path', documentUrlForSurface('https://peterponyu.github.io/', 'robots.txt'), 'https://peterponyu.github.io/robots.txt'],
+  ['hosted-document-project-path', documentUrlForSurface('https://peterponyu.github.io/gahib-site/', 'robots.txt'), 'https://peterponyu.github.io/gahib-site/robots.txt'],
+  ['hosted-sitemap-project-path', documentUrlForSurface('https://peterponyu.github.io/gahib-site/', 'sitemap.xml'), 'https://peterponyu.github.io/gahib-site/sitemap.xml'],
+].map(([id, actual, expected]) => ({ id, ok: actual === expected }));
+
+const fetchSurfaceDocuments = async (surfaces, reportDir) =>
+  Object.fromEntries(await Promise.all(Object.entries(surfaces).map(async ([surfaceKey, surface]) => [
+    surfaceKey,
     {
-      robots: await fetchOriginDocument(origin, 'robots.txt', reportDir),
-      sitemap: await fetchOriginDocument(origin, 'sitemap.xml', reportDir),
+      robots: await fetchSurfaceDocument(surface.url, 'robots.txt', reportDir),
+      sitemap: await fetchSurfaceDocument(surface.url, 'sitemap.xml', reportDir),
     },
   ])));
-};
 
 const checkCanonicalOrOg = (html, expectedUrl) => {
   const canonical = getLinkHref(html, 'canonical');
@@ -959,7 +972,17 @@ const main = async () => {
   ensureDir(reportDir);
 
   if (runFixtureSelfTest) {
-    const fixtureResults = runNegativeFixtureChecks();
+    const negativeFixtureResults = runNegativeFixtureChecks();
+    const documentCases = documentUrlFixtureCases();
+    const fixtureResults = {
+      ...negativeFixtureResults,
+      ok: negativeFixtureResults.ok && documentCases.every((fixtureCase) => fixtureCase.ok),
+      cases: [...negativeFixtureResults.cases, ...documentCases],
+      failures: [
+        ...negativeFixtureResults.failures,
+        ...documentCases.filter((fixtureCase) => !fixtureCase.ok).map((fixtureCase) => `${fixtureCase.id}: document URL mismatch`),
+      ],
+    };
     const result = {
       ok: fixtureResults.ok,
       timestamp,
@@ -1003,7 +1026,7 @@ const main = async () => {
       Object.entries(SURFACES).map(async ([surfaceKey, surface]) => [surfaceKey, await fetchSurface(surfaceKey, surface, reportDir)]),
     ),
   );
-  const originDocuments = await fetchOriginDocuments(SURFACES, reportDir);
+  const surfaceDocuments = await fetchSurfaceDocuments(SURFACES, reportDir);
 
   const surfaces = {};
   const failures = [];
@@ -1028,15 +1051,15 @@ const main = async () => {
     writeText(desktopGeometryPath, JSON.stringify(desktopGeometry, null, 2));
     writeText(mobileGeometryPath, JSON.stringify(mobileGeometry, null, 2));
 
-    const originDocumentsForSurface = originDocuments[new URL(SURFACES[surfaceKey].url).origin];
+    const documentsForSurface = surfaceDocuments[surfaceKey];
     const genericFailures = validateHostedSurfaceFixture({
       surface: SURFACES[surfaceKey],
       status: fetchResult.status,
       html: fetchResult.html,
-      robotsText: originDocumentsForSurface.robots.text,
-      robotsStatus: originDocumentsForSurface.robots.status,
-      sitemapText: originDocumentsForSurface.sitemap.text,
-      sitemapStatus: originDocumentsForSurface.sitemap.status,
+      robotsText: documentsForSurface.robots.text,
+      robotsStatus: documentsForSurface.robots.status,
+      sitemapText: documentsForSurface.sitemap.text,
+      sitemapStatus: documentsForSurface.sitemap.status,
       domHtml,
       consoleOutput: domDump.stderr,
       localOnlyUrls,
