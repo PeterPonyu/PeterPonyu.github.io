@@ -167,6 +167,42 @@ Public utility surface in the PeterPonyu public graph for browsing precomputed m
 - Homepage (https://peterponyu.github.io/) and SCPortal (https://peterponyu.github.io/scportal/) are the canonical discovery/root neighbors for this surface.
 - The current public boundary is intentional.
 `,
+  hostedSurfaces: {
+    homepage: {
+      surface: { url: 'https://peterponyu.github.io/', indexingMode: 'index_follow' },
+      status: 200,
+      html: '<!doctype html><html><head><link rel="canonical" href="https://peterponyu.github.io/"><meta name="robots" content="index, follow"></head><body><a href="https://peterponyu.github.io/scportal/">SCPortal</a></body></html>',
+      robotsText: 'User-agent: *\nAllow: /\n',
+      sitemapText: 'https://peterponyu.github.io/\n',
+      domHtml: '<!doctype html><html><body>ready</body></html>',
+      localOnlyUrls: ['https://peterponyu.github.io/iAODE/frontend/'],
+    },
+    iaode: {
+      surface: { url: 'https://peterponyu.github.io/iAODE/', indexingMode: 'index_follow' },
+      status: 200,
+      html: '<!doctype html><html><head><link rel="canonical" href="https://peterponyu.github.io/iAODE/"><meta name="robots" content="index, follow"></head><body><a href="https://peterponyu.github.io/">Homepage</a></body></html>',
+      robotsText: 'User-agent: *\nAllow: /\n',
+      sitemapText: 'https://peterponyu.github.io/iAODE/\n',
+      domHtml: '<!doctype html><html><body>ready</body></html>',
+      localOnlyUrls: ['https://peterponyu.github.io/iAODE/frontend/'],
+    },
+    gahib: {
+      surface: { url: 'https://peterponyu.github.io/gahib-site/', indexingMode: 'noindex_nofollow' },
+      status: 200,
+      html: '<!doctype html><html><head><link rel="canonical" href="https://peterponyu.github.io/gahib-site/"><meta name="robots" content="noindex, nofollow"></head><body><a href="https://peterponyu.github.io/">Homepage</a></body></html>',
+      robotsText: 'User-agent: *\nDisallow: /gahib-site/\n',
+      sitemapText: 'https://peterponyu.github.io/\n',
+      domHtml: '<!doctype html><html><body>ready</body></html>',
+    },
+    noindexFollow: {
+      surface: { url: 'https://peterponyu.github.io/prepublication/', indexingMode: 'noindex_follow' },
+      status: 200,
+      html: '<!doctype html><html><head><link rel="canonical" href="https://peterponyu.github.io/prepublication/"><meta name="robots" content="noindex, follow"></head><body><a href="https://peterponyu.github.io/">Homepage</a></body></html>',
+      robotsText: 'User-agent: *\nAllow: /\n',
+      sitemapText: 'https://peterponyu.github.io/\n',
+      domHtml: '<!doctype html><html><body>ready</body></html>',
+    },
+  },
 });
 
 const negativeCases = Object.freeze([
@@ -324,6 +360,202 @@ const negativeCases = Object.freeze([
         .replace('SCPortal', 'the analysis portal'),
     }),
   },
+  {
+    id: 'hosted-surface-local-only-url-leaked',
+    expectedFailure: 'Hosted surface must not contain a local-only workspace URL.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        homepage: {
+          ...fixtures.hostedSurfaces.homepage,
+          html: fixtures.hostedSurfaces.homepage.html.replace('</body>', '<a href="https://peterponyu.github.io/iAODE/frontend/">Workspace</a></body>'),
+        },
+      },
+    }),
+  },
+  {
+    id: 'hosted-surface-root-relative-local-only-url-leaked',
+    expectedFailure: 'Hosted surface must not contain a local-only workspace URL.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        homepage: {
+          ...fixtures.hostedSurfaces.homepage,
+          html: fixtures.hostedSurfaces.homepage.html.replace('</body>', '<a href="/iAODE/frontend/">Workspace</a></body>'),
+        },
+      },
+    }),
+  },
+  {
+    id: 'iaode-path-relative-local-only-url-leaked',
+    expectedFailure: 'Hosted surface must not contain a local-only workspace URL.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        iaode: {
+          ...fixtures.hostedSurfaces.iaode,
+          html: fixtures.hostedSurfaces.iaode.html.replace('</body>', '<a href="frontend/">Workspace</a></body>'),
+        },
+      },
+    }),
+  },
+  {
+    id: 'dom-only-absolute-local-only-url-leaked',
+    expectedFailure: 'Hosted surface must not contain a local-only workspace URL.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        iaode: {
+          ...fixtures.hostedSurfaces.iaode,
+          domHtml: '<!doctype html><html><body><a href="https://peterponyu.github.io/iAODE/frontend/">Workspace</a></body></html>',
+        },
+      },
+    }),
+  },
+  {
+    id: 'dom-only-root-relative-local-only-url-leaked',
+    expectedFailure: 'Hosted surface must not contain a local-only workspace URL.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        iaode: {
+          ...fixtures.hostedSurfaces.iaode,
+          domHtml: '<!doctype html><html><body><a href="/iAODE/frontend/">Workspace</a></body></html>',
+        },
+      },
+    }),
+  },
+  {
+    id: 'dom-only-path-relative-local-only-url-leaked',
+    expectedFailure: 'Hosted surface must not contain a local-only workspace URL.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        iaode: {
+          ...fixtures.hostedSurfaces.iaode,
+          domHtml: '<!doctype html><html><body><a href="frontend/">Workspace</a></body></html>',
+        },
+      },
+    }),
+  },
+  {
+    id: 'noindex-nofollow-canonical-path-allowed',
+    expectedFailure: 'Hosted surface robots.txt must disallow crawler access for its canonical path.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          robotsText: 'User-agent: *\nAllow: /gahib-site/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'noindex-nofollow-canonical-route-allowed',
+    expectedFailure: 'Hosted surface robots.txt must disallow crawler access for its canonical path.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          robotsText: 'User-agent: *\nAllow: /\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'noindex-nofollow-longer-disallow-overrides-shorter-allow',
+    expected: 'pass',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          robotsText: 'User-agent: *\nAllow: /gahib-\nDisallow: /gahib-site/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'noindex-nofollow-longer-allow-overrides-shorter-disallow',
+    expectedFailure: 'Hosted surface robots.txt must disallow crawler access for its canonical path.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          robotsText: 'User-agent: *\nDisallow: /gahib-\nAllow: /gahib-site/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'noindex-nofollow-equal-path-allow-wins-over-disallow',
+    expectedFailure: 'Hosted surface robots.txt must disallow crawler access for its canonical path.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          robotsText: 'User-agent: *\nDisallow: /gahib-site/\nAllow: /gahib-site/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'noindex-follow-canonical-route-disallowed',
+    expectedFailure: 'Hosted surface robots.txt must allow crawler access for its canonical path.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        noindexFollow: {
+          ...fixtures.hostedSurfaces.noindexFollow,
+          robotsText: 'User-agent: *\nDisallow: /prepublication/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'noindex-nofollow-sitemap-includes-canonical',
+    expectedFailure: 'Non-indexable hosted surface must be excluded from sitemap.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        gahib: {
+          ...fixtures.hostedSurfaces.gahib,
+          sitemapText: 'https://peterponyu.github.io/gahib-site/\n',
+        },
+      },
+    }),
+  },
+  {
+    id: 'index-follow-robots-mode-mismatch',
+    expectedFailure: 'Hosted surface robots metadata must match its indexing mode.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      hostedSurfaces: {
+        ...fixtures.hostedSurfaces,
+        homepage: {
+          ...fixtures.hostedSurfaces.homepage,
+          html: fixtures.hostedSurfaces.homepage.html.replace('index, follow', 'noindex, follow'),
+        },
+      },
+    }),
+  },
 ]);
 
 function stripNonVisibleBlocks(value) {
@@ -372,6 +604,18 @@ function hrefPaths(html, baseUrl) {
     .filter(Boolean);
 }
 
+function resourcePaths(html, baseUrl) {
+  return [...html.matchAll(/\b(?:href|src|action)=["']([^"']+)["']/gi)]
+    .map((match) => {
+      try {
+        return decodeURIComponent(new URL(match[1], baseUrl).pathname).replace(/\/{2,}/g, '/');
+      } catch {
+        return '';
+      }
+    })
+    .filter(Boolean);
+}
+
 function hasRoute(html, baseUrl, pattern) {
   return hrefPaths(html, baseUrl).some((hrefPath) => pattern.test(hrefPath));
 }
@@ -397,6 +641,114 @@ function readCount(html, key) {
 
 function collectCheck(condition, message, failures) {
   if (!condition) failures.push(message);
+}
+
+const canonicalUrls = (html) =>
+  [...html.matchAll(/<link\b(?=[^>]*\brel=["'][^"']*\bcanonical\b[^"']*["'])[^>]*\bhref=["']([^"']+)["'][^>]*>/gi)].map((match) => match[1]);
+
+const robotsMode = (html) => {
+  const match = html.match(/<meta\b(?=[^>]*\bname=["']robots["'])[^>]*\bcontent=["']([^"']+)["'][^>]*>/i);
+  return match ? match[1].toLowerCase().replace(/\s+/g, '') : '';
+};
+
+const indexingRequirements = Object.freeze({
+  index_follow: { robotsMode: 'index,follow', crawlAllowed: true, sitemapIncluded: true },
+  noindex_follow: { robotsMode: 'noindex,follow', crawlAllowed: true, sitemapIncluded: false },
+  noindex_nofollow: { robotsMode: 'noindex,nofollow', crawlAllowed: false, sitemapIncluded: false },
+});
+const escapeRegex = (value) => value.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+function wildcardRobotsRules(robotsText) {
+  const rules = [];
+  let groupMatchesWildcard = false;
+  let groupHasRules = false;
+  for (const rawLine of robotsText.split(/\r?\n/)) {
+    const line = rawLine.replace(/#.*/, '').trim();
+    if (!line) continue;
+    const userAgent = line.match(/^user-agent\s*:\s*(.+)$/i);
+    if (userAgent) {
+      if (groupHasRules) {
+        groupMatchesWildcard = userAgent[1].trim() === '*';
+        groupHasRules = false;
+      } else {
+        groupMatchesWildcard ||= userAgent[1].trim() === '*';
+      }
+      continue;
+    }
+    const rule = line.match(/^(allow|disallow)\s*:\s*(.*)$/i);
+    if (!rule) continue;
+    groupHasRules = true;
+    if (groupMatchesWildcard && rule[2]) {
+      rules.push({ type: rule[1].toLowerCase(), path: rule[2] });
+    }
+  }
+  return rules;
+}
+
+function robotsRuleMatchesPath(rulePath, pathname) {
+  const anchored = rulePath.endsWith('$');
+  const pattern = anchored ? rulePath.slice(0, -1) : rulePath;
+  const expression = `^${pattern.split('*').map(escapeRegex).join('.*')}${anchored ? '$' : ''}`;
+  return new RegExp(expression).test(pathname);
+}
+
+function robotsAllowsCanonicalPath(robotsText, canonicalUrl) {
+  const pathname = new URL(canonicalUrl).pathname;
+  const matches = wildcardRobotsRules(robotsText)
+    .filter((rule) => robotsRuleMatchesPath(rule.path, pathname))
+    .sort((left, right) => right.path.length - left.path.length || (left.type === 'allow' ? -1 : 1));
+  return matches.length === 0 || matches[0].type === 'allow';
+}
+
+export function validateHostedSurfaceFixture({ surface, status, html, robotsText, robotsStatus, sitemapText, sitemapStatus, domHtml = '', consoleOutput = '', localOnlyUrls = ['/iAODE/frontend/'] }) {
+  const failures = [];
+  const canonical = canonicalUrls(html);
+  const expectedUrl = surface.url;
+  const requirements = indexingRequirements[surface.indexingMode];
+  const basePath = new URL(expectedUrl).pathname.replace(/\/+$/, '');
+  const normalizedHtmlPaths = resourcePaths(html, expectedUrl);
+  const normalizedDomPaths = resourcePaths(domHtml, expectedUrl);
+  const prohibitedWorkspacePaths = localOnlyUrls.map((url) => decodeURIComponent(new URL(url, expectedUrl).pathname).replace(/\/{2,}/g, '/'));
+  const returnPaths = hrefPaths(html, expectedUrl);
+  const hasReturnPath = returnPaths.some((pathname) => pathname === '/' || pathname === '/scportal');
+  const hasDuplicatedBasePath = basePath
+    ? normalizedHtmlPaths.some((pathname) => pathname.includes(`${basePath}${basePath.slice(1)}`))
+    : false;
+  const sitemapContainsCanonical = new RegExp(`(^|[^A-Za-z0-9_/-])${escapeRegex(expectedUrl)}($|[^A-Za-z0-9_/-])`).test(sitemapText);
+  const hasLocalWorkspaceLeak = [...normalizedHtmlPaths, ...normalizedDomPaths].some((pathname) => prohibitedWorkspacePaths.includes(pathname));
+
+  collectCheck(status === 200, 'Hosted surface must return HTTP 200.', failures);
+  collectCheck(robotsStatus === undefined || robotsStatus === 200, 'Hosted surface robots.txt must return HTTP 200.', failures);
+  collectCheck(sitemapStatus === undefined || sitemapStatus === 200, 'Hosted surface sitemap.xml must return HTTP 200.', failures);
+  collectCheck(canonical.length === 1, 'Hosted surface must declare exactly one canonical URL.', failures);
+  collectCheck(canonical[0] === expectedUrl, 'Hosted surface canonical URL must match its manifest URL.', failures);
+  collectCheck(Boolean(requirements), 'Hosted surface must use a supported indexing mode.', failures);
+  collectCheck(robotsMode(html) === requirements?.robotsMode, 'Hosted surface robots metadata must match its indexing mode.', failures);
+  collectCheck(!hasLocalWorkspaceLeak, 'Hosted surface must not contain a local-only workspace URL.', failures);
+  collectCheck(!hasDuplicatedBasePath, 'Hosted surface must not duplicate its base path in links.', failures);
+  collectCheck(hasReturnPath, 'Hosted surface must link to the homepage or SCPortal.', failures);
+  collectCheck(!/\b(?:console\s*error|error\s*:\s*console|uncaught(?:\s+\w+)?error|unhandled(?:\s+promise)?\s+rejection)\b/i.test(`${domHtml}\n${consoleOutput}`), 'Hosted surface DOM dump must not contain browser console errors.', failures);
+  collectCheck(
+    robotsAllowsCanonicalPath(robotsText, expectedUrl) === requirements?.crawlAllowed,
+    requirements?.crawlAllowed
+      ? 'Hosted surface robots.txt must allow crawler access for its canonical path.'
+      : 'Hosted surface robots.txt must disallow crawler access for its canonical path.',
+    failures,
+  );
+  collectCheck(
+    sitemapContainsCanonical === requirements?.sitemapIncluded,
+    requirements?.sitemapIncluded
+      ? 'Indexable hosted surface must appear in sitemap.'
+      : 'Non-indexable hosted surface must be excluded from sitemap.',
+    failures,
+  );
+  return failures;
+}
+
+function validateHostedSurfaceFixtures(hostedSurfaces) {
+  return Object.fromEntries(
+    Object.entries(hostedSurfaces).map(([surface, fixture]) => [`hosted:${surface}`, validateHostedSurfaceFixture(fixture)]),
+  );
 }
 
 export function validateHomepageFixture(html) {
@@ -531,6 +883,7 @@ export function validateFlagshipHtmlFixtures(fixtures) {
     iaode: validateIaodeFixture(fixtures.iaode),
     profileReadme: validateProfileReadmeFixture(fixtures.profileReadme),
     mrnaReadme: validateMrnaReadmeFixture(fixtures.mrnaReadme),
+    ...validateHostedSurfaceFixtures(fixtures.hostedSurfaces),
   };
   const failures = Object.entries(checks).flatMap(([surface, list]) =>
     list.map((message) => ({ surface, message })),
@@ -553,11 +906,13 @@ export function runNegativeFixtureChecks() {
     const mutated = fixtureCase.mutate(positiveFixtures);
     const result = validateFlagshipHtmlFixtures(mutated);
     const observedMessages = result.failures.map(({ message }) => message);
-    const ok = observedMessages.includes(fixtureCase.expectedFailure);
+    const expected = fixtureCase.expected ?? 'fail';
+    const ok = expected === 'pass' ? result.ok : observedMessages.includes(fixtureCase.expectedFailure);
     return {
       id: fixtureCase.id,
       ok,
-      expectedFailure: fixtureCase.expectedFailure,
+      expected,
+      expectedFailure: fixtureCase.expectedFailure ?? null,
       observedFailures: result.failures,
     };
   });
@@ -568,14 +923,16 @@ export function runNegativeFixtureChecks() {
     cases,
     failures: cases
       .filter((fixtureCase) => !fixtureCase.ok)
-      .map((fixtureCase) => `${fixtureCase.id}: expected failure not observed`),
+      .map((fixtureCase) => fixtureCase.expected === 'pass'
+        ? `${fixtureCase.id}: expected pass but observed failures`
+        : `${fixtureCase.id}: expected failure not observed`),
   };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const result = runNegativeFixtureChecks();
   for (const fixtureCase of result.cases) {
-    console.log(`${fixtureCase.ok ? 'PASS' : 'FAIL'} ${fixtureCase.id}: ${fixtureCase.expectedFailure}`);
+    console.log(`${fixtureCase.ok ? 'PASS' : 'FAIL'} ${fixtureCase.id}: ${fixtureCase.expected === 'pass' ? 'expected pass' : fixtureCase.expectedFailure}`);
   }
   if (!result.ok) {
     console.error(JSON.stringify(result.failures, null, 2));

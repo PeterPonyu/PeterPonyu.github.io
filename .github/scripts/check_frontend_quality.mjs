@@ -12,40 +12,76 @@ import {
   validateMccvaeFixture,
   validateMrnaReadmeFixture,
   validateProfileReadmeFixture,
+  validateHostedSurfaceFixture,
 } from './frontend_quality_fixtures.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(scriptDir, '../..');
 const reportsRoot = path.join(root, '.omx/reports');
 const publicGraphScript = path.join(root, '.github/scripts/check_frontend_public_graph.mjs');
+const manifestPath = path.join(root, '.cache/public-graph.manifest.json');
 
-const SURFACES = {
-  homepage: {
-    label: 'Homepage',
-    url: 'https://peterponyu.github.io/',
-    screenshotBase: 'homepage',
-  },
-  scportal: {
-    label: 'SCPortal',
-    url: 'https://peterponyu.github.io/scportal/',
-    screenshotBase: 'scportal',
-  },
-  liora: {
-    label: 'Liora UI',
-    url: 'https://peterponyu.github.io/liora-ui/',
-    screenshotBase: 'liora',
-  },
-  mccvae: {
-    label: 'MCCVAE',
-    url: 'https://peterponyu.github.io/MCCVAE/',
-    screenshotBase: 'mccvae',
-  },
-  iaode: {
-    label: 'iAODE',
-    url: 'https://peterponyu.github.io/iAODE/',
-    screenshotBase: 'iaode',
-  },
+const surfaceKeyByManifestId = Object.freeze({
+  homepage: 'homepage',
+  scportal: 'scportal',
+  liora_benchmarks: 'liora',
+  mrna_intersection: 'mrna',
+  iaode_pages: 'iaode',
+  mccvae: 'mccvae',
+  scccvgben: 'scccvgbenNext',
+  gahib_site: 'gahib',
+});
+
+const screenshotBaseFor = (key) => key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+
+const createSurface = (site, key = surfaceKeyByManifestId[site.id] ?? site.id) => ({
+  key,
+  manifestId: site.id,
+  label: site.name,
+  url: site.canonical_url,
+  documentRoot: site.canonical_url,
+  indexingMode: site.indexing.mode,
+  screenshotBase: screenshotBaseFor(key),
+});
+
+const loadSurfaceInventory = () => {
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  const hostedSites = manifest.sites.filter((site) => site.availability !== 'local_only' && typeof site.canonical_url === 'string');
+  const localOnlyUrls = manifest.sites
+    .filter((site) => site.availability === 'local_only' && typeof site.workspace_path === 'string')
+    .flatMap((site) => {
+      const publicSibling = hostedSites.find((hostedSite) => hostedSite.source_repo === site.source_repo);
+      return publicSibling ? [new URL(site.workspace_path, publicSibling.canonical_url).href] : [];
+    });
+  const surfaces = Object.fromEntries(hostedSites.map((site) => {
+    const surface = createSurface(site);
+    return [surface.key, surface];
+  }));
+  const scportal = surfaces.scportal;
+  if (!scportal) throw new Error('Public graph must include the SCPortal hosted surface.');
+  surfaces.autoselect = {
+    ...scportal,
+    key: 'autoselect',
+    label: 'SCPortal AutoSelect',
+    url: new URL('autoselect/', scportal.url).href,
+    screenshotBase: 'autoselect',
+    routeSurface: true,
+  };
+  const scccvgben = hostedSites.find((site) => site.id === 'scccvgben');
+  if (scccvgben) {
+    const hugoUrl = 'https://peterponyu.github.io/scCCVGBen/';
+    surfaces.scccvgbenHugo = {
+      ...createSurface(scccvgben, 'scccvgbenHugo'),
+      label: 'scCCVGBen Hugo',
+      url: hugoUrl,
+      documentRoot: hugoUrl,
+      routeSurface: true,
+    };
+  }
+  return { surfaces, localOnlyUrls };
 };
+
+const { surfaces: SURFACES, localOnlyUrls } = loadSurfaceInventory();
 
 const SCPORTAL_PUBLIC_ROUTE_PATTERNS = Object.freeze({
   datasets: /^\/scportal\/datasets$/i,
@@ -323,6 +359,59 @@ const fetchSurface = async (surfaceKey, surface, reportDir) => {
   writeText(htmlPath, html);
   return { surfaceKey, status: response.status, url: response.url, requestedUrl: surface.url, headers, html, htmlPath };
 };
+
+const documentUrlForSurface = (surfaceUrl, name, documentRoot = surfaceUrl) => {
+  const url = new URL(documentRoot);
+  const base = url.pathname === '/'
+    ? new URL('/', url)
+    : new URL(`${url.pathname.replace(/\/+$/, '')}/`, url);
+  return new URL(name, base).href;
+};
+
+const fetchSurfaceDocument = async (surface, name, reportDir) => {
+  const url = documentUrlForSurface(surface.url, name, surface.documentRoot);
+  try {
+    const response = await fetchWithRetry(url, {
+      redirect: 'follow',
+      headers: { 'user-agent': 'frontend-quality-v1/1.0 (+https://peterponyu.github.io/)' },
+    });
+    const text = await response.text();
+    const documentPath = new URL(url).pathname.replace(/^\/+|\/+$/g, '').replaceAll('/', '-') || 'root';
+    const outputPath = path.join(reportDir, `${new URL(url).hostname}-${documentPath}-${name}`);
+    writeText(outputPath, text);
+    return { url, status: response.status, text, path: relativePath(outputPath), error: null };
+  } catch (error) {
+    return { url, status: null, text: '', path: null, error: error.stack || String(error) };
+  }
+};
+
+const documentUrlFixtureCases = () => {
+  const autoselectUrl = 'https://peterponyu.github.io/scportal/autoselect/';
+  const scportalRootUrl = 'https://peterponyu.github.io/scportal/';
+  const autoselectRobotsUrl = documentUrlForSurface(autoselectUrl, 'robots.txt', scportalRootUrl);
+  const scccvgbenHugo = SURFACES.scccvgbenHugo;
+  const hugoRobotsUrl = documentUrlForSurface(scccvgbenHugo.url, 'robots.txt', scccvgbenHugo.documentRoot);
+  return [
+    ['hosted-document-root-path', documentUrlForSurface('https://peterponyu.github.io/', 'robots.txt'), 'https://peterponyu.github.io/robots.txt'],
+    ['hosted-document-project-path', documentUrlForSurface('https://peterponyu.github.io/gahib-site/', 'robots.txt'), 'https://peterponyu.github.io/gahib-site/robots.txt'],
+    ['hosted-sitemap-project-path', documentUrlForSurface('https://peterponyu.github.io/gahib-site/', 'sitemap.xml'), 'https://peterponyu.github.io/gahib-site/sitemap.xml'],
+    ['autoselect-document-project-root', autoselectRobotsUrl, 'https://peterponyu.github.io/scportal/robots.txt'],
+    ['autoselect-document-not-route-relative', autoselectRobotsUrl !== 'https://peterponyu.github.io/scportal/autoselect/robots.txt', true],
+    ['autoselect-sitemap-project-root', documentUrlForSurface(autoselectUrl, 'sitemap.xml', scportalRootUrl), 'https://peterponyu.github.io/scportal/sitemap.xml'],
+    ['scccvgben-hugo-document-project-root', hugoRobotsUrl, 'https://peterponyu.github.io/scCCVGBen/robots.txt'],
+    ['scccvgben-hugo-document-not-next-surface', hugoRobotsUrl !== 'https://peterponyu.github.io/scccvgben-next/robots.txt', true],
+    ['scccvgben-hugo-sitemap-project-root', documentUrlForSurface(scccvgbenHugo.url, 'sitemap.xml', scccvgbenHugo.documentRoot), 'https://peterponyu.github.io/scCCVGBen/sitemap.xml'],
+  ].map(([id, actual, expected]) => ({ id, ok: actual === expected }));
+};
+
+const fetchSurfaceDocuments = async (surfaces, reportDir) =>
+  Object.fromEntries(await Promise.all(Object.entries(surfaces).map(async ([surfaceKey, surface]) => [
+    surfaceKey,
+    {
+      robots: await fetchSurfaceDocument(surface, 'robots.txt', reportDir),
+      sitemap: await fetchSurfaceDocument(surface, 'sitemap.xml', reportDir),
+    },
+  ])));
 
 const checkCanonicalOrOg = (html, expectedUrl) => {
   const canonical = getLinkHref(html, 'canonical');
@@ -899,7 +988,17 @@ const main = async () => {
   ensureDir(reportDir);
 
   if (runFixtureSelfTest) {
-    const fixtureResults = runNegativeFixtureChecks();
+    const negativeFixtureResults = runNegativeFixtureChecks();
+    const documentCases = documentUrlFixtureCases();
+    const fixtureResults = {
+      ...negativeFixtureResults,
+      ok: negativeFixtureResults.ok && documentCases.every((fixtureCase) => fixtureCase.ok),
+      cases: [...negativeFixtureResults.cases, ...documentCases],
+      failures: [
+        ...negativeFixtureResults.failures,
+        ...documentCases.filter((fixtureCase) => !fixtureCase.ok).map((fixtureCase) => `${fixtureCase.id}: document URL mismatch`),
+      ],
+    };
     const result = {
       ok: fixtureResults.ok,
       timestamp,
@@ -943,6 +1042,7 @@ const main = async () => {
       Object.entries(SURFACES).map(async ([surfaceKey, surface]) => [surfaceKey, await fetchSurface(surfaceKey, surface, reportDir)]),
     ),
   );
+  const surfaceDocuments = await fetchSurfaceDocuments(SURFACES, reportDir);
 
   const surfaces = {};
   const failures = [];
@@ -957,16 +1057,30 @@ const main = async () => {
 
   for (const [surfaceKey, fetchResult] of Object.entries(fetchResults)) {
     const checker = checkerBySurface[surfaceKey];
-    const checked = checker(fetchResult);
+    const checked = checker ? checker(fetchResult) : { title: getTitle(fetchResult.html), checks: [] };
     const domDump = await dumpDom({ chrome, surfaceKey, surface: SURFACES[surfaceKey], reportDir });
-    const desktopGeometry = geometryBySurface[surfaceKey](domDump.ok ? fs.readFileSync(path.join(root, domDump.path), 'utf8') : fetchResult.html);
+    const domHtml = domDump.ok ? fs.readFileSync(path.join(root, domDump.path), 'utf8') : fetchResult.html;
+    const desktopGeometry = (geometryBySurface[surfaceKey] ?? (() => ({})))(domHtml);
     const mobileGeometry = desktopGeometry;
     const desktopGeometryPath = path.join(reportDir, `${SURFACES[surfaceKey].screenshotBase}-desktop-geometry.json`);
     const mobileGeometryPath = path.join(reportDir, `${SURFACES[surfaceKey].screenshotBase}-mobile-geometry.json`);
     writeText(desktopGeometryPath, JSON.stringify(desktopGeometry, null, 2));
     writeText(mobileGeometryPath, JSON.stringify(mobileGeometry, null, 2));
 
-    const checks = [...checked.checks];
+    const documentsForSurface = surfaceDocuments[surfaceKey];
+    const genericFailures = validateHostedSurfaceFixture({
+      surface: SURFACES[surfaceKey],
+      status: fetchResult.status,
+      html: fetchResult.html,
+      robotsText: documentsForSurface.robots.text,
+      robotsStatus: documentsForSurface.robots.status,
+      sitemapText: documentsForSurface.sitemap.text,
+      sitemapStatus: documentsForSurface.sitemap.status,
+      domHtml,
+      consoleOutput: domDump.stderr,
+      localOnlyUrls,
+    });
+    const checks = [...checked.checks, ...validationChecks(genericFailures)];
     if (!publicGraphAudit.ok) {
       checks.push({ name: 'public_graph_audit', status: CHECK_STATUS.fail, details: publicGraphAudit.stderr || publicGraphAudit.stdout });
     } else {

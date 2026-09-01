@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(scriptDir, '../..');
 
-const manifestPath = path.join(root, 'public-graph.manifest.json');
+const manifestPath = path.join(root, '.cache/public-graph.manifest.json');
 const indexPath = path.join(root, 'index.html');
 const sitemapPath = path.join(root, 'sitemap.xml');
 
@@ -36,8 +36,9 @@ const mccvaeSite = siteById.get('mccvae');
 assert(homepageSite?.role === 'identity_root', 'Homepage must remain identity_root.');
 assert(scportalSite?.role === 'discovery_hub', 'SCPortal must remain discovery_hub.');
 assert(lioraSite?.role === 'microsite', 'Liora must remain a microsite.');
-assert(iaodeWorkspaceSite?.boundary === 'local_first', 'iAODE workspace must remain local_first.');
-assert(mccvaeSite?.boundary === 'landing_only', 'MCCVAE must remain landing_only.');
+assert(iaodeWorkspaceSite?.availability === 'local_only', 'iAODE workspace must remain local_only.');
+assert(iaodeWorkspaceSite?.canonical_url === null, 'iAODE workspace must remain without a public canonical URL.');
+assert(mccvaeSite?.availability === 'landing_only', 'MCCVAE must remain landing_only.');
 
 assert(
   homepage.includes('href="https://peterponyu.github.io/"') ||

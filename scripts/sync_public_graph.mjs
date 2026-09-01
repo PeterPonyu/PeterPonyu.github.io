@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '..');
-const manifestPath = path.join(repoRoot, 'public-graph.manifest.json');
+const manifestPath = path.join(repoRoot, '.cache/public-graph.manifest.json');
 const homepagePath = path.join(repoRoot, 'index.html');
 const sitemapPath = path.join(repoRoot, 'sitemap.xml');
 
@@ -49,11 +49,18 @@ assert(Array.isArray(manifest.sites), 'Manifest must contain a sites array.');
 
 for (const site of manifest.sites) {
   assert(typeof site.name === 'string' && site.name.length > 0, 'Each site must define a name.');
-  assert(typeof site.canonical_url === 'string', `Site ${site.name} must define canonical_url.`);
   assert(site.visibility && typeof site.visibility === 'object', `Site ${site.name} must define visibility.`);
   assert(typeof site.visibility.homepage === 'string', `Site ${site.name} must define visibility.homepage.`);
   assert(typeof site.visibility.sitemap === 'boolean', `Site ${site.name} must define visibility.sitemap.`);
   assert(site.indexing && typeof site.indexing.mode === 'string', `Site ${site.name} must define indexing.mode.`);
+  if (site.availability === 'local_only') {
+    assert(site.canonical_url === null, `Local-only site ${site.name} must set canonical_url to null.`);
+    assert(site.visibility.homepage === 'hidden', `Local-only site ${site.name} must be hidden from the homepage.`);
+    assert(site.visibility.sitemap === false, `Local-only site ${site.name} must be excluded from the sitemap.`);
+  } else {
+    assert(typeof site.canonical_url === 'string', `Site ${site.name} must define canonical_url as a URL.`);
+    new URL(site.canonical_url);
+  }
   if (site.visibility.homepage !== 'hidden') {
     assert(
       Number.isInteger(site.visibility.homepage_order),
@@ -70,14 +77,13 @@ for (const site of manifest.sites) {
       `Visible homepage site ${site.name} must define presentation.homepage.cta_label.`
     );
   }
-  if (site.visibility.homepage === 'hidden' && site.boundary !== 'public') {
+  if (site.visibility.homepage === 'hidden' && site.availability !== 'public') {
     assert(
       typeof site.presentation?.homepage?.boundary_note === 'string' &&
       site.presentation.homepage.boundary_note.length > 0,
       `Hidden non-public site ${site.name} must define presentation.homepage.boundary_note.`
     );
   }
-  new URL(site.canonical_url);
 }
 
 const visibleSites = manifest.sites
@@ -91,7 +97,7 @@ const visibleSites = manifest.sites
 const primarySites = visibleSites.filter((site) => site.visibility.homepage === 'primary');
 const secondarySites = visibleSites.filter((site) => site.visibility.homepage === 'secondary');
 const boundaryNoteSites = manifest.sites.filter(
-  (site) => site.visibility.homepage === 'hidden' && site.boundary !== 'public'
+  (site) => site.visibility.homepage === 'hidden' && site.availability !== 'public'
 );
 const routeStripSites = [...primarySites, ...secondarySites];
 
@@ -106,13 +112,13 @@ const routeBadgeLabel = (site) => {
 };
 
 const boundaryLabel = (site) => {
-  if (site.boundary === 'local_first') {
+  if (site.availability === 'local_only') {
     return 'Local-First';
   }
-  if (site.boundary === 'landing_only') {
+  if (site.availability === 'landing_only') {
     return 'Landing-Only';
   }
-  return site.boundary;
+  return site.availability;
 };
 
 const renderRouteCard = (site) => {

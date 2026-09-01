@@ -3,14 +3,24 @@ name: Frontend Quality
 on:
   pull_request:
     paths:
+      - ".github/public-graph.lock.json"
       - ".github/scripts/**"
       - ".github/workflows/frontend-quality.yml"
+      - ".gitignore"
+      - "index.html"
+      - "scripts/**"
+      - "sitemap.xml"
   push:
     branches:
       - main
     paths:
+      - ".github/public-graph.lock.json"
       - ".github/scripts/**"
       - ".github/workflows/frontend-quality.yml"
+      - ".gitignore"
+      - "index.html"
+      - "scripts/**"
+      - "sitemap.xml"
   workflow_dispatch:
   workflow_run:
     workflows:
@@ -38,9 +48,20 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Run repo-local audits
+      - name: Verify public graph fetch failure fixture
+        run: node .github/scripts/fetch_public_graph.mjs --self-test
+
+      - name: Fetch pinned public graph
+        run: node .github/scripts/fetch_public_graph.mjs
+
+      - name: Synchronize generated homepage graph
+        run: node scripts/sync_public_graph.mjs
+
+      - name: Audit generated homepage graph
+        run: node .github/scripts/check_frontend_public_graph.mjs
+
+      - name: Run remaining repo-local audits
         run: |
-          node .github/scripts/check_frontend_public_graph.mjs
           node .github/scripts/frontend_quality_fixtures.mjs
           node .github/scripts/check_frontend_quality.mjs --fixture-self-test
 
@@ -65,6 +86,15 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Fetch pinned public graph
+        run: node .github/scripts/fetch_public_graph.mjs
+
+      - name: Synchronize generated homepage graph
+        run: node scripts/sync_public_graph.mjs
+
+      - name: Audit generated homepage graph
+        run: node .github/scripts/check_frontend_public_graph.mjs
+
       - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
 
@@ -75,6 +105,7 @@ jobs:
         run: node .github/scripts/check_frontend_quality.mjs
 
       - name: Locate latest report
+        if: ${{ always() }}
         id: report
         run: |
           latest="$(ls -td .omx/reports/frontend-quality-* | head -1)"
@@ -85,6 +116,7 @@ jobs:
           sed -n '1,120p' "$latest/summary.md" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload quality report artifact
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: frontend-quality-report-${{ github.run_id }}
