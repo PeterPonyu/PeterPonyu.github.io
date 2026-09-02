@@ -5,12 +5,24 @@ on:
     paths:
       - ".github/scripts/**"
       - ".github/workflows/frontend-quality.yml"
+      - "index.html"
+      - "sitemap.xml"
+      - "public-graph.manifest.json"
+      - "public-graph.manifest.upstream.json"
+      - "public-graph.source-ref.json"
+      - "scripts/sync_public_graph.mjs"
   push:
     branches:
       - main
     paths:
       - ".github/scripts/**"
       - ".github/workflows/frontend-quality.yml"
+      - "index.html"
+      - "sitemap.xml"
+      - "public-graph.manifest.json"
+      - "public-graph.manifest.upstream.json"
+      - "public-graph.source-ref.json"
+      - "scripts/sync_public_graph.mjs"
   workflow_dispatch:
   workflow_run:
     workflows:
@@ -40,9 +52,12 @@ jobs:
 
       - name: Run repo-local audits
         run: |
+          node scripts/sync_public_graph.mjs --source public-graph.manifest.upstream.json
+          node .github/scripts/check_public_graph_parity.mjs --source public-graph.manifest.upstream.json --mirror public-graph.manifest.json --ref public-graph.source-ref.json
           node .github/scripts/check_frontend_public_graph.mjs
           node .github/scripts/frontend_quality_fixtures.mjs
           node .github/scripts/check_frontend_quality.mjs --fixture-self-test
+          git diff --exit-code -- index.html sitemap.xml public-graph.manifest.json
 
   live-quality-gate:
     name: Live Quality Gate
@@ -72,6 +87,8 @@ jobs:
         run: google-chrome --version
 
       - name: Run full quality gate
+        env:
+          EXPECTED_SCPORTAL_RELEASE: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || '' }}
         run: node .github/scripts/check_frontend_quality.mjs
 
       - name: Locate latest report

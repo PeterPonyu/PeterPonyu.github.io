@@ -18,6 +18,7 @@ const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(scriptDir, '../..');
 const reportsRoot = path.join(root, '.omx/reports');
 const publicGraphScript = path.join(root, '.github/scripts/check_frontend_public_graph.mjs');
+const publicGraphParityScript = path.join(root, '.github/scripts/check_public_graph_parity.mjs');
 
 const SURFACES = {
   homepage: {
@@ -29,6 +30,11 @@ const SURFACES = {
     label: 'SCPortal',
     url: 'https://peterponyu.github.io/scportal/',
     screenshotBase: 'scportal',
+  },
+  autoselect: {
+    label: 'SCPortal AutoSelect',
+    url: 'https://peterponyu.github.io/scportal/autoselect/',
+    screenshotBase: 'scportal-autoselect',
   },
   liora: {
     label: 'Liora UI',
@@ -132,6 +138,7 @@ const CHECK_STATUS = {
 
 const args = new Set(process.argv.slice(2));
 const runFixtureSelfTest = args.has('--fixture-self-test') || args.has('--self-test');
+const expectedScportalRelease = process.env.EXPECTED_SCPORTAL_RELEASE?.trim() || null;
 
 const ensureDir = (dir) => fs.mkdirSync(dir, { recursive: true });
 const writeText = (filePath, content) => {
@@ -346,12 +353,15 @@ const checkHomepage = ({ html, status, headers }) => {
   recordCheck(checks, canonical === SURFACES.homepage.url, 'canonical_url', { canonical });
   recordCheck(checks, html.includes('https://peterponyu.github.io/scportal/') || html.includes('/scportal/'), 'contains_scportal_route');
   recordCheck(checks, html.includes('https://peterponyu.github.io/liora-ui/') || html.includes('/liora-ui/'), 'contains_liora_route');
+  recordCheck(checks, html.includes('https://peterponyu.github.io/scCCVGBen/'), 'contains_scccvgben_atlas_route');
+  recordCheck(checks, html.includes('https://github.com/PeterPonyu/model-router'), 'contains_model_router_protocol_link');
   recordCheck(checks, Boolean(routingAside), 'apps_contains_quick_guide_aside');
   recordCheck(checks, quickGuideBadgeCount >= 4, 'apps_quick_guide_has_at_least_4_badges', { quickGuideBadgeCount });
   recordCheck(checks, hasCurrentToolGroups, 'apps_contains_current_tool_group_headings');
   recordCheck(checks, !appsText.includes('also in the public graph') && !appsText.includes('hidden by design'), 'retired_public_graph_boundary_copy_absent');
-  recordCheck(checks, !appsText.includes('iaode workspace'), 'iaode_workspace_not_visible_homepage_app_destination');
-  recordCheck(checks, !appsText.includes('mccvae'), 'mccvae_not_visible_live_hosted_app_destination');
+  recordCheck(checks, !hrefMatches(appsSection, /\/iAODE\/frontend\//i), 'iaode_workspace_not_visible_homepage_app_destination');
+  recordCheck(checks, !hrefMatches(appsSection, /\/MCCVAE\//i), 'mccvae_not_visible_live_hosted_app_destination');
+  recordCheck(checks, !/(localhost|127\.0\.0\.1|file:\/|\/home\/)/i.test(html), 'homepage_private_runtime_values_absent');
   recordInfo(checks, 'headers', {
     lastModified: headers['last-modified'] ?? null,
     cacheControl: headers['cache-control'] ?? null,
@@ -372,6 +382,17 @@ const checkScportal = ({ html, status, headers }) => {
   recordCheck(checks, ok, 'canonical_or_og_url_points_to_scportal', { canonical, ogUrl });
   recordCheck(checks, hrefExists(html, SURFACES.homepage.url), 'contains_homepage_link');
   recordCheck(checks, html.includes(SURFACES.liora.url) || html.includes('/liora-ui/'), 'contains_liora_link');
+  recordCheck(checks, hrefExists(html, 'https://peterponyu.github.io/scCCVGBen/'), 'contains_scccvgben_atlas_link');
+  recordCheck(checks, hrefExists(html, 'https://peterponyu.github.io/scportal/autoselect/'), 'contains_autoselect_link');
+  recordCheck(checks, html.includes('Model Router'), 'contains_model_router_scope_copy');
+  const release = getMetaContent(html, 'name', 'scportal-release');
+  recordCheck(checks, Boolean(release), 'release_marker_present', { release });
+  if (expectedScportalRelease) {
+    recordCheck(checks, release === expectedScportalRelease, 'release_marker_matches_expected', {
+      expected: expectedScportalRelease,
+      actual: release,
+    });
+  }
   recordCheck(checks, allRoutesPresent(routes), 'contains_scportal_public_task_routes', routes);
   recordCheck(checks, !visibleText.includes('homepage as a discovery hub replacement'), 'does_not_present_homepage_as_discovery_hub_replacement');
   recordInfo(checks, 'headers', {
@@ -379,6 +400,27 @@ const checkScportal = ({ html, status, headers }) => {
     cacheControl: headers['cache-control'] ?? null,
   });
 
+  return { title, canonical, ogUrl, checks };
+};
+
+const checkAutoselect = ({ html, status, headers }) => {
+  const checks = [];
+  const title = getTitle(html);
+  const { canonical, ogUrl, ok } = checkCanonicalOrOg(html, SURFACES.autoselect.url);
+  const visibleText = normalizeVisibleText(html);
+  recordCheck(checks, status === 200, 'http_200', { status });
+  recordCheck(checks, /AutoSelect/i.test(title), 'title_contains_autoselect', { title });
+  recordCheck(checks, ok, 'canonical_or_og_url_points_to_autoselect', { canonical, ogUrl });
+  recordCheck(checks, visibleText.includes('thirteen published method identities'), 'contains_thirteen_method_identity_scope');
+  recordCheck(checks, visibleText.includes('synthetic') && visibleText.includes('candidate'), 'contains_synthetic_candidate_scope');
+  recordCheck(checks, visibleText.includes('model router') && visibleText.includes('local infrastructure'), 'contains_local_router_scope');
+  recordCheck(checks, hrefExists(html, SURFACES.homepage.url), 'contains_homepage_link');
+  recordCheck(checks, hrefExists(html, SURFACES.scportal.url), 'contains_scportal_link');
+  recordCheck(checks, !/(localhost|127\.0\.0\.1|file:\/|\/home\/)/i.test(html), 'autoselect_private_runtime_values_absent');
+  recordInfo(checks, 'headers', {
+    lastModified: headers['last-modified'] ?? null,
+    cacheControl: headers['cache-control'] ?? null,
+  });
   return { title, canonical, ogUrl, checks };
 };
 
@@ -682,6 +724,7 @@ const runV2AQualityAudit = async (reportDir) => {
 const checkerBySurface = {
   homepage: checkHomepage,
   scportal: checkScportal,
+  autoselect: checkAutoselect,
   liora: checkLiora,
   mccvae: checkMccvae,
   iaode: checkIaode,
@@ -754,8 +797,21 @@ const geometryForHomepage = (html) => {
 const geometryForScportal = (html) => ({
   hasHomepageLink: hrefExists(html, SURFACES.homepage.url),
   hasLioraLink: html.includes(SURFACES.liora.url) || html.includes('/liora-ui/'),
+  hasAutoselectLink: hrefExists(html, SURFACES.autoselect.url),
+  hasAtlasLink: hrefExists(html, 'https://peterponyu.github.io/scCCVGBen/'),
   routes: routePresence(html, SURFACES.scportal.url, SCPORTAL_PUBLIC_ROUTE_PATTERNS),
 });
+
+const geometryForAutoselect = (html) => {
+  const visibleText = normalizeVisibleText(html);
+  return {
+    containsThirteenMethodIdentities: visibleText.includes('thirteen published method identities'),
+    containsSyntheticCandidates: visibleText.includes('synthetic') && visibleText.includes('candidate'),
+    containsLocalRouter: visibleText.includes('model router') && visibleText.includes('local infrastructure'),
+    hasHomepageLink: hrefExists(html, SURFACES.homepage.url),
+    hasScportalLink: hrefExists(html, SURFACES.scportal.url),
+  };
+};
 
 const geometryForLiora = (html) => ({
   routes: routePresence(html, SURFACES.liora.url, LIORA_PUBLIC_ROUTE_PATTERNS),
@@ -803,16 +859,31 @@ const geometryForIaode = (html) => {
 const geometryBySurface = {
   homepage: geometryForHomepage,
   scportal: geometryForScportal,
+  autoselect: geometryForAutoselect,
   liora: geometryForLiora,
   mccvae: geometryForMccvae,
   iaode: geometryForIaode,
 };
 
 const runPublicGraphAudit = async () => {
-  const result = await runCommand(process.execPath, [publicGraphScript]);
+  const parity = await runCommand(process.execPath, [
+    publicGraphParityScript,
+    '--source',
+    path.join(root, 'public-graph.manifest.upstream.json'),
+    '--mirror',
+    path.join(root, 'public-graph.manifest.json'),
+    '--ref',
+    path.join(root, 'public-graph.source-ref.json'),
+  ]);
+  const graph = await runCommand(process.execPath, [publicGraphScript]);
+  const result = {
+    status: parity.status === 0 && graph.status === 0 ? 0 : (graph.status || parity.status),
+    stdout: [parity.stdout, graph.stdout].filter(Boolean).join('\n'),
+    stderr: [parity.stderr, graph.stderr].filter(Boolean).join('\n'),
+  };
   return {
     ok: result.status === 0,
-    command: `node ${relativePath(publicGraphScript)}`,
+    command: `node ${relativePath(publicGraphParityScript)} && node ${relativePath(publicGraphScript)}`,
     stdout: result.stdout.trim(),
     stderr: result.stderr.trim(),
   };

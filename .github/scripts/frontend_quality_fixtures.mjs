@@ -3,6 +3,8 @@
 const EXPECTED_HOMEPAGE_GUIDE_BADGES = 4;
 const SCPORTAL_URL = 'https://peterponyu.github.io/scportal/';
 const LIORA_URL = 'https://peterponyu.github.io/liora-ui/';
+const SCCCVGBEN_ATLAS_URL = 'https://peterponyu.github.io/scCCVGBen/';
+const MODEL_ROUTER_URL = 'https://github.com/PeterPonyu/model-router';
 
 const SCPORTAL_PUBLIC_ROUTE_PATTERNS = Object.freeze({
   datasets: /^\/scportal\/datasets$/i,
@@ -37,6 +39,7 @@ const positiveFixtures = Object.freeze({
         <a href="https://peterponyu.github.io/liora-ui/">LAIOR Benchmarks</a>
         <a href="https://peterponyu.github.io/iAODE/">iAODE Pages</a>
         <a href="https://peterponyu.github.io/scccvgben-next/">scCCVGBen</a>
+        <a href="https://peterponyu.github.io/scCCVGBen/">scCCVGBen Atlas</a>
         <a href="https://peterponyu.github.io/gahib-site/">GAHIB</a>
       </div>
     </div>
@@ -52,7 +55,9 @@ const positiveFixtures = Object.freeze({
       <h2>More linked pages</h2>
       <a href="https://peterponyu.github.io/liora-ui/">LAIOR Benchmarks</a>
       <a href="https://peterponyu.github.io/iAODE/">iAODE Pages</a>
+      <a href="https://github.com/PeterPonyu/model-router">Model Router</a>
     </div>
+    <div class="resource-card"><span>Local infrastructure</span></div>
   </section>
 </body>
 </html>`,
@@ -184,6 +189,22 @@ const negativeCases = Object.freeze([
     mutate: (fixtures) => ({
       ...fixtures,
       homepage: fixtures.homepage.replace('More linked pages', 'Linked pages'),
+    }),
+  },
+  {
+    id: 'homepage-atlas-link-removed',
+    expectedFailure: 'Homepage must link to the scCCVGBen atlas.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      homepage: fixtures.homepage.replaceAll(SCCCVGBEN_ATLAS_URL, 'https://example.com/atlas/'),
+    }),
+  },
+  {
+    id: 'homepage-router-link-removed',
+    expectedFailure: 'Homepage must link to the Model Router public protocol.',
+    mutate: (fixtures) => ({
+      ...fixtures,
+      homepage: fixtures.homepage.replaceAll(MODEL_ROUTER_URL, 'https://example.com/router/'),
     }),
   },
   {
@@ -414,7 +435,11 @@ export function validateHomepageFixture(html) {
     failures,
   );
   collectCheck(!textIncludes(apps, 'Also in the public graph') && !textIncludes(apps, 'Hidden by design'), 'Homepage must not contain retired public-graph boundary copy.', failures);
-  collectCheck(!textIncludes(apps, 'iAODE Workspace'), 'Homepage must not promote iAODE Workspace as a visible app destination.', failures);
+  collectCheck(hasHrefContaining(apps, SCCCVGBEN_ATLAS_URL), 'Homepage must link to the scCCVGBen atlas.', failures);
+  collectCheck(hasHrefContaining(apps, MODEL_ROUTER_URL), 'Homepage must link to the Model Router public protocol.', failures);
+  collectCheck(textIncludes(apps, 'local infrastructure'), 'Homepage must label Model Router as local infrastructure.', failures);
+  collectCheck(!hasHrefContaining(apps, '/iAODE/frontend/'), 'Homepage must not promote iAODE Workspace as a visible app destination.', failures);
+  collectCheck(!/(localhost|127\.0\.0\.1|file:\/|\/home\/)/i.test(apps), 'Homepage #apps must not expose private runtime URLs or paths.', failures);
 
   return failures;
 }
