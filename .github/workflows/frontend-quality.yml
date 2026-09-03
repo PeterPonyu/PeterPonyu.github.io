@@ -87,8 +87,9 @@ jobs:
         run: google-chrome --version
 
       - name: Run full quality gate
-        env:
-          EXPECTED_SCPORTAL_RELEASE: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || '' }}
+        # SCPortal and Homepage are independent repositories, so their commit SHAs
+        # are intentionally not compared here. The gate verifies that SCPortal
+        # publishes a release marker; graph provenance is pinned by source-ref.json.
         run: node .github/scripts/check_frontend_quality.mjs
 
       - name: Locate latest report
