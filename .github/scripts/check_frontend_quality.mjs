@@ -30,6 +30,7 @@ const surfaceKeyByManifestId = Object.freeze({
   mccvae: 'mccvae',
   scccvgben: 'scccvgbenNext',
   gahib_site: 'gahib',
+  scccvgben_atlas: 'scccvgbenHugo',
 });
 
 const screenshotBaseFor = (key) => key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
@@ -67,17 +68,6 @@ const loadSurfaceInventory = () => {
     screenshotBase: 'autoselect',
     routeSurface: true,
   };
-  const scccvgben = hostedSites.find((site) => site.id === 'scccvgben');
-  if (scccvgben) {
-    const hugoUrl = 'https://peterponyu.github.io/scCCVGBen/';
-    surfaces.scccvgbenHugo = {
-      ...createSurface(scccvgben, 'scccvgbenHugo'),
-      label: 'scCCVGBen Hugo',
-      url: hugoUrl,
-      documentRoot: hugoUrl,
-      routeSurface: true,
-    };
-  }
   return { surfaces, localOnlyUrls };
 };
 

@@ -12,6 +12,8 @@ on:
       - 'key-geometry/**'
       - 'noise-swamping/**'
       - 'noise-swamping-wave/**'
+      - 'public-graph.manifest.upstream.json'
+      - 'public-graph.source-ref.json'
       - 'robots.txt'
       - 'scripts/**'
       - 'sitemap.xml'
@@ -28,6 +30,8 @@ on:
       - 'key-geometry/**'
       - 'noise-swamping/**'
       - 'noise-swamping-wave/**'
+      - 'public-graph.manifest.upstream.json'
+      - 'public-graph.source-ref.json'
       - 'robots.txt'
       - 'scripts/**'
       - 'sitemap.xml'
@@ -57,11 +61,18 @@ jobs:
       - name: Fetch and verify pinned public graph
         run: node .github/scripts/fetch_public_graph.mjs
 
+      - name: Verify public graph provenance and parity
+        run: |
+          node .github/scripts/check_public_graph_parity.mjs --self-test
+          node .github/scripts/check_public_graph_parity.mjs
+
       - name: Synchronize generated homepage graph
         run: node scripts/sync_public_graph.mjs
 
       - name: Audit generated homepage graph
-        run: node .github/scripts/check_frontend_public_graph.mjs
+        run: |
+          node .github/scripts/check_frontend_public_graph.mjs
+          git diff --exit-code -- index.html sitemap.xml
 
       - name: Run homepage quality fixtures
         run: |

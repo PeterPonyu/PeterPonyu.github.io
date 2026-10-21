@@ -5,6 +5,10 @@
 .omx/
 .claude/
 .codex/
+
+# Working audit notes — they cite agent report paths and read as process, not
+# as anything a visitor to the homepage should find.
+DESIGN.md
 *.live.txt
 .env
 .env.*

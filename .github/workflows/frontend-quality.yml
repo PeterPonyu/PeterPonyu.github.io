@@ -6,10 +6,11 @@ on:
       - ".github/public-graph.lock.json"
       - ".github/scripts/**"
       - ".github/workflows/frontend-quality.yml"
-      - ".gitignore"
       - "index.html"
-      - "scripts/**"
       - "sitemap.xml"
+      - "public-graph.manifest.upstream.json"
+      - "public-graph.source-ref.json"
+      - "scripts/sync_public_graph.mjs"
   push:
     branches:
       - main
@@ -17,10 +18,11 @@ on:
       - ".github/public-graph.lock.json"
       - ".github/scripts/**"
       - ".github/workflows/frontend-quality.yml"
-      - ".gitignore"
       - "index.html"
-      - "scripts/**"
       - "sitemap.xml"
+      - "public-graph.manifest.upstream.json"
+      - "public-graph.source-ref.json"
+      - "scripts/sync_public_graph.mjs"
   workflow_dispatch:
   workflow_run:
     workflows:
@@ -41,29 +43,23 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: "24"
 
-      - name: Verify public graph fetch failure fixture
-        run: node .github/scripts/fetch_public_graph.mjs --self-test
-
-      - name: Fetch pinned public graph
-        run: node .github/scripts/fetch_public_graph.mjs
-
-      - name: Synchronize generated homepage graph
-        run: node scripts/sync_public_graph.mjs
-
-      - name: Audit generated homepage graph
-        run: node .github/scripts/check_frontend_public_graph.mjs
-
-      - name: Run remaining repo-local audits
+      - name: Run repo-local audits
         run: |
+          node .github/scripts/fetch_public_graph.mjs --self-test
+          node .github/scripts/fetch_public_graph.mjs
+          node scripts/sync_public_graph.mjs
+          node .github/scripts/check_public_graph_parity.mjs --source public-graph.manifest.upstream.json --mirror .cache/public-graph.manifest.json --ref public-graph.source-ref.json
+          node .github/scripts/check_frontend_public_graph.mjs
           node .github/scripts/frontend_quality_fixtures.mjs
           node .github/scripts/check_frontend_quality.mjs --fixture-self-test
+          git diff --exit-code -- index.html sitemap.xml
 
   live-quality-gate:
     name: Live Quality Gate
@@ -77,35 +73,35 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7.0.0
         with:
           node-version: "24"
 
-      - name: Fetch pinned public graph
-        run: node .github/scripts/fetch_public_graph.mjs
-
-      - name: Synchronize generated homepage graph
-        run: node scripts/sync_public_graph.mjs
-
-      - name: Audit generated homepage graph
-        run: node .github/scripts/check_frontend_public_graph.mjs
+      - name: Fetch and audit pinned public graph
+        run: |
+          node .github/scripts/fetch_public_graph.mjs
+          node scripts/sync_public_graph.mjs
+          node .github/scripts/check_public_graph_parity.mjs --source public-graph.manifest.upstream.json --mirror .cache/public-graph.manifest.json --ref public-graph.source-ref.json
+          node .github/scripts/check_frontend_public_graph.mjs
 
       - name: Install Chrome
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@v2.2.0
 
       - name: Verify Chrome
         run: google-chrome --version
 
       - name: Run full quality gate
+        # SCPortal and Homepage are independent repositories, so their commit SHAs
+        # are intentionally not compared here. The gate verifies that SCPortal
+        # publishes a release marker; graph provenance is pinned by source-ref.json.
         run: node .github/scripts/check_frontend_quality.mjs
 
       - name: Locate latest report
-        if: ${{ always() }}
         id: report
         run: |
           latest="$(ls -td .omx/reports/frontend-quality-* | head -1)"
@@ -116,8 +112,7 @@ jobs:
           sed -n '1,120p' "$latest/summary.md" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload quality report artifact
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: frontend-quality-report-${{ github.run_id }}
           path: ${{ steps.report.outputs.path }}
