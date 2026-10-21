@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(scriptDir, '../..');
 
-const manifestPath = path.join(root, 'public-graph.manifest.json');
+const manifestPath = path.join(root, '.cache/public-graph.manifest.json');
 const indexPath = path.join(root, 'index.html');
 const sitemapPath = path.join(root, 'sitemap.xml');
 

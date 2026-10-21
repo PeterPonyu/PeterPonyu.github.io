@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '..');
-const mirrorPath = path.join(repoRoot, 'public-graph.manifest.json');
+const mirrorPath = path.join(repoRoot, '.cache/public-graph.manifest.json');
 const homepagePath = path.join(repoRoot, 'index.html');
 const sitemapPath = path.join(repoRoot, 'sitemap.xml');
 
@@ -255,7 +255,10 @@ homepage = replaceMarkedSection(homepage, 'resources', requiredMarkers[8][1], re
 homepage = replaceMarkedSection(homepage, 'boundaryNotes', requiredMarkers[9][1], requiredMarkers[9][2], boundaryNoteSites.map(renderBoundaryNote).join('\n'));
 
 fs.writeFileSync(homepagePath, homepage);
-fs.writeFileSync(mirrorPath, `${JSON.stringify(manifest, null, 2)}\n`);
+if (sourceValue) {
+  fs.mkdirSync(path.dirname(mirrorPath), { recursive: true });
+  fs.copyFileSync(sourcePath, mirrorPath);
+}
 
 const sitemapSites = manifest.sites.filter(
   (site) => site.availability === 'public' && site.canonical_url !== null && site.visibility.sitemap === true && site.indexing.mode === 'index_follow',

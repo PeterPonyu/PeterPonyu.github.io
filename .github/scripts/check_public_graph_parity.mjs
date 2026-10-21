@@ -109,7 +109,7 @@ if (invokedDirectly && process.argv.includes('--self-test')) {
 } else if (invokedDirectly) {
   const args = parseArgs(process.argv.slice(2));
   const sourcePath = resolvePath(args.source, 'public-graph.manifest.upstream.json');
-  const mirrorPath = resolvePath(args.mirror, 'public-graph.manifest.json');
+  const mirrorPath = resolvePath(args.mirror, '.cache/public-graph.manifest.json');
   const refPath = resolvePath(args.ref, 'public-graph.source-ref.json');
   const result = checkParity({ source: readJson(sourcePath), mirror: readJson(mirrorPath), ref: readJson(refPath) });
   console.log(`Public graph parity passed: ${result.siteCount} sites, ${result.resourceCount} resources, digest ${result.digest}.`);
